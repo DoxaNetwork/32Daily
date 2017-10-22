@@ -186,6 +186,7 @@ contract BackableToken is BasicToken {
 
 	// helper for tests
 	function checkElectionStatus(address user) constant public returns (bool) {
+		confirmElection(user);
 		return electedMap[user];
 	}
 
