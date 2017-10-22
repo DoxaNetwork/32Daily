@@ -175,10 +175,6 @@ contract BackableToken is BasicToken {
 		return true;
 	}
 
-	function getLinks() private returns(string[]) {
-        return links;
-    }
-
 	// helper for tests
 	// how can I get the return value of this?
 	function confirmElection(address _address) public returns (bool) {
