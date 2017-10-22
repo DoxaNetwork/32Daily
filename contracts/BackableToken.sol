@@ -6,7 +6,14 @@ import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
 contract BackableToken is BasicToken {
 
-	uint256 constant THRESHOLD = 1000;
+	struct Member {
+		string username;
+		address _address;
+		bool active;
+	}
+
+	uint256 constant ELECTION_THRESHOLD = 1000;
+	uint256 constant MEMBERSHIP_THRESHOLD = 1;
 
 	// backer -> (backee -> amount)
 	mapping (address => mapping (address => uint256)) internal backed;
@@ -19,18 +26,52 @@ contract BackableToken is BasicToken {
 
 	mapping (address => bool) public electedMap; // this needs to be defaulted to false?
 
-	// helper for tests
-	// how can I get the return value of this?
-	function confirmElection(address user) public returns (bool) {
-		if (totalTokens(user) >= THRESHOLD) {
-			electedMap[user] = true;
-		}
-		return electedMap[user];
+	Member[] public  members;
+
+	mapping (bytes32 => Member) public userNameMap;
+	mapping (address => Member) public addressMap;
+
+	string[] public links;
+
+	function memberCount() public constant returns (uint count) {
+		return members.length;
 	}
 
-	// helper for tests
-	function checkElectionStatus(address user) constant public returns (bool) {
-		return electedMap[user];
+	function findMemberByAddress(address owner) public constant returns (string username, address _address, bool active) {
+		return (addressMap[owner].username, addressMap[owner]._address, addressMap[owner].active);
+	}
+
+	function findMemberByUserName(string _username) public constant returns (string username, address _address, bool active) {
+		bytes32 key = keccak256(_username);
+		return (userNameMap[key].username, userNameMap[key]._address, userNameMap[key].active);
+	}
+
+	function register(string username) public payable returns (bool) {
+		mint(msg.sender, msg.value);
+		registerMember(msg.sender, username);
+		return true;
+	}
+
+	// register a new user
+	// requires that some minimum amount of token is alrady held
+	function registerMember(address _address, string username) public returns (bool) {
+		require(balances[_address] > MEMBERSHIP_THRESHOLD);
+
+
+		Member memory newMember = Member({
+			username: username,
+			_address: _address,
+			active: true
+		});
+
+		members.push(newMember);
+
+		// create link from username to member struct
+		userNameMap[keccak256(newMember.username)] = newMember;
+		// create link from address to member struct
+		addressMap[newMember._address] = newMember;
+
+		return true;
 	}
 
 	// return total held minus total outgoing backed
@@ -57,7 +98,7 @@ contract BackableToken is BasicToken {
 		incoming[_to] = incoming[_to].add(_value);
 
 		// if not already elected, and over the thresold, then elect
-		if (!electedMap[_to] && totalTokens(_to) >= THRESHOLD) {
+		if (!electedMap[_to] && totalTokens(_to) >= ELECTION_THRESHOLD) {
 			electedMap[_to] = true;
 		}
 
@@ -78,7 +119,7 @@ contract BackableToken is BasicToken {
 		backed[msg.sender][_to] = 0;
 
 		// if already elected, and no longer over the thresold, then un-elect
-		if (electedMap[_to] && totalTokens(_to) < THRESHOLD) {
+		if (electedMap[_to] && totalTokens(_to) < ELECTION_THRESHOLD) {
 			electedMap[_to] = false;
 			// todo how to pull full list of elected?
 		}
@@ -94,39 +135,22 @@ contract BackableToken is BasicToken {
     	balances[_to] = balances[_to].add(_value);
 
     	// possibly unelect sending address
-    	if (electedMap[msg.sender] && totalTokens(msg.sender) < THRESHOLD) {
+    	if (electedMap[msg.sender] && totalTokens(msg.sender) < ELECTION_THRESHOLD) {
 			electedMap[msg.sender] = true;
 		}
 		// possibly elect receiving address
-		if (!electedMap[_to] && totalTokens(_to) >= THRESHOLD) {
+		if (!electedMap[_to] && totalTokens(_to) >= ELECTION_THRESHOLD) {
 			electedMap[_to] = true;
 		}
     	Transfer(msg.sender, _to, _value);
+
+    	// TODO possibly de-activate member if balance has dropped below MEMBERSHIP_THRESHOLD
+
     	return true;
 	}
 	
-
-	string[] public links;
-
-	function postLink(string link) public returns(bool) {
-		require(electedMap[msg.sender] == true);
-
-		links.push(link);
-
-		uint256 payout = 100;
-		mint(msg.sender, payout);
-
-		return true;
-	}
-
-	function getLinks() private returns(string[]) {
-		return links;
-	}
-
-
 	function () payable {
 		//ether is burned by being locked to contract
-
 		// finney = milliether, szabo = microether
 		uint256 price = 1 finney + SafeMath.mul(5 szabo, totalSupply);
 		uint256 dispersal = SafeMath.div(msg.value, price);
@@ -141,6 +165,32 @@ contract BackableToken is BasicToken {
 		Mint(_to, _amount);
 		Transfer(0x0, _to, _amount);
 		return true;
+	}
+
+	function postLink(string link) public returns(bool) {
+		require(electedMap[msg.sender] == true);
+		links.push(link);
+		uint256 payout = 100;
+		mint(msg.sender, payout);
+		return true;
+	}
+
+	function getLinks() private returns(string[]) {
+        return links;
+    }
+
+	// helper for tests
+	// how can I get the return value of this?
+	function confirmElection(address _address) public returns (bool) {
+		if (totalTokens(_address) >= ELECTION_THRESHOLD) {
+			electedMap[_address] = true;
+		}
+		return electedMap[_address];
+	}
+
+	// helper for tests
+	function checkElectionStatus(address user) constant public returns (bool) {
+		return electedMap[user];
 	}
 
 }
