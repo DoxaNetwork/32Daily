@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import SimpleStorageContract from '../build/contracts/SimpleStorage.json'
+import BackableTokenContract from '../build/contracts/BackableToken.json'
 import getWeb3 from './utils/getWeb3'
 
 import './css/oswald.css'
@@ -44,6 +45,11 @@ class App extends Component {
      */
 
     const contract = require('truffle-contract')
+    const token = contract(BackableTokenContract)
+    token.setProvider(this.state.web3.currentProvider)
+
+    var tokenInstance
+
     const simpleStorage = contract(SimpleStorageContract)
     simpleStorage.setProvider(this.state.web3.currentProvider)
 
@@ -67,6 +73,35 @@ class App extends Component {
     })
   }
 
+  clickButton() {
+    console.log('button clicked');
+
+    const contract = require('truffle-contract')
+    const token = contract(BackableTokenContract)
+    token.setProvider(this.state.web3.currentProvider)
+
+    var tokenInstance
+
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      token.deployed().then((instance) => {
+        tokenInstance = instance
+
+        console.log(this.state)
+        // Buys 1 ether worth of token
+        console.log(accounts[0])
+        return tokenInstance.sendTransaction({from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(2,'ether'))});
+        
+        // return tokenInstance.send('1000000000', {from: accounts[0]});
+      }).then((result) => {
+        // Get the value from the contract to prove it worked.
+        return tokenInstance.totalTokens(accounts[0])
+      }).then((result) => {
+        // Update state with the result.
+        return this.setState({ storageValue: result.c[0] })
+      })
+    })
+  }
+
   render() {
     return (
       <div className="App">
@@ -74,15 +109,23 @@ class App extends Component {
             <a href="#" className="pure-menu-heading pure-menu-link">Truffle Box</a>
         </nav>
 
+        
+
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
+
               <h1>Good to Go!</h1>
               <p>Your Truffle Box is installed and ready.</p>
               <h2>Smart Contract Example</h2>
               <p>If your contracts compiled and migrated successfully, below will show a stored value of 5 (by default).</p>
               <p>Try changing the value stored on <strong>line 59</strong> of App.js.</p>
               <p>The stored value is: {this.state.storageValue}</p>
+              <form>
+                Username
+                <input type="text" name="username"></input>
+              </form>
+              <button onClick={this.clickButton.bind(this)}>Join</button>
             </div>
           </div>
         </main>

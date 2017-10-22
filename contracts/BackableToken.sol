@@ -80,7 +80,7 @@ contract BackableToken is BasicToken {
 	}
 
 	// return total held plus total incoming backed
-	function totalTokens(address _to) constant internal returns (uint256 total) {
+	function totalTokens(address _to) constant public returns (uint256 total) {
 		return balances[_to].add(incoming[_to]);
 	}
 
