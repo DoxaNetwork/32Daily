@@ -85,7 +85,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should allow sending tokens after unbacking", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 		await token.unback(accounts[1], {from: accounts[0]});
@@ -97,20 +97,50 @@ contract('BackableToken', function(accounts) {
 		assert.equal(firstAccountBalance, 1000 - 400);
 	})
 
-	it("should increase supply after receiving ether", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
-		let before = await token.totalSupply();
+	it("should increase token price as supply increases", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 5000, accounts[1], 0); 
+		
+		let supplyOne = await token.totalSupply();
+		await token.send(new web3.BigNumber(web3.toWei(5,'ether')), {from: accounts[0]});
+		let supplyTwo = await token.totalSupply();
+		let firstDispersal = supplyTwo - supplyOne;
 
-		await token.send(new web3.BigNumber(web3.toWei(5.1,'ether')), {from: accounts[1]});
+		await token.send(new web3.BigNumber(web3.toWei(5,'ether')), {from: accounts[1]});
+		let supplyThree = await token.totalSupply();
+		let secondDispersal = supplyThree - supplyTwo;
 
-		let after = await token.totalSupply();
+		//console.log(firstDispersal);
+		//console.log(secondDispersal);
 
-		console.log(before)
-		console.log(after)
+		assert.ok(secondDispersal < firstDispersal);
+	})
 
-		assert.equal(after, 100);
+	it("should not allow non-elected user to add link", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		try {
+			await token.postLink("reddit.com", {from : accounts[0]});
+			assert.fail('should have thrown before');
+		} catch (error) {
+			assertJump(error);
+		}
 
 	})
+
+	it("should allow elected user to add Link and be paid", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+		
+		await token.confirmElection(accounts[0]);
+		let AIsElected = await token.checkElectionStatus(accounts[0]);
+		assert.equal(AIsElected, true);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		let links = token.links;
+		console.log(links);
+
+	})
+
+
 
 
 })

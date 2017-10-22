@@ -19,7 +19,6 @@ contract BackableToken is BasicToken {
 
 	mapping (address => bool) public electedMap; // this needs to be defaulted to false?
 
-
 	// helper for tests
 	// how can I get the return value of this?
 	function confirmElection(address user) public returns (bool) {
@@ -106,25 +105,41 @@ contract BackableToken is BasicToken {
     	return true;
 	}
 	
-	function () payable {
-		//ether is burned by being locked to contract
-		mint(msg.sender, msg.value);
+
+	string[] public links;
+
+	function postLink(string link) public returns(bool) {
+		require(electedMap[msg.sender] == true);
+
+		links.push(link);
+
+		uint256 payout = 100;
+		mint(msg.sender, payout);
+
+		return true;
 	}
 
-	event Mint(address indexed to, uint256 dispersal);
+	function getLinks() private returns(string[]) {
+		return links;
+	}
+
+
+	function () payable {
+		//ether is burned by being locked to contract
+
+		// finney = milliether, szabo = microether
+		uint256 price = 1 finney + SafeMath.mul(5 szabo, totalSupply);
+		uint256 dispersal = SafeMath.div(msg.value, price);
+		mint(msg.sender, dispersal);
+	}
+
+	event Mint(address indexed to, uint256 _amount);
 	
 	function mint(address _to, uint256 _amount) private returns (bool) {
-
-		//require(); require that this is called by the contract
-
-		//uint256 price = 1000000000000000000 + SafeMath.mul(5, totalSupply);
-		uint256 price = 1000000000000000000;
-		uint256 dispersal = SafeMath.div(_amount, price);
-
-		totalSupply = totalSupply.add(dispersal);
-		balances[_to] = balances[_to].add(dispersal);
-		Mint(_to, dispersal);
-		Transfer(0x0, _to, dispersal);
+		totalSupply = totalSupply.add(_amount);
+		balances[_to] = balances[_to].add(_amount);
+		Mint(_to, _amount);
+		Transfer(0x0, _to, _amount);
 		return true;
 	}
 
