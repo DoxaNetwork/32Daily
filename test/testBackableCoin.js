@@ -109,8 +109,37 @@ contract('BackableToken', function(accounts) {
 		console.log(after)
 
 		assert.equal(after, 100);
+	});
 
-	})
+	it("should allow a member with token to register a name", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+
+		await token.registerMember(accounts[0], 'enodios');
+
+		let [username, address, active] = await token.findMemberByAddress(accounts[0]);
+
+		assert.equal(username, 'enodios');
+		assert.equal(address, accounts[0]);
+		assert.equal(active, true);
+
+		let [username2, address2, active2] = await token.findMemberByUserName('enodios');
+
+		assert.equal(username2, 'enodios');
+		assert.equal(address2, accounts[0]);
+		assert.equal(active2, true);
+	});
+
+	it("should allow a new user to buy token and register a name", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+
+		await token.register.sendTransaction('enodios', {from: accounts[1], value: new web3.BigNumber(web3.toWei(5.1,'ether'))});
+
+		let [username, address, active] = await token.findMemberByAddress(accounts[1]);
+
+		assert.equal(username, 'enodios');
+		assert.equal(address, accounts[1]);
+		assert.equal(active, true);
+	});
 
 
 })
