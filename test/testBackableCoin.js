@@ -10,7 +10,7 @@ contract('BackableToken', function(accounts) {
 		assert.equal(totalSupply, 200)
 	})
 
-	it("should elect a user who hold enough token", async function() {
+	it("should elect a user who holds enough token", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 100); 
 		await token.confirmElection(accounts[0]);
 		await token.confirmElection(accounts[1]);
