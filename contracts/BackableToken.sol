@@ -50,11 +50,11 @@ contract BackableToken is BasicToken {
 		require(_value <= availableToSend(msg.sender));
 
 		// update the root mapping
-		backed[msg.sender][_to].add(_value); // might want to separate initial backing versus increase?
+		backed[msg.sender][_to] = backed[msg.sender][_to].add(_value); // might want to separate initial backing versus increase?
 
 		// update the caches
-		outgoing[msg.sender].add(_value);
-		incoming[_to].add(_value);
+		outgoing[msg.sender] = outgoing[msg.sender].add(_value);
+		incoming[_to] = incoming[_to].add(_value);
 
 		// if not already elected, and over the thresold, then elect
 		if (!electedMap[_to] && totalTokens(_to) >= THRESHOLD) {
@@ -71,8 +71,8 @@ contract BackableToken is BasicToken {
 		require(backed[msg.sender][_to] != 0);
 
 		// update the caches
-		outgoing[msg.sender].sub(backed[msg.sender][_to]);
-		incoming[_to].sub(backed[msg.sender][_to]);
+		outgoing[msg.sender] = outgoing[msg.sender].sub(backed[msg.sender][_to]);
+		incoming[_to] = incoming[_to].sub(backed[msg.sender][_to]);
 
 		// update the root mapping
 		backed[msg.sender][_to] = 0;
