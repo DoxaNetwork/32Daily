@@ -1,6 +1,7 @@
 pragma solidity ^0.4.11;
 
 import 'zeppelin-solidity/contracts/token/BasicToken.sol';
+import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
 
 contract BackableToken is BasicToken {
@@ -104,4 +105,27 @@ contract BackableToken is BasicToken {
     	Transfer(msg.sender, _to, _value);
     	return true;
 	}
+	
+	function () payable {
+		//ether is burned by being locked to contract
+		mint(msg.sender, msg.value);
+	}
+
+	event Mint(address indexed to, uint256 dispersal);
+	
+	function mint(address _to, uint256 _amount) private returns (bool) {
+
+		//require(); require that this is called by the contract
+
+		//uint256 price = 1000000000000000000 + SafeMath.mul(5, totalSupply);
+		uint256 price = 1000000000000000000;
+		uint256 dispersal = SafeMath.div(_amount, price);
+
+		totalSupply = totalSupply.add(dispersal);
+		balances[_to] = balances[_to].add(dispersal);
+		Mint(_to, dispersal);
+		Transfer(0x0, _to, dispersal);
+		return true;
+	}
+
 }

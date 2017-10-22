@@ -97,4 +97,20 @@ contract('BackableToken', function(accounts) {
 		assert.equal(firstAccountBalance, 1000 - 400);
 	})
 
+	it("should increase supply after receiving ether", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+		let before = await token.totalSupply();
+
+		await token.send(new web3.BigNumber(web3.toWei(5.1,'ether')), {from: accounts[1]});
+
+		let after = await token.totalSupply();
+
+		console.log(before)
+		console.log(after)
+
+		assert.equal(after, 100);
+
+	})
+
+
 })
