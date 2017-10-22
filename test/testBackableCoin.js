@@ -1,6 +1,9 @@
 const assertJump = require('./assertJump');
 var BackableTokenMock = artifacts.require("./BackableTokenMock.sol");
 
+//var Web3 = require('web3');
+//var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
 contract('BackableToken', function(accounts) {
 
 	it("should return the correct totalSupply after construction", async function() {
@@ -164,12 +167,14 @@ contract('BackableToken', function(accounts) {
 		assert.equal(AIsElected, true);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
-		let links = token.links;
-		console.log(links);
+
+		let links = await token.links.call(0);
+		assert.equal("reddit.com",links);
+
+		let bal = await token.balanceOf(accounts[0]);
+		assert.equal(bal, 1100);
 
 	})
-
-
 
 
 })
