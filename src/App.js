@@ -18,11 +18,13 @@ class App extends Component {
       storageValue: 0,
       web3: null,
       tokenInstance: null,
-      users: null,
+      users: [],
       search: '',
       backing: null,
       elected: null,
-      address: null
+      address: null,
+      username: '',
+      userCount: null
     }
 
   }
@@ -53,14 +55,33 @@ class App extends Component {
         tokenInstance = instance
 
         // Buys 1 ether worth of token
-        return tokenInstance.register.sendTransaction('enodios', {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))});
+        return tokenInstance.memberCount();
       }).then((result) => {
+        console.log(result)
+        return this.setState({userCount: result.c[0] })
+      })
+    })
+  }
+
+  getAllUsers() {
+    var tokenInstance
+
+    this.state.web3.eth.getAccounts((error, accounts) => {
+      token.deployed().then((instance) => {
+        tokenInstance = instance
+
+        return tokenInstance.members(1)
+
+        // return tokenInstance.register.sendTransaction(this.state.username, {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))});
+      }).then((result) => {
+        console.log(result)
         // Get the value from the contract to prove it worked.
         return tokenInstance.totalTokens(accounts[0])
       }).then((result) => {
         // Update state with the result.
         return this.setState({ storageValue: result.c[0] })
       })
+
     })
   }
 
@@ -72,7 +93,12 @@ class App extends Component {
         tokenInstance = instance
 
         // Buys 1 ether worth of token
-        return tokenInstance.register.sendTransaction('enodios', {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))});
+        let users = this.state.users
+        users.push(this.state.username)
+        users.push(', ')
+        this.setState({users: users})
+        // this.getusers.push(this.state.username)
+        return tokenInstance.register.sendTransaction(this.state.username, {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))});
       }).then((result) => {
         // Get the value from the contract to prove it worked.
         return tokenInstance.totalTokens(accounts[0])
@@ -86,6 +112,10 @@ class App extends Component {
 
   handleSearchChange(event) {
     this.setState({search: event.target.value})
+  }
+
+  handleUserNameChange(event) {
+    this.setState({username: event.target.value})
   }
 
   search() {
@@ -146,10 +176,12 @@ class App extends Component {
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
+              <p>User count: {this.state.userCount}</p> 
+              <button onClick={this.getUsers.bind(this)}>update user count</button>
               <p>Your tokens: {this.state.storageValue}</p>
               <form>
                 Username
-                <input type="text" name="username"></input>
+                <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}></input>
               </form>
               <button onClick={this.clickButton.bind(this)}>Join</button>
 
@@ -167,7 +199,13 @@ class App extends Component {
               {this.state.elected}
               </div>
               </div>
+              <div>
+              user list: {this.state.users}
+              </div>
 
+              <div>
+                <button onClick={this.getAllUsers.bind(this)}>Get all users</button>
+              </div>
 
 
             </div>
