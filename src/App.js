@@ -29,38 +29,26 @@ class App extends Component {
 
   }
 
-  componentWillMount() {
+  async componentWillMount() {
     // Get network provider and web3 instance.
     // See utils/getWeb3 for more info.
 
-    getWeb3
-    .then(results => {
-      this.setState({
-        web3: results.web3
-      })
+    try {
+      let results = await getWeb3
+      this.setState({web3: results.web3})
 
       // Instantiate contract once web3 provided.
       token.setProvider(this.state.web3.currentProvider)
-    })
-    .catch(() => {
+    } catch (err) {
       console.log('Error finding web3.')
-    })
+    }
   }
 
-  getUsers() {
-    var tokenInstance
+  async getUsers() {
+      let tokenInstance = await token.deployed()
+      let result = await tokenInstance.memberCount()
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      token.deployed().then((instance) => {
-        tokenInstance = instance
-
-        // Buys 1 ether worth of token
-        return tokenInstance.memberCount();
-      }).then((result) => {
-        console.log(result)
-        return this.setState({userCount: result.c[0] })
-      })
-    })
+      return this.setState({userCount: result.c[0]})
   }
 
   getAllUsers() {
@@ -86,27 +74,21 @@ class App extends Component {
   }
 
   clickButton() {
-    var tokenInstance
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      token.deployed().then((instance) => {
-        tokenInstance = instance
+    this.state.web3.eth.getAccounts(async (error, accounts) => {
 
-        // Buys 1 ether worth of token
-        let users = this.state.users
-        users.push(this.state.username)
-        users.push(', ')
-        this.setState({users: users})
-        // this.getusers.push(this.state.username)
-        return tokenInstance.register.sendTransaction(this.state.username, {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))});
-      }).then((result) => {
-        // Get the value from the contract to prove it worked.
-        return tokenInstance.totalTokens(accounts[0])
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ storageValue: result.c[0] })
-      })
+      let tokenInstance = await token.deployed()
 
+      let users = this.state.users
+      users.push(this.state.username)
+      users.push(', ')
+      this.setState({users: users})
+
+      let result = await tokenInstance.register.sendTransaction(this.state.username, {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
+
+      let result2 = await tokenInstance.totalTokens(accounts[0])
+
+      this.setState({storageValue: result2.c[0]})
     })
   }
 
@@ -119,48 +101,27 @@ class App extends Component {
   }
 
   search() {
-     var tokenInstance
+    this.state.web3.eth.getAccounts(async (error, accounts) => {
 
-    console.log(this.state.search);
+      let tokenInstance = await token.deployed()
+      let [username, address, active] = await tokenInstance.findMemberByUserName(this.state.search)
+      this.setState({address: address})
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      token.deployed().then((instance) => {
-        tokenInstance = instance
+      let result = await tokenInstance.totalTokens(address)
 
-        // Buys 1 ether worth of token
-        return tokenInstance.findMemberByUserName(this.state.search);
-      }).then((result) => {
-        let [username, address, active] = result
-        this.setState({address: address})
-
-        return tokenInstance.totalTokens(address);
-        // Get the value from the contract to prove it worked.
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ backing: result.c[0] })
-      })
+      this.setState({backing: result.c[0]})
     })
 
   }
 
   getElected() {
-    var tokenInstance
+    this.state.web3.eth.getAccounts(async (error, accounts) => {
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      token.deployed().then((instance) => {
-        tokenInstance = instance
+      let tokenInstance = await token.deployed()
+      let result = await tokenInstance.checkElectionStatus(this.state.address);
 
-        // Buys 1 ether worth of token
-        return tokenInstance.checkElectionStatus(this.state.address);
-      }).then((result) => {
-        let a
-        if (result) {
-          a = 'yes!'
-        } else {
-          a = "NOPE"
-        }
-        return this.setState({ elected: a })
-      })
+      let text = result ? 'yes!' : 'NOPE'
+      this.setState({ elected: text })
     })
   }
 
