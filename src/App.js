@@ -7,6 +7,7 @@ import './css/open-sans.css'
 import './css/pure-min.css'
 import './App.css'
 
+// TODO test changing this to web3 or ethjs
 const contract = require('truffle-contract')
 const token = contract(BackableTokenContract)
 
@@ -14,6 +15,7 @@ class App extends Component {
   constructor(props) {
     super(props)
 
+    // TODO learn how to use state
     this.state = {
       storageValue: 0,
       web3: null,
@@ -24,7 +26,10 @@ class App extends Component {
       elected: null,
       address: null,
       username: '',
-      userCount: null
+      userCount: null,
+      account: null,
+      tokenInstance: null,
+      usernames: [], // TODO how to present this better?
     }
 
   }
@@ -42,56 +47,55 @@ class App extends Component {
     } catch (err) {
       console.log('Error finding web3.')
     }
+
+     this.state.web3.eth.getAccounts((error, accounts) => {
+      this.setState({account: accounts[0]}) //TODO how to let user choose address?
+    })
+
+    let tokenInstance = await token.deployed()
+    this.setState({tokenInstance: tokenInstance})
   }
 
   async getUsers() {
-      let tokenInstance = await token.deployed()
-      let result = await tokenInstance.memberCount()
+      // let tokenInstance = await token.deployed()
+      let result = await this.state.tokenInstance.memberCount()
 
       return this.setState({userCount: result.c[0]})
   }
 
-  getAllUsers() {
-    var tokenInstance
+  async getAllUsers() {      
+    let tokenInstance = await token.deployed()
 
-    this.state.web3.eth.getAccounts((error, accounts) => {
-      token.deployed().then((instance) => {
-        tokenInstance = instance
+    let indexes = [1,2]
 
-        return tokenInstance.members(1)
+    const functions = indexes.map(index => tokenInstance.members(index))
+    let results = await Promise.all(functions)
 
-        // return tokenInstance.register.sendTransaction(this.state.username, {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))});
-      }).then((result) => {
-        console.log(result)
-        // Get the value from the contract to prove it worked.
-        return tokenInstance.totalTokens(accounts[0])
-      }).then((result) => {
-        // Update state with the result.
-        return this.setState({ storageValue: result.c[0] })
-      })
+    let usernames = []
+    for (const [username, address, active] of results) {
+      usernames.push(username)
+    }
 
-    })
+    this.setState({usernames: usernames})
   }
 
-  clickButton() {
+  async clickButton() {
+    let tokenInstance = this.state.tokenInstance
 
-    this.state.web3.eth.getAccounts(async (error, accounts) => {
+    // TODO better way to do this
+    let users = this.state.users
+    users.push(this.state.username)
+    users.push(', ')
+    this.setState({users: users})
 
-      let tokenInstance = await token.deployed()
+    let result = await tokenInstance.register.sendTransaction(this.state.username, {from: this.state.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
 
-      let users = this.state.users
-      users.push(this.state.username)
-      users.push(', ')
-      this.setState({users: users})
+    let result2 = await tokenInstance.totalTokens(this.state.account)
 
-      let result = await tokenInstance.register.sendTransaction(this.state.username, {from: accounts[0], value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
-
-      let result2 = await tokenInstance.totalTokens(accounts[0])
-
-      this.setState({storageValue: result2.c[0]})
-    })
+    this.setState({storageValue: result2.c[0]})
   }
 
+  // TODO clean these up
   handleSearchChange(event) {
     this.setState({search: event.target.value})
   }
@@ -100,31 +104,25 @@ class App extends Component {
     this.setState({username: event.target.value})
   }
 
-  search() {
-    this.state.web3.eth.getAccounts(async (error, accounts) => {
+  async search() {
+    let tokenInstance = this.state.tokenInstance
+    let [username, address, active] = await tokenInstance.findMemberByUserName(this.state.search)
+    this.setState({address: address})
 
-      let tokenInstance = await token.deployed()
-      let [username, address, active] = await tokenInstance.findMemberByUserName(this.state.search)
-      this.setState({address: address})
+    let result = await tokenInstance.totalTokens(address)
 
-      let result = await tokenInstance.totalTokens(address)
-
-      this.setState({backing: result.c[0]})
-    })
-
+    this.setState({backing: result.c[0]})
   }
 
-  getElected() {
-    this.state.web3.eth.getAccounts(async (error, accounts) => {
+  async getElected() {
+    let tokenInstance = this.state.tokenInstance
+    let result = await tokenInstance.checkElectionStatus(this.state.address);
 
-      let tokenInstance = await token.deployed()
-      let result = await tokenInstance.checkElectionStatus(this.state.address);
-
-      let text = result ? 'yes!' : 'NOPE'
-      this.setState({ elected: text })
-    })
+    let text = result ? 'yes!' : 'NOPE'
+    this.setState({ elected: text })
   }
 
+  // TODO build out some components
   render() {
     return (
       <div className="App">
@@ -161,11 +159,11 @@ class App extends Component {
               </div>
               </div>
               <div>
-              user list: {this.state.users}
+              user list: {this.state.usernames}
               </div>
 
               <div>
-                <button onClick={this.getAllUsers.bind(this)}>Get all users</button>
+                <button onClick={this.getAllUsers.bind(this)}>Get all users</button> 
               </div>
 
 

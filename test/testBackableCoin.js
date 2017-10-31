@@ -15,11 +15,12 @@ contract('BackableToken', function(accounts) {
 
 	it("should elect a user who holds enough token", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 100); 
-		await token.confirmElection(accounts[0]);
-		await token.confirmElection(accounts[1]);
 
-		let AIsElected = await token.checkElectionStatus(accounts[0]);
-		let BIsElected = await token.checkElectionStatus(accounts[1]);
+		await token.checkElection(accounts[0]);
+		await token.checkElection(accounts[1]);
+
+		let AIsElected = await token.isElected(accounts[0]);
+		let BIsElected = await token.isElected(accounts[1]);
 		assert.equal(AIsElected, true);
 		assert.equal(BIsElected, false);
 	})
@@ -29,15 +30,14 @@ contract('BackableToken', function(accounts) {
 
 		await token.transfer(accounts[1], 200, {from: accounts[0]});
 
-		let AIsElected = await token.checkElectionStatus(accounts[0]);
-		let BIsElected = await token.checkElectionStatus(accounts[1]);
+		let AIsElected = await token.isElected(accounts[0]);
+		let BIsElected = await token.isElected(accounts[1]);
 		assert.equal(AIsElected, false);
 		assert.equal(BIsElected, true);
 	})
 
 	it("should not allow sending to yourself", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
-		await token.confirmElection(accounts[0]);
 
 		// can't back yourself, fool
 		try {
@@ -51,12 +51,11 @@ contract('BackableToken', function(accounts) {
 	it("backing should elect", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900);
 
-		await token.confirmElection(accounts[0]);
-
+		await token.checkElection(accounts[0]);
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
-		let AIsElected = await token.checkElectionStatus(accounts[0]);
-		let BIsElected = await token.checkElectionStatus(accounts[1]);
+		let AIsElected = await token.isElected(accounts[0]);
+		let BIsElected = await token.isElected(accounts[1]);
 		assert.equal(AIsElected, true);
 		assert.equal(BIsElected, true);
 	})
@@ -91,7 +90,7 @@ contract('BackableToken', function(accounts) {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
-		await token.unback(accounts[1], {from: accounts[0]});
+		await token.unback(accounts[1], 700, {from: accounts[0]});
 
 		await token.transfer(accounts[1], 400, {from: accounts[0]});
 
@@ -104,22 +103,20 @@ contract('BackableToken', function(accounts) {
 		let token = await BackableTokenMock.new(accounts[0], 5000, accounts[1], 0); 
 		
 		let supplyOne = await token.totalSupply();
-		await token.send(new web3.BigNumber(web3.toWei(5,'ether')), {from: accounts[0]});
+
+		await token.send(new web3.BigNumber(web3.toWei(5,'ether')));
 		let supplyTwo = await token.totalSupply();
-		let firstDispersal = supplyTwo - supplyOne;
 
-		await token.send(new web3.BigNumber(web3.toWei(5,'ether')), {from: accounts[1]});
+		await token.send(new web3.BigNumber(web3.toWei(5,'ether')));
 		let supplyThree = await token.totalSupply();
+
+		let firstDispersal = supplyTwo - supplyOne;
 		let secondDispersal = supplyThree - supplyTwo;
-
-		//console.log(firstDispersal);
-		//console.log(secondDispersal);
-
 		assert.ok(secondDispersal < firstDispersal);
 	})
 
 	it("should not allow non-elected user to add link", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(accounts[0], 900, accounts[1], 0);
 
 		try {
 			await token.postLink("reddit.com", {from : accounts[0]});
@@ -132,47 +129,54 @@ contract('BackableToken', function(accounts) {
 	it("should allow a member with token to register a name", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
 
-		await token.registerMember(accounts[0], 'enodios');
+		await token.createMember(accounts[0], 'enodios');
 
-		let [username, address, active] = await token.findMemberByAddress(accounts[0]);
+		let [username, active, elected] = await token.findMemberByAddress(accounts[0]);
 
 		assert.equal(username, 'enodios');
-		assert.equal(address, accounts[0]);
 		assert.equal(active, true);
+		assert.equal(elected, false);
 
-		let [username2, address2, active2] = await token.findMemberByUserName('enodios');
+		let [username2, active2, elected2] = await token.findMemberByUserName('enodios');
 
 		assert.equal(username2, 'enodios');
-		assert.equal(address2, accounts[0]);
 		assert.equal(active2, true);
+		assert.equal(elected2, false);
 	});
 
 	it("should allow a new user to buy token and register a name", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
 
-		await token.register.sendTransaction('enodios', {from: accounts[1], value: new web3.BigNumber(web3.toWei(5.1,'ether'))});
+		await token.register.sendTransaction('enodios', {from: accounts[1], value: new web3.BigNumber(web3.toWei(1,'ether'))});
 
-		let [username, address, active] = await token.findMemberByAddress(accounts[1]);
+		let backing = await token.totalBacking(accounts[1]);
+
+		assert.ok(backing > 1000);
+
+		let [username, active, elected] = await token.findMemberByAddress(accounts[1]);
 
 		assert.equal(username, 'enodios');
-		assert.equal(address, accounts[1]);
 		assert.equal(active, true);
+		assert.equal(elected, true);
 	});
 
 	it("should allow elected user to add Link and be paid", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.register.sendTransaction('enodios', {from: accounts[1], value: new web3.BigNumber(web3.toWei(1,'ether'))});
 		
-		await token.confirmElection(accounts[0]);
-		let AIsElected = await token.checkElectionStatus(accounts[0]);
+		let AIsElected = await token.isElected(accounts[1]);
 		assert.equal(AIsElected, true);
 
-		await token.postLink("reddit.com", {from : accounts[0]});
+		let balanceBefore = await token.balanceOf(accounts[1]);
+
+		await token.postLink("reddit.com", {from : accounts[1]});
 
 		let links = await token.links.call(0);
 		assert.equal("reddit.com",links);
 
-		let bal = await token.balanceOf(accounts[0]);
-		assert.equal(bal, 1100);
+		let balanceAfter = await token.balanceOf(accounts[1]);
+		assert.ok(balanceAfter > balanceBefore);
 
 	})
 
