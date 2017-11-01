@@ -63,6 +63,13 @@ contract BackableToken is BasicToken {
 
 	// ========================= events ==================================================
 	event Mint(address indexed to, uint256 _amount);
+	// event MemberCreated();
+	// event LinkPosted();
+	// event Elected();
+	// event Unelected();
+	// event Backing();
+	// event Unbacking();
+	// TODO maybe combine Backing/Unbacking and Elected/Unelected
 
 
 
@@ -71,13 +78,14 @@ contract BackableToken is BasicToken {
 		return memberList.length;
 	}
 
-	function findMemberByAddress(address _owner) public constant returns (string username, bool active, bool elected) {
-		return (addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected);
+	function findMemberByAddress(address _owner) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
+		return (_owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner]);
 	}
 
-	function findMemberByUserName(string _username) public constant returns (string username, bool active, bool elected) {
+	function findMemberByUserName(string _username) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
 		bytes32 key = keccak256(_username);
-		return (userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected);
+		// TODO is there any gas cost to temporarily storing a variable in memory? that could simplify the next line
+		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner]);
 	}
 
 	function register(string _username) public payable returns (bool) {

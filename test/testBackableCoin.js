@@ -131,13 +131,13 @@ contract('BackableToken', function(accounts) {
 
 		await token.createMember(accounts[0], 'enodios');
 
-		let [username, active, elected] = await token.findMemberByAddress(accounts[0]);
+		let [address, username, active, elected, balance, backing] = await token.findMemberByAddress(accounts[0]);
 
 		assert.equal(username, 'enodios');
 		assert.equal(active, true);
 		assert.equal(elected, false);
 
-		let [username2, active2, elected2] = await token.findMemberByUserName('enodios');
+		let [address2, username2, active2, elected2, balance2, backing2] = await token.findMemberByUserName('enodios');
 
 		assert.equal(username2, 'enodios');
 		assert.equal(active2, true);
@@ -149,12 +149,9 @@ contract('BackableToken', function(accounts) {
 
 		await token.register.sendTransaction('enodios', {from: accounts[1], value: new web3.BigNumber(web3.toWei(1,'ether'))});
 
-		let backing = await token.totalBacking(accounts[1]);
-
-		assert.ok(backing > 1000);
-
-		let [username, active, elected] = await token.findMemberByAddress(accounts[1]);
-
+		let [address, username, active, elected, balance, backing] = await token.findMemberByAddress(accounts[1]);
+		
+		assert.ok(balance > 1000);
 		assert.equal(username, 'enodios');
 		assert.equal(active, true);
 		assert.equal(elected, true);
