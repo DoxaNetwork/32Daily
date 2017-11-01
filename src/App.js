@@ -19,15 +19,12 @@ class App extends Component {
     this.state = {
       storageValue: 0,
       web3: null,
-      tokenInstance: null,
       users: [],
       search: '',
       backing: null,
       elected: null,
       address: null,
       userCount: null,
-      account: null,
-      tokenInstance: null,
       usernames: [], // TODO how to present this better?
     }
 
@@ -48,16 +45,14 @@ class App extends Component {
     }
 
      this.state.web3.eth.getAccounts((error, accounts) => {
-      this.setState({account: accounts[0]}) //TODO how to let user choose address?
+      this.account = accounts[0] //TODO how to let user choose address?
     })
 
-    let tokenInstance = await token.deployed()
-    this.setState({tokenInstance: tokenInstance})
+    this.tokenInstance = await token.deployed()
   }
 
   async getUsers() {
-      // let tokenInstance = await token.deployed()
-      let result = await this.state.tokenInstance.memberCount()
+      let result = await this.tokenInstance.memberCount()
 
       return this.setState({userCount: result.c[0]})
   }
@@ -84,18 +79,16 @@ class App extends Component {
   }
 
   async search() {
-    let tokenInstance = this.state.tokenInstance
-    let [username, address, active] = await tokenInstance.findMemberByUserName(this.state.search)
+    let [username, address, active] = await this.tokenInstance.findMemberByUserName(this.state.search)
     this.setState({address: address})
 
-    let result = await tokenInstance.totalTokens(address)
+    let result = await this.tokenInstance.totalTokens(address)
 
     this.setState({backing: result.c[0]})
   }
 
   async getElected() {
-    let tokenInstance = this.state.tokenInstance
-    let result = await tokenInstance.checkElectionStatus(this.state.address);
+    let result = await this.tokenInstance.checkElectionStatus(this.state.address);
 
     let text = result ? 'yes!' : 'NOPE'
     this.setState({ elected: text })
@@ -119,7 +112,7 @@ class App extends Component {
               <button onClick={this.getUsers.bind(this)}>update user count</button>
               <p>Your tokens: {this.state.storageValue}</p>
 
-              <Join tokenInstance={this.state.tokenInstance} account={this.state.account}/>
+              <Join tokenInstance={this.tokenInstance} account={this.account}/>
 
               Look up user
               <form>
@@ -157,6 +150,9 @@ class Join extends Component {
   constructor(props) {
     super(props)
 
+    this.tokenInstance = this.props.tokenInstance;
+    this.account = this.props.account;
+
     this.state = {
       username: ''
     }
@@ -167,11 +163,9 @@ class Join extends Component {
   }
 
   async clickButton() {
-    let tokenInstance = this.props.tokenInstance
+    let result = await this.tokenInstance.register.sendTransaction(this.state.username, {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
 
-    let result = await tokenInstance.register.sendTransaction(this.state.username, {from: this.props.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
-
-    let result2 = await tokenInstance.totalTokens(this.props.account)
+    let result2 = await this.tokenInstance.totalTokens(this.account)
 
     this.setState({storageValue: result2.c[0]})
   }
