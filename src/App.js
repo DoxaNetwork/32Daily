@@ -25,7 +25,6 @@ class App extends Component {
       backing: null,
       elected: null,
       address: null,
-      username: '',
       userCount: null,
       account: null,
       tokenInstance: null,
@@ -79,29 +78,9 @@ class App extends Component {
     this.setState({usernames: usernames})
   }
 
-  async clickButton() {
-    let tokenInstance = this.state.tokenInstance
-
-    // TODO better way to do this
-    let users = this.state.users
-    users.push(this.state.username)
-    users.push(', ')
-    this.setState({users: users})
-
-    let result = await tokenInstance.register.sendTransaction(this.state.username, {from: this.state.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
-
-    let result2 = await tokenInstance.totalTokens(this.state.account)
-
-    this.setState({storageValue: result2.c[0]})
-  }
-
   // TODO clean these up
   handleSearchChange(event) {
     this.setState({search: event.target.value})
-  }
-
-  handleUserNameChange(event) {
-    this.setState({username: event.target.value})
   }
 
   async search() {
@@ -135,14 +114,12 @@ class App extends Component {
         <main className="container">
           <div className="pure-g">
             <div className="pure-u-1-1">
+              {this.props.children} - {this.props.name}
               <p>User count: {this.state.userCount}</p> 
               <button onClick={this.getUsers.bind(this)}>update user count</button>
               <p>Your tokens: {this.state.storageValue}</p>
-              <form>
-                Username
-                <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}></input>
-              </form>
-              <button onClick={this.clickButton.bind(this)}>Join</button>
+
+              <Join tokenInstance={this.state.tokenInstance} account={this.state.account}/>
 
               Look up user
               <form>
@@ -172,6 +149,43 @@ class App extends Component {
         </main>
       </div>
     );
+  }
+}
+
+class Join extends Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      username: ''
+    }
+  }
+
+  handleUserNameChange(event) {
+    this.setState({username: event.target.value})
+  }
+
+  async clickButton() {
+    let tokenInstance = this.props.tokenInstance
+
+    let result = await tokenInstance.register.sendTransaction(this.state.username, {from: this.props.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
+
+    let result2 = await tokenInstance.totalTokens(this.props.account)
+
+    this.setState({storageValue: result2.c[0]})
+  }
+
+  render() {
+   return (
+     <div>
+      <form>
+        Username
+        <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}/>
+      </form>
+      <button onClick={this.clickButton.bind(this)}>Join</button>
+    </div>
+    )
   }
 }
 
