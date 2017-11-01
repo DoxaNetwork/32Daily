@@ -18,7 +18,6 @@ class App extends Component {
     // TODO learn how to use state
     this.state = {
       storageValue: 0,
-      web3: null,
       users: [],
       search: '',
       backing: null,
@@ -36,15 +35,15 @@ class App extends Component {
 
     try {
       let results = await getWeb3
-      this.setState({web3: results.web3})
+      this.web3 = results.web3
 
       // Instantiate contract once web3 provided.
-      token.setProvider(this.state.web3.currentProvider)
+      token.setProvider(this.web3.currentProvider)
     } catch (err) {
       console.log('Error finding web3.')
     }
 
-     this.state.web3.eth.getAccounts((error, accounts) => {
+     this.web3.eth.getAccounts((error, accounts) => {
       this.account = accounts[0] //TODO how to let user choose address?
     })
 
