@@ -26,15 +26,11 @@ class App extends Component {
     // TODO learn how to use state
     this.state = {
       storageValue: 0,
-      users: [],
       backing: null,
       elected: null,
       userCount: null,
-      usernames: [], // TODO how to present this better?
-      tokenInstance: null // TODO is this the right place to put this?
     }
 
-    this.getAllUsers.bind(this)
     this.getUsers.bind(this)
   }
 
@@ -58,22 +54,6 @@ class App extends Component {
       return this.setState({userCount: result.c[0]})
   }
 
-  async getAllUsers() {      
-    let tokenInstance = await token.deployed()
-
-    let indexes = [1,2]
-
-    const functions = indexes.map(index => tokenInstance.members(index))
-    let results = await Promise.all(functions)
-
-    let usernames = []
-    for (const [username, address, active] of results) {
-      usernames.push(username)
-    }
-
-    this.setState({usernames: usernames})
-  }
-
   render() {
     return (
       <div className="App">
@@ -89,13 +69,7 @@ class App extends Component {
 
               <Search/>
 
-              <div>
-              user list: {this.state.usernames}
-              </div>
-
-              <div>
-                <button onClick={this.getAllUsers}>Get all users</button> 
-              </div>
+              <MemberTable/>
 
             </div>
           </div>
@@ -189,6 +163,7 @@ class Join extends Component {
 
     // TODO make this a promise
     results.web3.eth.getAccounts((error, accounts) => {
+      console.log(accounts[0])
       this.account = accounts[0] //TODO how to let user choose address?
     })
   }
@@ -205,9 +180,11 @@ class Join extends Component {
   async clickButton() {
     let result = await this.tokenInstance.register.sendTransaction(this.state.username, {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
 
-    let result2 = await this.tokenInstance.totalTokens(this.account)
+    console.log(result)
 
-    this.setState({storageValue: result2.c[0]})
+    // let result2 = await this.tokenInstance.totalTokens(this.account)
+
+    // this.setState({storageValue: result2.c[0]})
   }
 
   render() {
@@ -221,6 +198,63 @@ class Join extends Component {
     </div>
     )
   }
+}
+
+
+class MemberRow extends Component {
+
+  render() {
+    return (
+      <li>
+        <div> {this.props.username} </div>
+        <div> {this.props.backing} </div>
+      </li>
+    )
+  }
+}
+
+class MemberTable extends Component {
+
+  constructor(props) {
+    super(props) 
+
+    this.state = {
+      users: []
+    }
+  }
+
+  async componentWillMount() {
+    this.tokenInstance = await getContract(token);
+    const memberCount = await this.tokenInstance.memberCount()
+    const indexesToRetrieve = [...Array(memberCount.toNumber()).keys()]
+
+    const functions = indexesToRetrieve.map(index => this.tokenInstance.findMemberByIndex(index))
+    let results = await Promise.all(functions)
+
+    let users = []
+    for (const [address, username, active, elected, balance, backing] of results) {
+      const totalBacking = balance + backing
+      users.push({username, backing:totalBacking, address})
+    }
+
+    this.setState({users})
+
+  }
+
+  render() {
+    let users = this.state.users;
+
+    let userList = users.map(({ username, backing, address }) => 
+      <MemberRow key={address} username={username} backing={backing} /> 
+    )
+
+    return (
+      <ul>
+        {userList}
+      </ul>
+    )
+  }
+
 }
 
 export default App
