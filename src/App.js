@@ -27,6 +27,11 @@ class App extends Component {
       usernames: [], // TODO how to present this better?
     }
 
+    this.getAllUsers.bind(this)
+    this.getElected.bind(this)
+    this.search.bind(this)
+    this.handleSearchChange.bind(this)
+    this.getUsers.bind(this)
   }
 
   async componentWillMount() {
@@ -108,7 +113,7 @@ class App extends Component {
             <div className="pure-u-1-1">
               {this.props.children} - {this.props.name}
               <p>User count: {this.state.userCount}</p> 
-              <button onClick={this.getUsers.bind(this)}>update user count</button>
+              <button onClick={this.getUsers}>update user count</button>
               <p>Your tokens: {this.state.storageValue}</p>
 
               <Join tokenInstance={this.tokenInstance} account={this.account}/>
@@ -116,13 +121,13 @@ class App extends Component {
               Look up user
               <form>
                 Username
-                <input type="text" name="username_search" value={this.state.search} onChange={this.handleSearchChange.bind(this)}></input>
+                <input type="text" name="username_search" value={this.state.search} onChange={this.handleSearchChange}></input>
               </form>
-              <button onClick={this.search.bind(this)}>Look up user</button>
+              <button onClick={this.search}>Look up user</button>
               User has {this.state.backing} backing votes
 
               <div>
-              <button onClick={this.getElected.bind(this)}>Is this user elected?</button>
+              <button onClick={this.getElected}>Is this user elected?</button>
               <div>
               {this.state.elected}
               </div>
@@ -132,7 +137,7 @@ class App extends Component {
               </div>
 
               <div>
-                <button onClick={this.getAllUsers.bind(this)}>Get all users</button> 
+                <button onClick={this.getAllUsers}>Get all users</button> 
               </div>
 
 
@@ -155,6 +160,9 @@ class Join extends Component {
     this.state = {
       username: ''
     }
+
+    this.handleUserNameChange.bind(this)
+    this.clickButton.bind(this)
   }
 
   handleUserNameChange(event) {
@@ -174,9 +182,9 @@ class Join extends Component {
      <div>
       <form>
         Username
-        <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}/>
+        <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange}/>
       </form>
-      <button onClick={this.clickButton.bind(this)}>Join</button>
+      <button onClick={this.clickButton}>Join</button>
     </div>
     )
   }
