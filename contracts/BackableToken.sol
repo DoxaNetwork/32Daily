@@ -78,6 +78,11 @@ contract BackableToken is BasicToken {
 		return memberList.length;
 	}
 
+	function findMemberByIndex(uint256 _index) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
+		address _owner = electedMembers[_index];
+		return (addressMap[_owner].owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner]);
+	}
+
 	function findMemberByAddress(address _owner) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
 		return (_owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner]);
 	}
