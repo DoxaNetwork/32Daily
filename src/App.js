@@ -19,18 +19,14 @@ class App extends Component {
     this.state = {
       storageValue: 0,
       users: [],
-      search: '',
       backing: null,
       elected: null,
-      address: null,
       userCount: null,
       usernames: [], // TODO how to present this better?
+      tokenInstance: null // TODO is this the right place to put this?
     }
 
     this.getAllUsers.bind(this)
-    this.getElected.bind(this)
-    this.search.bind(this)
-    this.handleSearchChange.bind(this)
     this.getUsers.bind(this)
   }
 
@@ -77,27 +73,6 @@ class App extends Component {
     this.setState({usernames: usernames})
   }
 
-  // TODO clean these up
-  handleSearchChange(event) {
-    this.setState({search: event.target.value})
-  }
-
-  async search() {
-    let [username, address, active] = await this.tokenInstance.findMemberByUserName(this.state.search)
-    this.setState({address: address})
-
-    let result = await this.tokenInstance.totalTokens(address)
-
-    this.setState({backing: result.c[0]})
-  }
-
-  async getElected() {
-    let result = await this.tokenInstance.checkElectionStatus(this.state.address);
-
-    let text = result ? 'yes!' : 'NOPE'
-    this.setState({ elected: text })
-  }
-
   // TODO build out some components
   render() {
     return (
@@ -110,22 +85,10 @@ class App extends Component {
               <button onClick={this.getUsers}>update user count</button>
               <p>Your tokens: {this.state.storageValue}</p>
 
-              <Join tokenInstance={this.tokenInstance} account={this.account}/>
+              <Join/>
+              
+              <Search/>
 
-              Look up user
-              <form>
-                Username
-                <input type="text" name="username_search" value={this.state.search} onChange={this.handleSearchChange}></input>
-              </form>
-              <button onClick={this.search}>Look up user</button>
-              User has {this.state.backing} backing votes
-
-              <div>
-              <button onClick={this.getElected}>Is this user elected?</button>
-              <div>
-              {this.state.elected}
-              </div>
-              </div>
               <div>
               user list: {this.state.usernames}
               </div>
@@ -133,7 +96,6 @@ class App extends Component {
               <div>
                 <button onClick={this.getAllUsers}>Get all users</button> 
               </div>
-
 
             </div>
           </div>
@@ -143,20 +105,110 @@ class App extends Component {
   }
 }
 
+class Search extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      search: '',
+      address: null,
+    };
+
+    this.getElected.bind(this)
+    this.search.bind(this)
+    this.handleSearchChange.bind(this)
+  }
+
+  // TODO must be a better way than repeating this 3 times
+  async componentWillMount() {
+    try {
+      let results = await getWeb3
+      this.web3 = results.web3
+
+      // Instantiate contract once web3 provided.
+      token.setProvider(this.web3.currentProvider)
+    } catch (err) {
+      console.log('Error finding web3.')
+    }
+
+     this.web3.eth.getAccounts((error, accounts) => {
+      this.account = accounts[0] //TODO how to let user choose address?
+    })
+
+    const tokenInstance = await token.deployed()
+    this.tokenInstance = tokenInstance;
+  }
+
+  async getElected() {
+    let result = await this.tokenInstance.checkElectionStatus(this.state.address);
+
+    let text = result ? 'yes!' : 'NOPE'
+    this.setState({ elected: text })
+  }
+
+  async search() {
+    let [username, address, active] = await this.tokenInstance.findMemberByUserName(this.state.search)
+    this.setState({address: address})
+
+    let result = await this.tokenInstance.totalTokens(address)
+
+    this.setState({backing: result.c[0]})
+  }
+
+  // TODO clean these up
+  handleSearchChange(event) {
+    this.setState({search: event.target.value})
+  }
+
+  render() {
+    return (
+      <div>
+        Look up user
+        <form>
+          Username
+          <input type="text" name="username_search" value={this.state.search} onChange={this.handleSearchChange.bind(this)}/>
+        </form>
+        <button onClick={this.search.bind(this)}>Look up user</button>
+        User has {this.state.backing} backing votes
+
+        <button onClick={this.getElected}>Is this user elected?</button>
+        {this.state.elected}
+      </div>
+    )
+  }
+}
+
 class Join extends Component {
 
   constructor(props) {
     super(props)
 
-    this.tokenInstance = this.props.tokenInstance;
-    this.account = this.props.account;
-
     this.state = {
       username: ''
     }
 
-    this.handleUserNameChange.bind(this)
+    this.handleUserNameChange.bind(this) // TODO why doesn't this work?
     this.clickButton.bind(this)
+  }
+
+  async componentWillMount() {
+    try {
+      let results = await getWeb3
+      this.web3 = results.web3
+
+      // Instantiate contract once web3 provided.
+      token.setProvider(this.web3.currentProvider)
+    } catch (err) {
+      console.log('Error finding web3.')
+    }
+
+     this.web3.eth.getAccounts((error, accounts) => {
+      this.account = accounts[0] //TODO how to let user choose address?
+    })
+
+    const tokenInstance = await token.deployed()
+    this.tokenInstance = tokenInstance;
   }
 
   handleUserNameChange(event) {
@@ -176,9 +228,9 @@ class Join extends Component {
      <div>
       <form>
         Username
-        <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange}/>
+        <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}/>
       </form>
-      <button onClick={this.clickButton}>Join</button>
+      <button onClick={this.clickButton.bind(this)}>Join</button>
     </div>
     )
   }
