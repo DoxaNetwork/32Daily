@@ -11,6 +11,14 @@ import './App.css'
 const contract = require('truffle-contract')
 const token = contract(BackableTokenContract)
 
+async function getContract(contract) {
+  let results = await getWeb3
+
+  contract.setProvider(results.web3.currentProvider)
+
+  return contract.deployed()
+}
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -30,25 +38,18 @@ class App extends Component {
     this.getUsers.bind(this)
   }
 
-  async componentWillMount() {
-    // Get network provider and web3 instance.
-    // See utils/getWeb3 for more info.
-
-    try {
-      let results = await getWeb3
-      this.web3 = results.web3
-
-      // Instantiate contract once web3 provided.
-      token.setProvider(this.web3.currentProvider)
-    } catch (err) {
-      console.log('Error finding web3.')
-    }
-
-     this.web3.eth.getAccounts((error, accounts) => {
+  // TODO shouldnt have this repeated 3 times
+  async getAccount() {
+    let results = await getWeb3
+    // TODO make this a promise
+    results.web3.eth.getAccounts((error, accounts) => {
       this.account = accounts[0] //TODO how to let user choose address?
     })
+  }
 
-    this.tokenInstance = await token.deployed()
+  async componentWillMount() {
+    this.tokenInstance = await getContract(token);
+    await this.getAccount();
   }
 
   async getUsers() {
@@ -73,7 +74,6 @@ class App extends Component {
     this.setState({usernames: usernames})
   }
 
-  // TODO build out some components
   render() {
     return (
       <div className="App">
@@ -86,7 +86,7 @@ class App extends Component {
               <p>Your tokens: {this.state.storageValue}</p>
 
               <Join/>
-              
+
               <Search/>
 
               <div>
@@ -120,24 +120,17 @@ class Search extends Component {
     this.handleSearchChange.bind(this)
   }
 
-  // TODO must be a better way than repeating this 3 times
-  async componentWillMount() {
-    try {
-      let results = await getWeb3
-      this.web3 = results.web3
-
-      // Instantiate contract once web3 provided.
-      token.setProvider(this.web3.currentProvider)
-    } catch (err) {
-      console.log('Error finding web3.')
-    }
-
-     this.web3.eth.getAccounts((error, accounts) => {
+  async getAccount() {
+    let results = await getWeb3
+    // TODO make this a promise
+    results.web3.eth.getAccounts((error, accounts) => {
       this.account = accounts[0] //TODO how to let user choose address?
     })
+  }
 
-    const tokenInstance = await token.deployed()
-    this.tokenInstance = tokenInstance;
+  async componentWillMount() {
+    this.tokenInstance = await getContract(token);
+    await this.getAccount();
   }
 
   async getElected() {
@@ -156,7 +149,6 @@ class Search extends Component {
     this.setState({backing: result.c[0]})
   }
 
-  // TODO clean these up
   handleSearchChange(event) {
     this.setState({search: event.target.value})
   }
@@ -192,23 +184,18 @@ class Join extends Component {
     this.clickButton.bind(this)
   }
 
-  async componentWillMount() {
-    try {
-      let results = await getWeb3
-      this.web3 = results.web3
+  async getAccount() {
+    let results = await getWeb3
 
-      // Instantiate contract once web3 provided.
-      token.setProvider(this.web3.currentProvider)
-    } catch (err) {
-      console.log('Error finding web3.')
-    }
-
-     this.web3.eth.getAccounts((error, accounts) => {
+    // TODO make this a promise
+    results.web3.eth.getAccounts((error, accounts) => {
       this.account = accounts[0] //TODO how to let user choose address?
     })
+  }
 
-    const tokenInstance = await token.deployed()
-    this.tokenInstance = tokenInstance;
+  async componentWillMount() {
+    this.tokenInstance = await getContract(token);
+    await this.getAccount();
   }
 
   handleUserNameChange(event) {
