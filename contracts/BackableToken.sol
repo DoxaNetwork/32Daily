@@ -79,7 +79,7 @@ contract BackableToken is BasicToken {
 	}
 
 	function findMemberByIndex(uint256 _index) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
-		address _owner = electedMembers[_index];
+		address _owner = memberList[_index];
 		return (addressMap[_owner].owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner]);
 	}
 
@@ -94,7 +94,9 @@ contract BackableToken is BasicToken {
 	}
 
 	function register(string _username) public payable returns (bool) {
-		mint(msg.sender, msg.value);
+		uint256 price = 1 finney;
+		uint256 dispersal = SafeMath.div(msg.value, price); 
+		mint(msg.sender, dispersal);
 		createMember(msg.sender, _username); // TODO this should revert if the minting did not create enough
 		return true;
 	}
@@ -238,16 +240,18 @@ contract BackableToken is BasicToken {
 	function () payable {
 		// finney = milliether, szabo = microether
 		// TODO decide on price curve
-		uint256 price = 1 finney + SafeMath.mul(5 szabo, totalSupply);
-		uint256 dispersal = SafeMath.div(msg.value, price);
+		// uint256 price = 1 finney + SafeMath.mul(5 szabo, totalSupply);
+		uint256 price = 10000000000000000000;
+		// uint256 dispersal = SafeMath.div(msg.value, price);
+		uint256 dispersal = 3;
 		mint(msg.sender, dispersal);
 	}
 	
-	function mint(address _to, uint256 _amount) private returns (bool) {
-		totalSupply = totalSupply.add(_amount);
-		balances[_to] = balances[_to].add(_amount);
-		Mint(_to, _amount);
-		Transfer(0x0, _to, _amount);
+	function mint(address _to, uint256 _quantity) private returns (bool) {
+		totalSupply = totalSupply.add(_quantity);
+		balances[_to] = balances[_to].add(_quantity); // TODO just use transfer here
+		Mint(_to, _quantity);
+		Transfer(0x0, _to, _quantity);
 		return true;
 	}
 
