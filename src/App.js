@@ -163,7 +163,6 @@ class Join extends Component {
 
     // TODO make this a promise
     results.web3.eth.getAccounts((error, accounts) => {
-      console.log(accounts[0])
       this.account = accounts[0] //TODO how to let user choose address?
     })
   }
@@ -178,13 +177,10 @@ class Join extends Component {
   }
 
   async clickButton() {
-    let result = await this.tokenInstance.register.sendTransaction(this.state.username, {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(1,'ether'))})
-
-    console.log(result)
-
-    // let result2 = await this.tokenInstance.totalTokens(this.account)
-
-    // this.setState({storageValue: result2.c[0]})
+    let result = await this.tokenInstance.register.sendTransaction(
+      this.state.username, 
+      {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(2,'ether'))}
+    )
   }
 
   render() {
@@ -208,6 +204,7 @@ class MemberRow extends Component {
       <li>
         <div> {this.props.username} </div>
         <div> {this.props.backing} </div>
+        <div> {this.props.elected ? '' : 'NOT'} Elected  </div>
       </li>
     )
   }
@@ -225,16 +222,20 @@ class MemberTable extends Component {
 
   async componentWillMount() {
     this.tokenInstance = await getContract(token);
+
+    // TODO this code should also be modular
+    // const users = getAllUsers()
     const memberCount = await this.tokenInstance.memberCount()
     const indexesToRetrieve = [...Array(memberCount.toNumber()).keys()]
 
     const functions = indexesToRetrieve.map(index => this.tokenInstance.findMemberByIndex(index))
     let results = await Promise.all(functions)
 
+    // TODO: this code should be modular. it will be used a lot
     let users = []
     for (const [address, username, active, elected, balance, backing] of results) {
       const totalBacking = balance + backing
-      users.push({username, backing:totalBacking, address})
+      users.push({username, backing:totalBacking, address, elected})
     }
 
     this.setState({users})
@@ -244,14 +245,17 @@ class MemberTable extends Component {
   render() {
     let users = this.state.users;
 
-    let userList = users.map(({ username, backing, address }) => 
-      <MemberRow key={address} username={username} backing={backing} /> 
+    let userList = users.map(({ username, backing, address, elected }) => 
+      <MemberRow key={address} username={username} backing={backing} elected={elected} /> 
     )
 
     return (
+    <div>
+      <h2>Current Members</h2>
       <ul>
         {userList}
       </ul>
+    </div>
     )
   }
 
