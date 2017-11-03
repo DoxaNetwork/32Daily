@@ -15,11 +15,15 @@ To get started after installing necessary libraries (testrpc, npm, truffle, meta
 
 `truffle deploy`
 
-4. Start server
+4. install npm dependencies
+
+`npm install`
+
+5. Start server
 
 `npm run start`
 
-5. Initialize metamask
+6. Initialize metamask
 
 - open metamask and paste in the seed phrase from `testrpc`. (we use the `-s 1` flag) to keep this seed constant
 - choose `localhost 8545` as the network from the top left dropdown in metamask
