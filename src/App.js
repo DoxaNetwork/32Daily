@@ -172,9 +172,22 @@ class Join extends Component {
 class MemberRow extends Component {
 
   render() {
+
+    const maxWidth = 500;
+    const scale = maxWidth / this.props.totalTokens; // multiply this times a token quantity to get a pixel quantity
+    // const scaledWidth = this.props.balance.toNumber() / this.props.totalTokens * maxWidth;
+    // const scaledWidth = this.props.balance.toNumber() / this.props.totalTokens * maxWidth;
+
+    const balanceWidth = this.props.balance.toNumber() * scale;
+    const availableWidth = this.props.availableBalance * scale;
+
     return (
       <li>
-        <div> Username: {this.props.username} </div>
+      <div style={{ display: 'flex' }}>
+        <div style={{ backgroundColor: this.props.elected ? '#087F8C' : '#5AAA95', width: `${balanceWidth}px`, height: '20px' }}></div>
+        <div style={{ backgroundColor: '#DEE5E5', width: `${availableWidth}px`, height: '20px' }}></div>
+      </div>
+        <div> Username: {this.props.username}</div>
         <div> Balance: {this.props.balance.toNumber()} </div>
         <div> Backing: {this.props.backing.toNumber()} </div>
         <div> {this.props.elected ? '' : 'NOT'} Elected  </div>
@@ -189,7 +202,8 @@ class MemberTable extends Component {
     super(props) 
 
     this.state = {
-      users: []
+      users: [],
+      totalTokens: null
     }
   }
 
@@ -206,28 +220,41 @@ class MemberTable extends Component {
 
     // TODO: this code should be modular. it will be used a lot
     let users = []
+    let totalTokens = 0;
     for (const [address, username, active, elected, balance, backing] of results) {
+      totalTokens += balance.toNumber(); 
       const totalBacking = balance + backing
       users.push({address, username, elected, balance, backing})
     }
 
-    this.setState({users})
+    users.sort((a,b) => b.balance - a.balance )
+
+    this.setState({users, totalTokens})
 
   }
 
   render() {
     let users = this.state.users;
 
+    const maxWidth = 500; // TODO this should not be in two places
+    const threshold = 1000;
+    const scale = maxWidth / this.state.totalTokens;
+    const thresholdScaled = threshold * scale + 40; // TODO we shouldnt have the ul margin hardcoded here
+
     let userList = users.map(({ address, username, elected, balance, backing }) => 
-      <MemberRow key={address} username={username} elected={elected} balance={balance} backing={backing}  /> 
+      <MemberRow key={address} username={username} elected={elected} balance={balance} backing={backing} totalTokens={this.state.totalTokens} availableBalance={1000}/> 
     )
 
     return (
     <div>
       <h2>Current Members</h2>
-      <ul>
-        {userList}
-      </ul>
+      <div style={{ position: 'relative' }}>
+        <ul style={{ listStyle: 'none' }}>
+          {userList}
+          <div style={{ position: 'absolute', border: '1px dashed darkgray', height: '100%', width: '0px', top: '0', left:`${thresholdScaled}px`}}/>
+        </ul>
+        
+      </div>
     </div>
     )
   }
