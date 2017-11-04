@@ -47,7 +47,7 @@ contract BackableToken is BasicToken {
 
 	
 	// ========================= data about ELECTIONS ===================================
-	uint256 constant ELECTION_THRESHOLD = 1000;
+	uint256 constant ELECTION_THRESHOLD = 5000;
 	// TODO use this
 	address[] public electedMembers; // TODO should this be an array of members?
 
