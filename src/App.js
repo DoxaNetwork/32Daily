@@ -108,7 +108,8 @@ class Join extends Component {
     super(props)
 
     this.state = {
-      username: ''
+      username: '',
+      etherAmount: 1
     }
 
     this.handleUserNameChange.bind(this) // TODO why doesn't this work?
@@ -133,19 +134,33 @@ class Join extends Component {
     this.setState({username: event.target.value})
   }
 
+  handleEtherAmountChange(event) {
+    this.setState({etherAmount: event.target.value})
+  }
+
   async clickButton() {
     let result = await this.tokenInstance.register.sendTransaction(
       this.state.username, 
-      {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(2,'ether'))}
+      {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(this.state.etherAmount,'ether'))}
     )
   }
 
   render() {
    return (
      <div>
+     <h2>Become a member </h2>
       <form>
-        Username
-        <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}/>
+        <p>
+          Username
+          <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}/>
+        </p>
+        <p>
+          Ether amount
+          <input type="number" name="etherAmount" value={this.state.etherAmount} onChange={this.handleEtherAmountChange.bind(this)}/>
+        </p>
+        <p>
+          Buys you {this.state.etherAmount * 1000} Toasty tokens
+        </p>
       </form>
       <button onClick={this.clickButton.bind(this)}>Join</button>
     </div>
