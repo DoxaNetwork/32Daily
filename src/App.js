@@ -20,58 +20,15 @@ async function getContract(contract) {
 }
 
 class App extends Component {
-  constructor(props) {
-    super(props)
-
-    // TODO learn how to use state
-    this.state = {
-      storageValue: 0,
-      backing: null,
-      elected: null,
-      userCount: null,
-    }
-
-    this.getUsers.bind(this)
-  }
-
-  // TODO shouldnt have this repeated 3 times
-  async getAccount() {
-    let results = await getWeb3
-    // TODO make this a promise
-    results.web3.eth.getAccounts((error, accounts) => {
-      this.account = accounts[0] //TODO how to let user choose address?
-    })
-  }
-
-  async componentWillMount() {
-    this.tokenInstance = await getContract(token);
-    await this.getAccount();
-  }
-
-  async getUsers() {
-      let result = await this.tokenInstance.memberCount()
-
-      return this.setState({userCount: result.c[0]})
-  }
 
   render() {
     return (
       <div className="App">
         <main>
           <div>
-            <div>
-              {this.props.children} - {this.props.name}
-              <p>User count: {this.state.userCount}</p> 
-              <button onClick={this.getUsers}>update user count</button>
-              <p>Your tokens: {this.state.storageValue}</p>
+            <Join/>
 
-              <Join/>
-
-              <Search/>
-
-              <MemberTable/>
-
-            </div>
+            <MemberTable/>
           </div>
         </main>
       </div>
@@ -202,8 +159,9 @@ class MemberRow extends Component {
   render() {
     return (
       <li>
-        <div> {this.props.username} </div>
-        <div> {this.props.backing} </div>
+        <div> Username: {this.props.username} </div>
+        <div> Balance: {this.props.balance.toNumber()} </div>
+        <div> Backing: {this.props.backing.toNumber()} </div>
         <div> {this.props.elected ? '' : 'NOT'} Elected  </div>
       </li>
     )
@@ -235,7 +193,7 @@ class MemberTable extends Component {
     let users = []
     for (const [address, username, active, elected, balance, backing] of results) {
       const totalBacking = balance + backing
-      users.push({username, backing:totalBacking, address, elected})
+      users.push({address, username, elected, balance, backing})
     }
 
     this.setState({users})
@@ -245,8 +203,8 @@ class MemberTable extends Component {
   render() {
     let users = this.state.users;
 
-    let userList = users.map(({ username, backing, address, elected }) => 
-      <MemberRow key={address} username={username} backing={backing} elected={elected} /> 
+    let userList = users.map(({ address, username, elected, balance, backing }) => 
+      <MemberRow key={address} username={username} elected={elected} balance={balance} backing={backing}  /> 
     )
 
     return (
