@@ -93,6 +93,12 @@ contract BackableToken is BasicToken {
 		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner]);
 	}
 
+	function findMemberByUserName(string _username) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
+		bytes32 key = keccak256(_username);
+		
+		return userNameMap[key].owner;
+	}
+
 	function register(string _username) public payable returns (bool) {
 		uint256 price = 1 finney;
 		uint256 dispersal = SafeMath.div(msg.value, price); 
