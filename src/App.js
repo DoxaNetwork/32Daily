@@ -24,6 +24,10 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <h1>
+          Sign Up
+        </h1>
+        <p>Sign up for your account here.  You can see everyone else signed up below.</p>
         <main>
           <div>
             <Join/>
