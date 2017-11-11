@@ -195,7 +195,7 @@ class MemberRow extends Component {
 
     handleBackMember() {
         if (confirm(`Back this member ${this.props.username} with ${this.props.availableBalance} tokens?`)){
-            backMember(this.props.username, 1)
+            backMember(this.props.username, 1).then(alert('Transaction successfull')).catch(alert('Transaction failed'))
         }
     }
 
