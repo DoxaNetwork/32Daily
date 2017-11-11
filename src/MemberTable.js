@@ -3,52 +3,19 @@ import React, { Component } from 'react'
 import MemberRow from './MemberRow'
 
 class MemberTable extends Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            users: [],
-            totalTokens: null
-        }
-    }
-
-    async componentWillMount() {
-        this.tokenInstance = await this.props.getContract(this.props.token);
-
-        // TODO this code should also be modular
-        // const users = getAllUsers()
-        const memberCount = await this.tokenInstance.memberCount()
-        const indexesToRetrieve = [...Array(memberCount.toNumber()).keys()]
-
-        const functions = indexesToRetrieve.map(index => this.tokenInstance.findMemberByIndex(index))
-        let results = await Promise.all(functions)
-
-        // TODO: this code should be modular. it will be used a lot
-        let users = []
-        let totalTokens = 0;
-        for (const [address, username, active, elected, balance, backing] of results) {
-            totalTokens += balance.toNumber();
-            const totalBacking = balance + backing
-            users.push({address, username, elected, balance, backing})
-        }
-
+    render() {
+        let users = this.props.users;
         users.sort((a,b) => b.balance - a.balance )
 
-        this.setState({users, totalTokens})
-
-    }
-
-    render() {
-        let users = this.state.users;
+        const maxTokens = users.reduce((acc, value) => Math.max(acc, value.balance.toNumber()), 0);
 
         const maxWidth = 500; // TODO this should not be in two places
         const threshold = 1000;
-        const scale = maxWidth / this.state.totalTokens;
+        const scale = maxWidth / maxTokens
         const thresholdScaled = threshold * scale + 40; // TODO we shouldnt have the ul margin hardcoded here
 
         let userList = users.map(({ address, username, elected, balance, backing }) =>
-            <MemberRow key={address} username={username} elected={elected} balance={balance} backing={backing} totalTokens={this.state.totalTokens} availableBalance={1000}/>
+            <MemberRow key={address} username={username} elected={elected} balance={balance} backing={backing} maxTokens={maxTokens} availableBalance={this.props.availableBalance}/>
         )
 
         return (

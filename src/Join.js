@@ -9,23 +9,6 @@ class Join extends Component {
             username: '',
             etherAmount: 1
         }
-
-        this.handleUserNameChange.bind(this) // TODO why doesn't this work?
-        this.clickButton.bind(this)
-    }
-
-    async getAccount() {
-        let results = await this.props.getWeb3;
-
-        // TODO make this a promise
-        results.web3.eth.getAccounts((error, accounts) => {
-            this.account = accounts[0] //TODO how to let user choose address?
-        })
-    }
-
-    async componentWillMount() {
-        this.tokenInstance = await this.props.getContract(this.props.token);
-        await this.getAccount();
     }
 
     handleUserNameChange(event) {
@@ -36,16 +19,13 @@ class Join extends Component {
         this.setState({etherAmount: event.target.value})
     }
 
-    async clickButton() {
-        let result = await this.tokenInstance.register.sendTransaction(
-            this.state.username,
-            {from: this.account, value: new window.web3.BigNumber(window.web3.toWei(this.state.etherAmount,'ether'))}
-        )
-    }
-
     render() {
         return (
             <div>
+                <h1>
+                    Sign Up
+                </h1>
+                <p>Sign up for your account here.  You can see everyone else signed up below.</p>
                 <h2>Become a member </h2>
                 <form>
                     <p>
@@ -60,7 +40,7 @@ class Join extends Component {
                         Buys you {this.state.etherAmount * 1000} Toasty tokens
                     </p>
                 </form>
-                <button onClick={this.clickButton.bind(this)}>Join</button>
+                <button onClick={() => this.props.onSubmit(this.state.username, this.state.etherAmount)}>Join</button>
             </div>
         )
     }
