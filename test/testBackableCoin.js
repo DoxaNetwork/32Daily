@@ -1,4 +1,3 @@
-const assertJump = require('./assertJump');
 var BackableTokenMock = artifacts.require("./BackableTokenMock.sol");
 
 //var Web3 = require('web3');
