@@ -147,7 +147,7 @@ contract('BackableToken', function(accounts) {
 	// it("should allow a new user to buy a little token and register a name", async function() {
 	// 	let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
 
-	// 	await token.register.sendTransaction('enodios', {from: accounts[1], value: new web3.BigNumber(web3.toWei(0.5,'ether'))});
+	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 	// 	let [address, username, active, elected, balance, backing] = await token.findMemberByAddress(accounts[1]);
 		
@@ -157,29 +157,29 @@ contract('BackableToken', function(accounts) {
 	// 	assert.equal(elected, false);
 	// });
 
-	it("should retrieve elected member by index", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+	// it("should retrieve elected member by index", async function() {
+	// 	let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
 
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
+	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
 
-		let [address, username, active, elected, balance, backing] = await token.findMemberByIndex(0);
+	// 	let [address, username, active, elected, balance, backing] = await token.findMemberByIndex(0);
 
-		assert.equal(username, 'enodios');
-		assert.equal(active, true);
-		assert.equal(elected, true);
-	})
+	// 	assert.equal(username, 'enodios');
+	// 	assert.equal(active, true);
+	// 	assert.equal(elected, true);
+	// })
 
-	it("should retrieve unelected member by index", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+	// it("should retrieve unelected member by index", async function() {
+	// 	let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
 
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
+	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
 
-		let [address, username, active, elected, balance, backing] = await token.findMemberByIndex(0);
+	// 	let [address, username, active, elected, balance, backing] = await token.findMemberByIndex(0);
 
-		assert.equal(username, 'enodios');
-		assert.equal(active, true);
-		assert.equal(elected, false);
-	})
+	// 	assert.equal(username, 'enodios');
+	// 	assert.equal(active, true);
+	// 	assert.equal(elected, false);
+	// })
 
 	it("should allow elected user to add Link and be paid", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);

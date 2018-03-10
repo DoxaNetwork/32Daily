@@ -94,7 +94,7 @@ contract BackableToken is BasicToken {
 	}
 
 	function register(string _username) public returns (bool) {
-		uint256 dispersal = 1001; 
+		uint256 dispersal = 1000; 
 		mint(msg.sender, dispersal);
 		createMember(msg.sender, _username); // TODO this should revert if the minting did not create enough
 		return true;
@@ -103,7 +103,7 @@ contract BackableToken is BasicToken {
 	// register a new user
 	// requires that some minimum amount of token is alrady held
 	function createMember(address _address, string _username) public returns (bool) {
-		require(balances[_address] >= MEMBERSHIP_THRESHOLD);
+		require(balances[_address] > MEMBERSHIP_THRESHOLD);
 
 		Member memory newMember = Member({
 			username: _username,
