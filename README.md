@@ -19,7 +19,7 @@ To get started, you can follow these instructions.  Please reach out to make any
 
     `ganache-cli -s 1`
 
-2. Run each command from here on out in the root folder of the application (..\Truffle). Install all npm dependencies
+2. Run each command from here on out in the root folder of the application (..\Toasty). Install all npm dependencies
 
     `npm install`
 
