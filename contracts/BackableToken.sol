@@ -106,11 +106,11 @@ contract BackableToken is BasicToken {
 		require(balances[_address] > MEMBERSHIP_THRESHOLD);
 
 		Member memory newMember = Member({
-			username: _username,
-			owner: _address,
-			active: true,
-			elected: false,
-			index: memberList.length,
+			username: _username, 
+			owner: _address, 
+			active: true, 
+			elected: false, 
+			index: memberList.length, 
 			electedIndex: 0
 		});
 
@@ -236,11 +236,11 @@ contract BackableToken is BasicToken {
     	return true;
 	}
 	
-	function () payable {
+	function () private payable {
 		// finney = milliether, szabo = microether
 		// TODO decide on price curve
 		// uint256 price = 1 finney + SafeMath.mul(5 szabo, totalSupply);
-		uint256 price = 10000000000000000000;
+		//uint256 price = 10000000000000000000;
 		// uint256 dispersal = SafeMath.div(msg.value, price);
 		uint256 dispersal = 3;
 		mint(msg.sender, dispersal);

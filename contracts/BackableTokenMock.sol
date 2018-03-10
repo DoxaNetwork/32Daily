@@ -5,7 +5,7 @@ import './BackableToken.sol';
 // mock class using BackableToken for testing
 contract BackableTokenMock is BackableToken {
 
-	function BackableTokenMock(address initialAccountA, uint256 initialBalanceA, address initialAccountB, uint256 initialBalanceB) {
+	function BackableTokenMock(address initialAccountA, uint256 initialBalanceA, address initialAccountB, uint256 initialBalanceB) public {
 		balances[initialAccountA] = initialBalanceA;
 		balances[initialAccountB] = initialBalanceB;
 
