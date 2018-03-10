@@ -18,7 +18,7 @@ class Submit extends Component {
 
 		return (
 			<div>
-				<p>You're ready to submit some content</p>
+				<h2>Submit a link</h2>
 
 				<form>
 					<input type="text" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>

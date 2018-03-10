@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import Submit from './Submit'
+import { postLink } from './DappFunctions'
 
 function Welcome(props){
     return (
@@ -6,8 +8,8 @@ function Welcome(props){
             <h1>
                 Welcome Back, {props.user.username}!
             </h1>
-            <p>You have {props.user.balance.toNumber()} TT, and you are backed by {props.user.backing.toNumber()} TT.</p>
-            <p>Your address is {props.user.address}.</p>
+            <p>Your address is {props.user.address}, and you have {props.user.balance.toNumber()} Doxa Tokens</p>
+            <Submit onSubmit={postLink} />
         </div>
     )
 }

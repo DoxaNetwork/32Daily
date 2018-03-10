@@ -3,8 +3,7 @@ import React, { Component } from 'react'
 import MemberTable from './MemberTable'
 import Join from './Join'
 import Welcome from './Welcome'
-import Submit from './Submit'
-import { getCurrentUser, getAllUsers, registerUser, backMember, postLink } from './DappFunctions'
+import { getCurrentUser, getAllUsers, registerUser, backMember } from './DappFunctions'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -41,7 +40,6 @@ class App extends Component {
                     <div>
                         {header}
                         <MemberTable users={this.state.users} availableBalance={availableBalance} />
-                        <Submit onSubmit={postLink} />
                     </div>
                 </main>
             </div>
