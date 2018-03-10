@@ -30,11 +30,10 @@ async function getCurrentAccount(){
 /**
  * @summary Register a new user.
  */
-async function registerUser(username, etherAmount){
+async function registerUser(username){
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
-    const options = {from: account, value: new window.web3.BigNumber(window.web3.toWei(etherAmount,'ether'))}
-    tokenInstance.register.sendTransaction(username, options);
+    tokenInstance.register.sendTransaction(username, {from: account});
 }
 
 /**
@@ -80,4 +79,14 @@ async function backMember(memberName, tokenAmount) {
     let result = await tokenInstance.back.sendTransaction(address, tokenAmount, { from: account })
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backMember }
+/**
+ * @summary Post a link to the contract
+ */
+async function postLink(text) {
+    const tokenInstance = await getContract(token);
+    const account = await getCurrentAccount();
+
+    let result = await tokenInstance.postLink.sendTransaction(text, { from: account})
+}
+
+export { getCurrentUser, getAllUsers, registerUser, backMember, postLink }

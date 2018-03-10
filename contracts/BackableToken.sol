@@ -93,9 +93,8 @@ contract BackableToken is BasicToken {
 		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner]);
 	}
 
-	function register(string _username) public payable returns (bool) {
-		uint256 price = 1 finney;
-		uint256 dispersal = SafeMath.div(msg.value, price); 
+	function register(string _username) public returns (bool) {
+		uint256 dispersal = 1001; 
 		mint(msg.sender, dispersal);
 		createMember(msg.sender, _username); // TODO this should revert if the minting did not create enough
 		return true;
@@ -104,7 +103,7 @@ contract BackableToken is BasicToken {
 	// register a new user
 	// requires that some minimum amount of token is alrady held
 	function createMember(address _address, string _username) public returns (bool) {
-		require(balances[_address] > MEMBERSHIP_THRESHOLD);
+		require(balances[_address] >= MEMBERSHIP_THRESHOLD);
 
 		Member memory newMember = Member({
 			username: _username,

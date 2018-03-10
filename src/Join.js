@@ -6,17 +6,11 @@ class Join extends Component {
         super(props)
 
         this.state = {
-            username: '',
-            etherAmount: 1
-        }
+            username: ''        }
     }
 
     handleUserNameChange(event) {
         this.setState({username: event.target.value})
-    }
-
-    handleEtherAmountChange(event) {
-        this.setState({etherAmount: event.target.value})
     }
 
     render() {
@@ -33,14 +27,10 @@ class Join extends Component {
                         <input type="text" name="username" value={this.state.username} onChange={this.handleUserNameChange.bind(this)}/>
                     </p>
                     <p>
-                        Ether amount
-                        <input type="number" name="etherAmount" value={this.state.etherAmount} onChange={this.handleEtherAmountChange.bind(this)}/>
-                    </p>
-                    <p>
-                        Buys you {this.state.etherAmount * 1000} Toasty tokens
+                        You'll get 1000 Toasty tokens to play around with
                     </p>
                 </form>
-                <button onClick={() => this.props.onSubmit(this.state.username, this.state.etherAmount)}>Join</button>
+                <button onClick={() => this.props.onSubmit(this.state.username)}>Join</button>
             </div>
         )
     }

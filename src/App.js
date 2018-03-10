@@ -3,7 +3,8 @@ import React, { Component } from 'react'
 import MemberTable from './MemberTable'
 import Join from './Join'
 import Welcome from './Welcome'
-import { getCurrentUser, getAllUsers, registerUser, backMember } from './DappFunctions'
+import Submit from './Submit'
+import { getCurrentUser, getAllUsers, registerUser, backMember, postLink } from './DappFunctions'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -23,15 +24,11 @@ class App extends Component {
         this.setState({users, currentUser})
     }
 
-    handleOnSubmit(username, etherAmount) {
-        registerUser(username, etherAmount)
-    }
-
     render() {
         let header = ''
         let availableBalance = 0
         if (this.state.currentUser === undefined){
-            header = <Join onSubmit={this.handleOnSubmit} />;
+            header = <Join onSubmit={registerUser} />;
             availableBalance = 0;
         } else {
             header = <Welcome user={this.state.currentUser} />
@@ -44,6 +41,7 @@ class App extends Component {
                     <div>
                         {header}
                         <MemberTable users={this.state.users} availableBalance={availableBalance} />
+                        <Submit onSubmit={postLink} />
                     </div>
                 </main>
             </div>
