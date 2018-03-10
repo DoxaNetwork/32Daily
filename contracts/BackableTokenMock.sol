@@ -9,6 +9,6 @@ contract BackableTokenMock is BackableToken {
 		balances[initialAccountA] = initialBalanceA;
 		balances[initialAccountB] = initialBalanceB;
 
-		totalSupply = initialBalanceA + initialBalanceB;
+		totalSupply_ = initialBalanceA + initialBalanceB;
 	}
 }

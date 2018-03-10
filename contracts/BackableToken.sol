@@ -1,6 +1,6 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/token/BasicToken.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
 // TODO
@@ -248,7 +248,7 @@ contract BackableToken is BasicToken {
 	}
 	
 	function mint(address _to, uint256 _quantity) private returns (bool) {
-		totalSupply = totalSupply.add(_quantity);
+		totalSupply_ = totalSupply_.add(_quantity);
 		balances[_to] = balances[_to].add(_quantity); // TODO just use transfer here
 		Mint(_to, _quantity);
 		Transfer(0x0, _to, _quantity);
