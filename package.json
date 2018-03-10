@@ -52,7 +52,7 @@
     "dotenv": "^2.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "zeppelin-solidity": "^1.7.0"
+    "zeppelin-solidity": "1.7.0"
   },
   "scripts": {
     "start": "node scripts/start.js",
@@ -98,5 +98,21 @@
   },
   "eslintConfig": {
     "extends": "react-app"
-  }
+  },
+  "description": "To get started, you can follow these instructions.  Please reach out to make any changes or clear up any bullet points.",
+  "main": "truffle.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thair116/Toasty.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thair116/Toasty/issues"
+  },
+  "homepage": "https://github.com/thair116/Toasty#readme"
 }
