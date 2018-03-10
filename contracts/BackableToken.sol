@@ -59,6 +59,7 @@ contract BackableToken is BasicToken {
 	// ========================= data about CONTENT ======================================
 
 	string[] public links;
+	address[] public linkPosters;
 
 
 	// ========================= events ==================================================
@@ -257,9 +258,25 @@ contract BackableToken is BasicToken {
 	function postLink(string link) public returns(bool) {
 		require(checkElection(msg.sender) == true);
 		links.push(link);
-		uint256 payout = 100;
-		mint(msg.sender, payout);
+		linkPosters.push(msg.sender);
 		return true;
+	}
+
+	/** 
+		* This function gets the total number of links
+		* @return the number of links
+	*/
+	function getLinkTotalCount() public constant returns(uint256) {
+		return links.length;
+	}
+
+	/** 
+		* This function gets the link and  given an index
+		* @param index the index of the link to get
+		* @return a struct 
+	*/
+	function getLinkByIndex( uint256 index ) public constant returns( address owner, string link ) {
+		return (linkPosters[index], links[index]);
 	}
 
 }

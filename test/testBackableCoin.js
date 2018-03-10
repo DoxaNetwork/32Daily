@@ -181,25 +181,64 @@ contract('BackableToken', function(accounts) {
 	// 	assert.equal(elected, false);
 	// })
 
-	it("should allow elected user to add Link and be paid", async function() {
+	it("should allow user to post Link", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
-		
-		let AIsElected = await token.isElected(accounts[1]);
-		assert.equal(AIsElected, true);
-
-		let balanceBefore = await token.balanceOf(accounts[1]);
 
 		await token.postLink("reddit.com", {from : accounts[1]});
 
 		let links = await token.links.call(0);
 		assert.equal("reddit.com",links);
 
-		let balanceAfter = await token.balanceOf(accounts[1]);
-		assert.ok(balanceAfter > balanceBefore);
+	})
+
+	it("should get link count", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.register.sendTransaction('enodios', {from: accounts[1]});
+
+		await token.postLink("reddit.com", {from : accounts[1]});
+
+		let count = await token.getLinkTotalCount();
+		assert.equal(1, count);
 
 	})
 
+	it("should get link count of 2", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
 
+		await token.register.sendTransaction('enodios', {from: accounts[1]});
+
+		await token.postLink("reddit.com", {from : accounts[1]});
+		await token.postLink("google.com", {from : accounts[1]});
+
+
+		let count = await token.getLinkTotalCount();
+		assert.equal(2, count);
+	})
+
+	it("should get link count of 2 for separate users", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.register.sendTransaction('enodios', {from: accounts[1]});
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.postLink("google.com", {from : accounts[1]});
+
+		let count = await token.getLinkTotalCount();
+		assert.equal(2, count);
+	})
+
+	it("should be able to get link and owner", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.register.sendTransaction('enodios', {from: accounts[1]});
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+
+		let [poster, link] = await token.getLinkByIndex( 0 );
+		assert.equal(poster, accounts[0]);
+		assert.equal(link, "reddit.com");
+	})
 })
