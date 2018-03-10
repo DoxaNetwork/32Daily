@@ -4,6 +4,13 @@ var BackableTokenMock = artifacts.require("./BackableTokenMock.sol");
 //var Web3 = require('web3');
 //var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
+const BigNumber = web3.BigNumber;
+
+require('chai')
+  .use(require('chai-as-promised'))
+  .use(require('chai-bignumber')(BigNumber))
+  .should();
+
 contract('BackableToken', function(accounts) {
 
 	it("should return the correct totalSupply after construction", async function() {
@@ -40,12 +47,7 @@ contract('BackableToken', function(accounts) {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
 
 		// can't back yourself, fool
-		try {
-			await token.back(accounts[0], 700, {from: accounts[0]});
-			assert.fail('should have thrown before');
-		} catch (error) {
-			assertJump(error);
-		}
+		await token.back(accounts[0], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("backing should elect", async function() {
@@ -65,12 +67,7 @@ contract('BackableToken', function(accounts) {
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
-		try {
-			await token.back(accounts[1], 700, {from: accounts[0]});
-			assert.fail('should have thrown before');
-		} catch (error) {
-			assertJump(error);
-		}
+		await token.back(accounts[1], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("should not allow sending tokens when they are already backed", async function() {
@@ -78,12 +75,7 @@ contract('BackableToken', function(accounts) {
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
-		try {
-			await token.transfer(accounts[1], 400, {from: accounts[0]});
-			assert.fail('should have thrown before');
-		} catch (error) {
-			assertJump(error);
-		}
+		await token.transfer(accounts[1], 400, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("should allow sending tokens after unbacking", async function() {
@@ -118,12 +110,7 @@ contract('BackableToken', function(accounts) {
 	it("should not allow non-elected user to add link", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 900, accounts[1], 0);
 
-		try {
-			await token.postLink("reddit.com", {from : accounts[0]});
-			assert.fail('should have thrown before');
-		} catch (error) {
-			assertJump(error);
-		}
+		await token.postLink("reddit.com", {from : accounts[0]}).should.be.rejectedWith('revert');
 	});
 
 	it("should allow a member with token to register a name", async function() {
