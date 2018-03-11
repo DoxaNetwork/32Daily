@@ -54,7 +54,7 @@ class App extends Component {
                                 render={(props) => <MemberTable {...props} users={this.state.users} />} />
                             <Route 
                                 path="/posts" 
-                                render={(props) => <AllPosts />} />
+                                render={(props) => <AllPosts user={this.state.currentUser} />} />
                         </div>
                     </main>
                 </div>

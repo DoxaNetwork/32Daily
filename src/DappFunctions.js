@@ -67,16 +67,13 @@ async function getCurrentUser(){
 }
 
 /**
- * @summary Back a specific user with the tokenAmount
+ * @summary Back a specific post with amount
  */
-async function backMember(memberName, tokenAmount) {
+async function backPost(postIndex, value) {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
 
-    let member = await tokenInstance.findMemberByUserName(memberName)
-    const address = member[0]  // The address of the user we find
-
-    let result = await tokenInstance.back.sendTransaction(address, tokenAmount, { from: account })
+    let result = await tokenInstance.backPost.sendTransaction(postIndex, value, { from: account })
 }
 
 /**
@@ -101,10 +98,10 @@ async function getAllLinks(){
     let results = await Promise.all(functions)
 
     let links = []
-    for (const [owner, link] of results) {
-        links.push({owner, link})
+    for (const [index, owner, link, backing] of results) {
+        links.push({index, owner, link, backing})
     }
     return links
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backMember, postLink, getAllLinks }
+export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks }

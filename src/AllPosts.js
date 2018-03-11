@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { getAllLinks } from './DappFunctions'
+import { getAllLinks, backPost } from './DappFunctions'
+import PostVoteItem from './PostVoteItem'
 
 class AllPosts extends Component {
 
@@ -18,12 +19,13 @@ class AllPosts extends Component {
         let posts = this.state.posts;
 
         let postList = posts.map(post =>
-        <li key={post.link}>{post.link}, address: {post.owner}</li>
+            <PostVoteItem key={post.index} post={post} onSubmit={backPost} />
         )
 
         return (
             <div>
                 <h2>All Posts</h2>
+                Available for backing: {this.props.user && this.props.user.balance.toNumber()}
                 <div style={{ position: 'relative' }}>
                     <ul>
                         {postList}

@@ -84,6 +84,20 @@ contract('BackableToken', function(accounts) {
 		// // user 1 should have 900 available backing
 		const tokensRemaining1 = await token.availableToBackPosts(accounts[1]);
 		tokensRemaining1.toNumber().should.be.equal(1900);
+    })
+    
+    it("user cannot over-back a post", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900);
+        await token.register.sendTransaction('enodios', {from: accounts[1]});
+                
+		// user 1 posts a link
+		await token.postLink("reddit.com", {from : accounts[1]});
+
+		// user 0 backs the link with 1000
+        await token.backPost(0, 1000, {from: accounts[0]});
+        
+		// user 0 backs the link with 1 more, which is too many
+		await token.backPost(0, 1, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("should not allow double backing", async function() {
