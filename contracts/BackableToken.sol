@@ -276,6 +276,7 @@ contract BackableToken is BasicToken {
 		* @return a struct 
 	*/
 	function getLinkByIndex( uint256 index ) public constant returns( address owner, string link ) {
+		require( index >= 0 ||  index < links.length );
 		return (linkPosters[index], links[index]);
 	}
 
