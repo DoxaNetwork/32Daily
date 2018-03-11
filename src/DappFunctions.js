@@ -89,4 +89,22 @@ async function postLink(text) {
     let result = await tokenInstance.postLink.sendTransaction(text, { from: account})
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backMember, postLink }
+/**
+ * @summary  Retrieve all linksthat have been submitted to the site
+ */
+async function getAllLinks(){
+    const tokenInstance = await getContract(token);
+
+    const count = await tokenInstance.getLinkTotalCount()
+    const indexesToRetrieve = [...Array(count.toNumber()).keys()]
+    const functions = indexesToRetrieve.map(index => tokenInstance.getLinkByIndex(index))
+    let results = await Promise.all(functions)
+
+    let links = []
+    for (const [owner, link] of results) {
+        links.push({owner, link})
+    }
+    return links
+}
+
+export { getCurrentUser, getAllUsers, registerUser, backMember, postLink, getAllLinks }

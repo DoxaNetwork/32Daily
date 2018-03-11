@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import MemberTable from './MemberTable'
 import Join from './Join'
 import Welcome from './Welcome'
+import AllPosts from './AllPosts'
 import { getCurrentUser, getAllUsers, registerUser, backMember } from './DappFunctions'
 
 import './css/oswald.css'
@@ -40,8 +41,9 @@ class App extends Component {
                 <div className="App">
                     <main>
                         <nav>
-                            <Link to="/">Home</Link>
-                            <Link to="/users">Users</Link>
+                            <Link to="/">Home</Link> | 
+                            <Link to="/users">Users</Link> | 
+                            <Link to="/posts">Posts</Link>
                         </nav>
                         <div>
                             <Route 
@@ -49,7 +51,10 @@ class App extends Component {
                                 render={() => header} />
                             <Route 
                                 path="/users" 
-                                render={(props) => <MemberTable {...props} users={this.state.users} availableBalance={availableBalance} />} />
+                                render={(props) => <MemberTable {...props} users={this.state.users} />} />
+                            <Route 
+                                path="/posts" 
+                                render={(props) => <AllPosts />} />
                         </div>
                     </main>
                 </div>

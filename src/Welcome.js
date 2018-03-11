@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import Submit from './Submit'
+import UserPosts from './UserPosts'
 import { postLink } from './DappFunctions'
 
 function Welcome(props){
@@ -10,6 +11,7 @@ function Welcome(props){
             </h1>
             <p>Your address is {props.user.address}, and you have {props.user.balance.toNumber()} Doxa Tokens</p>
             <Submit onSubmit={postLink} />
+            <UserPosts user={props.user} />
         </div>
     )
 }
