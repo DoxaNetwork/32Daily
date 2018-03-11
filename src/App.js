@@ -49,7 +49,7 @@ class App extends Component {
                                 render={() => header} />
                             <Route 
                                 path="/users" 
-                                render={(props) => <MemberTable {...props} users={this.state.users} availableBalance={availableBalance} />} />
+                                render={() => <MemberTable users={this.state.users} availableBalance={availableBalance} />} />
                         </div>
                     </main>
                 </div>
