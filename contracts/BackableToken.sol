@@ -271,9 +271,9 @@ contract BackableToken is BasicToken {
 	}
 
 	/** 
-		* This function gets the link and  given an index
+		* This function gets the link given an index
 		* @param index the index of the link to get
-		* @return a struct 
+		* @return a truple with the owner and link at the index 
 	*/
 	function getLinkByIndex( uint256 index ) public view returns( address owner, string link ) {
 		return (linkPosters[index], links[index]);
