@@ -312,13 +312,9 @@ contract BackableToken is BasicToken {
 		* @param index the index of the link to get
 		* @return a tuple with the owner and link at the index 
 	*/
-<<<<<<< HEAD
-	function getLinkByIndex( uint256 index ) public view returns( address owner, string link ) {
-		return (linkPosters[index], links[index]);
-=======
+
 	function getLinkByIndex( uint256 index ) public view returns( address owner, string link, uint256 backing ) {
 		return (linkPosters[index], links[index], incomingPostBackings[index]);
->>>>>>> users can now back posts
 	}
 
 }
