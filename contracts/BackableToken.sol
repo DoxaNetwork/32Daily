@@ -266,16 +266,16 @@ contract BackableToken is BasicToken {
 		* This function gets the total number of links
 		* @return the number of links
 	*/
-	function getLinkTotalCount() public constant returns(uint256) {
+	function getLinkTotalCount() public view returns(uint256) {
 		return links.length;
 	}
 
 	/** 
-		* This function gets the link and  given an index
+		* This function gets the link given an index
 		* @param index the index of the link to get
-		* @return a struct 
+		* @return a tuple with the owner and link at the index 
 	*/
-	function getLinkByIndex( uint256 index ) public constant returns( address owner, string link ) {
+	function getLinkByIndex( uint256 index ) public view returns( address owner, string link ) {
 		return (linkPosters[index], links[index]);
 	}
 
