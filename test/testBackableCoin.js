@@ -328,4 +328,107 @@ contract('BackableToken', function(accounts) {
 		await token.postLink("google.com", {from : accounts[1]});
 		await token.getLinkByIndex(20000).should.be.rejectedWith('invalid opcode');
 	})
+
+	// Start tests for publish
+	it("getPublishedContent with no content", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		assert.equal( await token.getPublishedContent(), 0);
+	})
+
+	it("getPublishedContent with some content", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.register.sendTransaction('enodios', {from: accounts[1]});
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.postLink("google.com", {from : accounts[1]});
+		await token.postLink("google.com", {from : accounts[0]});
+		await token.postLink("reddit.com", {from : accounts[1]});
+
+		assert.equal( await token.getPublishedContent(), 0);
+	})
+
+	it("getPublishedContentByIndex with no content", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.getPublishedContentByIndex(100).should.be.rejectedWith('invalid opcode');
+	})
+
+	it("publish content with no content", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		assert.equal( await token.getPublishedContent(), 0);
+	})
+
+	it("publish count equal zero before publishing at all", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		// await token.postLink("google.com", {from : accounts[1]});
+		// await token.postLink("google.com", {from : accounts[0]});
+		// await token.postLink("reddit.com", {from : accounts[1]});
+		// await token.backPost(0, 1001);
+		// await token.backPost(1, 1001);
+		// await token.backPost(2, 1001);
+		// await token.backPost(3, 1001);
+
+		assert.equal( await token.getPublishedContent(), 0);
+	})
+
+	it("publish count equal zero before publishing at all 2", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		// await token.postLink("google.com", {from : accounts[1]});
+		// await token.postLink("google.com", {from : accounts[0]});
+		// await token.postLink("reddit.com", {from : accounts[1]});
+		await token.backPost(0, 1001, {from : accounts[1]});
+		// await token.backPost(1, 1001);
+		// await token.backPost(2, 1001);
+		// await token.backPost(3, 1001);
+
+		assert.equal( await token.getPublishedContent(), 0);
+	})
+
+	it("publish does not crash without posts", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+
+		await token.publish();
+
+		assert.equal( 1, 1 );
+	})
+
+	it("publish single post above threshold", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.backPost(0, 1001, {from : accounts[1]});
+		await token.publish();
+
+		assert.equal( await token.getPublishedContent(), 1 );
+	})
+
+	it("publish single post below threshold", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.backPost(0, 999, {from : accounts[1]});
+		await token.publish();
+
+		assert.equal( await token.getPublishedContent(), 0 );
+	})
+
+	it("publish twice with single post", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.backPost(0, 1001, {from : accounts[1]});
+		await token.publish();
+		await token.publish();
+
+		const count = await token.getPublishedContent()
+		assert.equal( count, 1 );
+	})
+
 })

@@ -55,7 +55,7 @@ contract BackableToken is BasicToken {
 	// postIndex -> total amount backing this post
 	mapping (uint256 => uint256) internal incomingPostBackings;
 
-
+	uint256[] publishIndex;
 	
 	// ========================= data about ELECTIONS ===================================
 	uint256 constant ELECTION_THRESHOLD = 1000;
@@ -70,6 +70,7 @@ contract BackableToken is BasicToken {
 	// ========================= data about CONTENT ======================================
 
 	string[] public links;
+	// The array of posters at the same index as the links
 	address[] public linkPosters;
 
 
@@ -316,4 +317,20 @@ contract BackableToken is BasicToken {
 		return (index, linkPosters[index], links[index], incomingPostBackings[index]);
 	}
 
+	function getPublishedContent() public view returns(uint256 numPub) {
+		return publishIndex.length;
+	}
+
+	function getPublishedContentByIndex( uint256 index ) public view returns( uint256, address owner, string link, uint256 backing ) {
+		return getLinkByIndex(publishIndex[index]);
+	}
+
+	function publish() public {
+		publishIndex.length = 0;
+		for (uint i = 0; i < links.length; i++) {
+			if( incomingPostBackings[i] >= ELECTION_THRESHOLD) {
+				publishIndex.push(i);
+			}
+		}
+	}
 }
