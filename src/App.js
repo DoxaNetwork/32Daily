@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom"; 
 
 import MemberTable from './MemberTable'
 import Join from './Join'
@@ -35,14 +36,24 @@ class App extends Component {
         }
 
         return (
-            <div className="App">
-                <main>
-                    <div>
-                        {header}
-                        <MemberTable users={this.state.users} availableBalance={availableBalance} />
-                    </div>
-                </main>
-            </div>
+            <Router>
+                <div className="App">
+                    <main>
+                        <nav>
+                            <Link to="/">Home</Link>
+                            <Link to="/users">Users</Link>
+                        </nav>
+                        <div>
+                            <Route 
+                                exact path="/" 
+                                render={() => header} />
+                            <Route 
+                                path="/users" 
+                                render={(props) => <MemberTable {...props} users={this.state.users} availableBalance={availableBalance} />} />
+                        </div>
+                    </main>
+                </div>
+            </Router>
         );
     }
 }
