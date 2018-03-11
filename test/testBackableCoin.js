@@ -262,7 +262,8 @@ contract('BackableToken', function(accounts) {
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 
-		let [poster, link] = await token.getLinkByIndex( 0 );
+		let [index, poster, link] = await token.getLinkByIndex( 0 );
+		assert.equal(index, 0);
 		assert.equal(poster, accounts[0]);
 		assert.equal(link, "reddit.com");
 	})
@@ -277,19 +278,23 @@ contract('BackableToken', function(accounts) {
 		await token.postLink("google.com", {from : accounts[0]});
 		await token.postLink("reddit.com", {from : accounts[1]});
 
-		let [poster1, link1] = await token.getLinkByIndex( 0 );
+		let [index1, poster1, link1] = await token.getLinkByIndex( 0 );
+		assert.equal(index1, 0);
 		assert.equal(poster1, accounts[0]);
 		assert.equal(link1, "reddit.com");
 
-		let [poster2, link2] = await token.getLinkByIndex( 1 );
+		let [index2, poster2, link2] = await token.getLinkByIndex( 1 );
+		assert.equal(index2, 1);
 		assert.equal(poster2, accounts[1]);
 		assert.equal(link2, "google.com");
 
-		let [poster3, link3] = await token.getLinkByIndex( 2 );
+		let [index3, poster3, link3] = await token.getLinkByIndex( 2 );
+		assert.equal(index3, 2);
 		assert.equal(poster3, accounts[0]);
 		assert.equal(link3, "google.com");
 
-		let [poster4, link4] = await token.getLinkByIndex( 3 );
+		let [index4, poster4, link4] = await token.getLinkByIndex( 3 );
+		assert.equal(index4, 3);
 		assert.equal(poster4, accounts[1]);
 		assert.equal(link4, "reddit.com");
 	})
