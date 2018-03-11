@@ -45,6 +45,17 @@ contract BackableToken is BasicToken {
 	mapping (address => uint256) internal incoming; // incoming backs
 
 
+	// ======================= data about POST BACKINGS ================================
+	// postIndex -> (backer -> amount)
+	mapping (uint256 => mapping (address => uint256)) internal backedPosts;
+
+	// backer -> postIndex
+	mapping (address => uint256) internal outgoingPostBackings;
+	
+	// postIndex -> total amount backing this post
+	mapping (uint256 => uint256) internal incomingPostBackings;
+
+
 	
 	// ========================= data about ELECTIONS ===================================
 	uint256 constant ELECTION_THRESHOLD = 1000;
@@ -172,13 +183,22 @@ contract BackableToken is BasicToken {
 	}
 
 	// return total held minus total outgoing backed
-	function availableToSend(address _from) constant internal returns (uint256 available) {
-		return balances[_from].sub(outgoing[_from]);
+	function availableToSend(address _adress) constant internal returns (uint256 available) {
+		return balances[_adress].sub(outgoing[_adress]);
+	}
+
+	// return total held minus total outgoing backed towards posts
+	function availableToBackPosts(address _address) constant public returns (uint256 available) {
+		return balances[_address].sub(outgoingPostBackings[_address]);
 	}
 
 	// return total held plus total incoming backed
 	function totalBacking(address _to) constant public returns (uint256 total) {
 		return balances[_to].add(incoming[_to]);
+	}
+
+	function totalPostBacking(uint256 _index) constant public returns (uint256 total) {
+		return incomingPostBackings[_index];
 	}
 
 	function back(address _to, uint256 _value) public returns (bool) {
@@ -197,6 +217,23 @@ contract BackableToken is BasicToken {
 		// user may have bought enough to already be elected
 		checkElection(_to);
 
+		return true;
+	}
+
+	function backPost(uint256 _postIndex, uint256 _value) public returns (bool) {
+		// index must match an existing post
+		require(_postIndex >= 0 && _postIndex < links.length );
+		// user must have the available votes. if they don't, revert
+		// TODO: automatically free up votes
+		require(_value <= availableToBackPosts(msg.sender));
+		// TODO can't back a post you have posted
+
+		// update the root mapping
+		backedPosts[_postIndex][msg.sender] = backedPosts[_postIndex][msg.sender].add(_value);
+
+		// update the caches
+		outgoingPostBackings[msg.sender] = outgoing[msg.sender].add(_value);
+		incomingPostBackings[_postIndex] = incomingPostBackings[_postIndex].add(_value);
 		return true;
 	}
 
@@ -275,8 +312,13 @@ contract BackableToken is BasicToken {
 		* @param index the index of the link to get
 		* @return a tuple with the owner and link at the index 
 	*/
+<<<<<<< HEAD
 	function getLinkByIndex( uint256 index ) public view returns( address owner, string link ) {
 		return (linkPosters[index], links[index]);
+=======
+	function getLinkByIndex( uint256 index ) public view returns( address owner, string link, uint256 backing ) {
+		return (linkPosters[index], links[index], incomingPostBackings[index]);
+>>>>>>> users can now back posts
 	}
 
 }

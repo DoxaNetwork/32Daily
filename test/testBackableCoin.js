@@ -61,6 +61,31 @@ contract('BackableToken', function(accounts) {
 		assert.equal(BIsElected, true);
 	})
 
+	it("user can back a post", async function() {
+		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900);
+		await token.register.sendTransaction('enodios', {from: accounts[1]});
+		// user 1 posts a link
+		await token.postLink("reddit.com", {from : accounts[1]});
+
+		// link should have 0 backing
+		// TODO should automatically have the poster's backing too
+
+		// user 0 backs the link with 1000
+		await token.backPost(0, 1000, {from: accounts[0]});
+
+		// // link should now have 1000 backing
+		const backing = await token.totalPostBacking(0);
+		backing.toNumber().should.be.equal(1000);
+
+		// // user 0 should have 0 available backing
+		const tokensRemaining0 = await token.availableToBackPosts(accounts[0]);
+		tokensRemaining0.toNumber().should.be.equal(0);
+
+		// // user 1 should have 900 available backing
+		const tokensRemaining1 = await token.availableToBackPosts(accounts[1]);
+		tokensRemaining1.toNumber().should.be.equal(1900);
+	})
+
 	it("should not allow double backing", async function() {
 		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
 
