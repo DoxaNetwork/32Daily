@@ -10,7 +10,12 @@ const simpleCache = {};  // This can be used for simple objects, like the curren
 async function getContract(contract) {
     let results = await getWeb3
     contract.setProvider(results.web3.currentProvider)
-    return contract.deployed()
+    // option 1: will find the address from the ./build/contracts/.json file
+    // return contract.deployed() 
+
+    // option 2: will always look for the same contract, currently the one that Travis
+    //           deployed to the Ropsten test network
+    return contract.at('0xddb3e20bbd33dddb33b8c961bf297459dd6a8575')
 }
 
 // Get the address of the user in MetaMask.  Uses the simple cache
