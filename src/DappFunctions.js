@@ -15,7 +15,7 @@ async function getContract(contract) {
 
     // option 2: will always look for the same contract, currently the one that Travis
     //           deployed to the Ropsten test network
-    return contract.at('0xddb3e20bbd33dddb33b8c961bf297459dd6a8575')
+    return contract.at('0x4f2cff4b7c7401228aad9e1c3f6c0c92f47a5c5b')
 }
 
 // Get the address of the user in MetaMask.  Uses the simple cache
@@ -53,8 +53,8 @@ async function getAllUsers(){
     let results = await Promise.all(functions)
 
     let users = []
-    for (const [address, username, active, elected, balance, backing] of results) {
-        users.push({address, username, elected, balance, backing})
+    for (const [address, username, active, elected, balance, backing, availableToBackPosts] of results) {
+        users.push({address, username, elected, balance, backing, availableToBackPosts})
     }
     return users
 }
@@ -65,7 +65,7 @@ async function getAllUsers(){
  * The return is dictionary like {address, username, elected, balance, backing}
  */
 async function getCurrentUser(){
-    const users = await getAllUsers();  // Overall this can be done faster
+    const users = await getAllUsers();  // Overall this can be done faster. TODO grab user by address directly
     const account = await getCurrentAccount();
     const currentUser =  users.find(user => user.address === account);
     return currentUser;

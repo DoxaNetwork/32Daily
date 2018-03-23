@@ -91,19 +91,19 @@ contract BackableToken is BasicToken {
 		return memberList.length;
 	}
 
-	function findMemberByIndex(uint256 _index) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
+	function findMemberByIndex(uint256 _index) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing, uint256 _availableToBackPosts) {
 		address _owner = memberList[_index];
-		return (addressMap[_owner].owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner]);
+		return (addressMap[_owner].owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner], availableToBackPosts(_owner));
 	}
 
-	function findMemberByAddress(address _owner) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
-		return (_owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner]);
+	function findMemberByAddress(address _owner) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing, uint256 _availableToBackPosts) {
+		return (_owner, addressMap[_owner].username, addressMap[_owner].active, addressMap[_owner].elected, balances[_owner], incoming[_owner], availableToBackPosts(_owner));
 	}
 
-	function findMemberByUserName(string _username) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing) {
+	function findMemberByUserName(string _username) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing, uint256 _availableToBackPosts) {
 		bytes32 key = keccak256(_username);
 		// TODO is there any gas cost to temporarily storing a variable in memory? that could simplify the next line
-		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner]);
+		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner], availableToBackPosts(_owner));
 	}
 
 	function register(string _username) public returns (bool) {
@@ -189,6 +189,7 @@ contract BackableToken is BasicToken {
 	}
 
 	// return total held minus total outgoing backed towards posts
+	// TODO these calculations should only occur internally when necessary. usually the client can calculate this 
 	function availableToBackPosts(address _address) constant public returns (uint256 available) {
 		return balances[_address].sub(outgoingPostBackings[_address]);
 	}
@@ -233,7 +234,7 @@ contract BackableToken is BasicToken {
 		backedPosts[_postIndex][msg.sender] = backedPosts[_postIndex][msg.sender].add(_value);
 
 		// update the caches
-		outgoingPostBackings[msg.sender] = outgoing[msg.sender].add(_value);
+		outgoingPostBackings[msg.sender] = outgoingPostBackings[msg.sender].add(_value);
 		incomingPostBackings[_postIndex] = incomingPostBackings[_postIndex].add(_value);
 		return true;
 	}
@@ -275,6 +276,7 @@ contract BackableToken is BasicToken {
     	return true;
 	}
 	
+	// TODO this is being accidentally called when transactions are missing input data
 	function () private payable {
 		// finney = milliether, szabo = microether
 		// TODO decide on price curve

@@ -25,7 +25,7 @@ class AllPosts extends Component {
         return (
             <div>
                 <h2>All Posts</h2>
-                Available for backing: {this.props.user && this.props.user.balance.toNumber()}
+                Available for backing: {this.props.user && this.props.user.availableToBackPosts.toNumber()}
                 <div style={{ position: 'relative' }}>
                     <ul>
                         {postList}
