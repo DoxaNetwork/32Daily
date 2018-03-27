@@ -5,7 +5,7 @@ import MemberTable from './MemberTable'
 import Join from './Join'
 import Welcome from './Welcome'
 import AllPosts from './AllPosts'
-import { getCurrentUser, getAllUsers, registerUser, backMember } from './DappFunctions'
+import { getCurrentUser, getAllUsers, backMember, registerUser } from './DappFunctions'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -25,11 +25,20 @@ class App extends Component {
         this.setState({users, currentUser})
     }
 
+    async registerUser(username){
+        const result = await registerUser(username);
+        console.debug(result);
+
+        const users = await getAllUsers();
+        const currentUser = await getCurrentUser();
+        this.setState({users, currentUser});
+    }
+
     render() {
         let header = ''
         let availableBalance = 0
         if (this.state.currentUser === undefined){
-            header = <Join onSubmit={registerUser} />;
+            header = <Join onSubmit={this.registerUser.bind(this)} />;
             availableBalance = 0;
         } else {
             header = <Welcome user={this.state.currentUser} />

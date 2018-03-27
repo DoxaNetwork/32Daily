@@ -38,7 +38,7 @@ async function getCurrentAccount(){
 async function registerUser(username){
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
-    tokenInstance.register.sendTransaction(username, {from: account});
+    const log = await tokenInstance.register(username, {from: account});
 }
 
 /**
@@ -78,7 +78,7 @@ async function backPost(postIndex, value) {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
 
-    let result = await tokenInstance.backPost.sendTransaction(postIndex, value, { from: account })
+    let result = await tokenInstance.backPost(postIndex, value, { from: account })
 }
 
 /**
@@ -88,7 +88,7 @@ async function postLink(text) {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
 
-    let result = await tokenInstance.postLink.sendTransaction(text, { from: account})
+    let result = await tokenInstance.postLink(text, { from: account})
 }
 
 /**
