@@ -15,7 +15,7 @@ async function getContract(contract) {
 
     // option 2: will always look for the same contract, currently the one that Travis
     //           deployed to the Ropsten test network
-    return contract.at('0x4f2cff4b7c7401228aad9e1c3f6c0c92f47a5c5b')
+    return contract.at('0xe809031eebd710af891a5c592c0d9ffc3f82411a')
 }
 
 // Get the address of the user in MetaMask.  Uses the simple cache
@@ -38,7 +38,8 @@ async function getCurrentAccount(){
 async function registerUser(username){
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
-    const log = await tokenInstance.register(username, {from: account});
+    const result = await tokenInstance.register(username, {from: account});
+    return result;
 }
 
 /**
@@ -78,7 +79,8 @@ async function backPost(postIndex, value) {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
 
-    let result = await tokenInstance.backPost(postIndex, value, { from: account })
+    const result = await tokenInstance.backPost(postIndex, value, { from: account })
+    return result;
 }
 
 /**
@@ -88,7 +90,8 @@ async function postLink(text) {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
 
-    let result = await tokenInstance.postLink(text, { from: account})
+    const result = await tokenInstance.postLink(text, { from: account})
+    return result;
 }
 
 /**

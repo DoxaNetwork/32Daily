@@ -77,7 +77,7 @@ contract BackableToken is BasicToken {
 	// ========================= events ==================================================
 	event Mint(address indexed to, uint256 _amount);
 	// event MemberCreated();
-	// event LinkPosted();
+	event LinkPosted(address indexed owner, uint256 backing, uint256 index, string link);
 	// event Elected();
 	// event Unelected();
 	// event Backing();
@@ -103,7 +103,7 @@ contract BackableToken is BasicToken {
 	function findMemberByUserName(string _username) public constant returns (address owner, string username, bool active, bool elected, uint256 balance, uint256 backing, uint256 _availableToBackPosts) {
 		bytes32 key = keccak256(_username);
 		// TODO is there any gas cost to temporarily storing a variable in memory? that could simplify the next line
-		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner], availableToBackPosts(_owner));
+		return (userNameMap[key].owner, userNameMap[key].username, userNameMap[key].active, userNameMap[key].elected, balances[userNameMap[key].owner], incoming[userNameMap[key].owner], availableToBackPosts(userNameMap[key].owner));
 	}
 
 	function register(string _username) public returns (bool) {
@@ -299,6 +299,7 @@ contract BackableToken is BasicToken {
 		require(checkElection(msg.sender) == true);
 		links.push(link);
 		linkPosters.push(msg.sender);
+		LinkPosted(msg.sender, 0, links.length, link);
 		return true;
 	}
 
