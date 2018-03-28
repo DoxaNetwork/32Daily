@@ -95,10 +95,12 @@ async function postLink(text) {
     return result;
 }
 
+// TODO memoize this so only one event listener is created
 async function setUpListeners() {
     const tokenInstance = await getContract(token);
     let event = tokenInstance.LinkPosted();
     event.watch((error, result) => {console.log(result)});
+    return event;
 }
 
 /**
