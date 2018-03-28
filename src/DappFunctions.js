@@ -11,11 +11,11 @@ async function getContract(contract) {
     let results = await getWeb3
     contract.setProvider(results.web3.currentProvider)
     // option 1: will find the address from the ./build/contracts/.json file
-    // return contract.deployed() 
+    return contract.deployed() 
 
     // option 2: will always look for the same contract, currently the one that Travis
     //           deployed to the Ropsten test network
-    return contract.at('0xe809031eebd710af891a5c592c0d9ffc3f82411a')
+    // return contract.at('0xe809031eebd710af891a5c592c0d9ffc3f82411a')
 }
 
 // Get the address of the user in MetaMask.  Uses the simple cache
@@ -88,10 +88,17 @@ async function backPost(postIndex, value) {
  */
 async function postLink(text) {
     const tokenInstance = await getContract(token);
+
     const account = await getCurrentAccount();
 
     const result = await tokenInstance.postLink(text, { from: account})
     return result;
+}
+
+async function setUpListeners() {
+    const tokenInstance = await getContract(token);
+    let event = tokenInstance.LinkPosted();
+    event.watch((error, result) => {console.log(result)});
 }
 
 /**
@@ -112,4 +119,4 @@ async function getAllLinks(){
     return links
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks }
+export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpListeners }

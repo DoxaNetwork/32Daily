@@ -5,7 +5,7 @@ import MemberTable from './MemberTable'
 import Join from './Join'
 import Welcome from './Welcome'
 import AllPosts from './AllPosts'
-import { getCurrentUser, getAllUsers, backMember, registerUser } from './DappFunctions'
+import { getCurrentUser, getAllUsers, backMember, registerUser, setUpListeners } from './DappFunctions'
 
 import './css/oswald.css'
 import './css/open-sans.css'
@@ -22,6 +22,7 @@ class App extends Component {
     async componentWillMount() {
         const users = await getAllUsers();
         const currentUser = await getCurrentUser();
+        setUpListeners();
         this.setState({users, currentUser})
     }
 
