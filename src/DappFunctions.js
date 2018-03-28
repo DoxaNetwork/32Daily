@@ -96,10 +96,16 @@ async function postLink(text) {
 }
 
 // TODO memoize this so only one event listener is created
-async function setUpListeners() {
+async function setUpPostListener() {
     const tokenInstance = await getContract(token);
     let event = tokenInstance.LinkPosted();
-    event.watch((error, result) => {console.log(result)});
+    return event;
+}
+
+async function setUpUserPostBackedListener() {
+    const tokenInstance = await getContract(token);
+    const account = await getCurrentAccount();
+    let event = tokenInstance.PostBacked({backer: account});
     return event;
 }
 
@@ -121,4 +127,4 @@ async function getAllLinks(){
     return links
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpListeners }
+export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpPostListener, setUpUserPostBackedListener }

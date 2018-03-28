@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getAllLinks, backPost, setUpListeners } from './DappFunctions'
+import { getAllLinks, backPost, setUpPostListener } from './DappFunctions'
 import PostVoteItem from './PostVoteItem'
 
 class AllPosts extends Component {
@@ -12,7 +12,7 @@ class AllPosts extends Component {
 
     async componentWillMount() {
         var posts = await getAllLinks();
-        const event = await setUpListeners()
+        const event = await setUpPostListener()
         event.watch((error, result) => {
             const newPost = result.args;
             this.setState({ posts: [...this.state.posts, newPost] })
@@ -25,6 +25,8 @@ class AllPosts extends Component {
         const posts = this.state.posts;
         const index = result.logs[0].args.postIndex;
         const backing = result.logs[0].args.value;
+
+        this.props.updateUserAvailableToBack(backing)
 
         posts[index].backing = posts[index].backing.plus(backing);
         this.setState({posts})

@@ -78,7 +78,7 @@ contract BackableToken is BasicToken {
 	event Mint(address indexed to, uint256 _amount);
 	// event MemberCreated();
 	event LinkPosted(address indexed owner, uint256 backing, uint256 index, string link);
-	event PostBacked(address backer, uint256 postIndex, uint256 value);
+	event PostBacked(address indexed backer, uint256 postIndex, uint256 value);
 	// event Elected();
 	// event Unelected();
 	// event Backing();
