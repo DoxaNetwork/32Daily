@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { getAllLinks, backPost, setUpPostListener } from './DappFunctions'
+import { getAllLinks, backPost, setUpPostListener, setUpPostBackedListener } from './DappFunctions'
 import PostVoteItem from './PostVoteItem'
 
 class AllPosts extends Component {
@@ -12,24 +12,40 @@ class AllPosts extends Component {
 
     async componentWillMount() {
         var posts = await getAllLinks();
+        this.setState({posts});
+
+        // set up listener for new posts
         const event = await setUpPostListener()
         event.watch((error, result) => {
             const newPost = result.args;
             this.setState({ posts: [...this.state.posts, newPost] })
+            console.debug('new post event received')
         })
-        this.setState({posts})
+
+        // set up listener for new votes
+        const backEvent = await setUpPostBackedListener();
+        backEvent.watch((error, result) => {
+            const index = result.args.postIndex;
+            const backing = result.args.value;
+            this.updatePost(index, backing);
+            console.debug('new vote event received')
+        })
+    }
+
+    updatePost(index, value) {
+        const posts = this.state.posts;
+        posts[index].backing = posts[index].backing.plus(value);
+        this.setState({posts});
     }
 
     async backPost(postIndex, value) {
         const result = await backPost(postIndex, value);
-        const posts = this.state.posts;
-        const index = result.logs[0].args.postIndex;
         const backing = result.logs[0].args.value;
+        const index = result.logs[0].args.postIndex;
+
+        this.updatePost(result.logs[0].args.postIndex, result.logs[0].args.value)
 
         this.props.updateUserAvailableToBack(backing)
-
-        posts[index].backing = posts[index].backing.plus(backing);
-        this.setState({posts})
     }
 
 	render() {

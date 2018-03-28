@@ -109,6 +109,13 @@ async function setUpUserPostBackedListener() {
     return event;
 }
 
+async function setUpPostBackedListener() {
+    const tokenInstance = await getContract(token);
+    const account = await getCurrentAccount();
+    let event = tokenInstance.PostBacked();
+    return event;
+}
+
 /**
  * @summary  Retrieve all linksthat have been submitted to the site
  */
@@ -127,4 +134,4 @@ async function getAllLinks(){
     return links
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpPostListener, setUpUserPostBackedListener }
+export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpPostListener, setUpUserPostBackedListener, setUpPostBackedListener }
