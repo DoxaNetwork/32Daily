@@ -201,7 +201,7 @@ contract BackableToken is BasicToken {
 	}
 
 	function totalPostBacking(uint256 _index) constant public returns (uint256 total) {
-		return incomingPostBackings[_index];
+		return incomingPostBackings[_index]; // make this public so we can remove this getter function
 	}
 
 	function back(address _to, uint256 _value) public returns (bool) {

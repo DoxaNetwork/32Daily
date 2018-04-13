@@ -16,6 +16,7 @@ class Welcome extends Component {
 
     async componentWillMount() {
         var posts = await getAllLinks();
+        // this needs to be done on the server -- full post list could get huge
         posts = posts.filter(post => post.owner == this.props.user.address)
         this.setState({posts})
     }
