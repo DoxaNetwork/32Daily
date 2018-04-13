@@ -1,0 +1,53 @@
+.wordStream {
+	margin: 35vh auto;
+	display: flex;
+	align-items: center;
+	height: 200px;
+
+}
+
+.word {
+	margin:20px 35px 0;
+	padding: 10px 25px;
+	border-radius:2px;
+	border:2px solid #249;
+	box-shadow: 0 0 4px rgba(0,0,0,.14),
+				2px 2px 8px rgba(0,0,0,.14);
+				/*0 -4px 8px rgba(0,0,0,.28);*/
+}
+
+.nextWord {
+	margin:0 35px;
+	padding: 10px 25px;
+	width: 75px;
+	height: 20px;
+	border:2px solid #249;
+	border-radius: 2px;
+	transition: all 400ms ease-in-out;
+	box-shadow: 0 0 4px rgba(0,0,0,.14),
+				2px 2px 8px rgba(0,0,0,.14);
+				/*0 -4px 8px rgba(0,0,0,.28);*/
+}
+
+.nextWord:hover {
+	border: 5px solid #249;
+	width: 300px;
+	height: 100px;
+	font-size: 4em;
+	/*transition: border 200ms ease-in-out;*/
+}
+
+img {
+	width: 20px;
+	float: right;
+	position: relative;
+	bottom: 30px;
+	left: 10px;
+}
+
+input {
+	border: none;
+	outline: none;
+	width: 100%;
+	text-align: center;
+}
