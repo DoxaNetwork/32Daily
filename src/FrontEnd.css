@@ -3,14 +3,18 @@
 	display: flex;
 	align-items: center;
 	height: 200px;
+	width: 50%;
+	float: left;
 
 }
 
 .word {
 	margin:20px 35px 0;
 	padding: 10px 25px;
+	background-color:#249;
+	color: white;
 	border-radius:2px;
-	border:2px solid #249;
+	border:1px solid #249;
 	box-shadow: 0 0 4px rgba(0,0,0,.14),
 				2px 2px 8px rgba(0,0,0,.14);
 				/*0 -4px 8px rgba(0,0,0,.28);*/
@@ -27,6 +31,61 @@
 	box-shadow: 0 0 4px rgba(0,0,0,.14),
 				2px 2px 8px rgba(0,0,0,.14);
 				/*0 -4px 8px rgba(0,0,0,.28);*/
+}
+
+.submittedWords {
+	float: left;
+	margin:25vh 0;
+	margin-left: -20px;
+	width: 300px;
+	border-right: 4px dashed #249;
+}
+
+.submittedWordContainer {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+
+.submittedWordContainer:hover > .submittedWord {
+	background-color: #249;
+	color: white;
+	transition: none;
+}
+
+.progressBar {
+	/*width: 93px important!;*/
+	/*background-color: #249;*/
+	/*background: linear-gradient(to right, white, #249);*/
+	height: 4px;
+	border: 2px dashed #249;
+	box-sizing: border-box;
+	box-shadow: 0 0 4px rgba(0,0,0,.14);
+	transition: width 200ms ease-out;
+}
+
+.submittedWordContainer.published .progressBar {
+	border: 2px solid #249;
+}
+
+.submittedWordContainer.published .submittedWord {
+	background-color: #249;
+	color: white;
+}
+
+
+.submittedWord {
+	margin:5px 0;
+	padding: 10px 25px;
+	width: 75px;
+	height: 20px;
+	border:1px solid #249;
+	border-radius: 2px;
+	text-align: center;
+	cursor:pointer;
+	transition: all 200ms ease-out;
+	box-shadow: 0 0 4px rgba(0,0,0,.14),
+				2px 2px 8px rgba(0,0,0,.14);
 }
 
 .nextWord:hover {
