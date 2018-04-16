@@ -1,24 +1,33 @@
+html {
+	background-color: #135;
+}
+
 button {
-	border: 2px solid #249;
+	border: 1px solid #f84;
+	background-color: #135;
 	border-radius: 2px;
 	width: 127px;
 	padding: 10px;
+	color: #f84;
 	transition: all 200ms ease-in-out;
+	box-shadow: 0 0 4px rgba(0,0,0,.14),
+				2px 2px 8px rgba(0,0,0,.14);
 }
 
 
 
 button.ready {
-	background-color: #249;
+	background-color: #f84;
 	color: white;
 }
 
 button.ready:hover {
-	background-color: #137;
+	background-color: #16d;
+	border: 1px solid #16d;
 }
 
 .wordStream {
-	margin: 35vh auto;
+	margin: 300px auto;
 	display: flex;
 	align-items: center;
 	height: 200px;
@@ -30,10 +39,10 @@ button.ready:hover {
 .word {
 	margin:20px 35px 0;
 	padding: 10px 25px;
-	background-color:#249;
+	background-color:#f84;
 	color: white;
 	border-radius:2px;
-	border:1px solid #249;
+	border:1px solid #f84;
 	box-shadow: 0 0 4px rgba(0,0,0,.14),
 				2px 2px 8px rgba(0,0,0,.14);
 				/*0 -4px 8px rgba(0,0,0,.28);*/
@@ -44,16 +53,17 @@ button.ready:hover {
 	display: flex;
 	justify-content: space-between;
 	padding-right:20px;
+	margin-bottom: 30px;
 }
 .nextWord {
 	/*margin:0 35px;*/
-	/*color: white;*/
-	/*background-color: #249;*/
+	color: white;
+	background-color: #135;
 	padding: 10px;
 	width: 127px;
 	box-sizing: border-box;
 	/*height: 40px;*/
-	border:1px solid #249;
+	border:1px solid #f84;
 	border-radius: 2px;
 	transition: all 200ms ease-in-out;
 	box-shadow: 0 0 4px rgba(0,0,0,.14),
@@ -64,10 +74,10 @@ button.ready:hover {
 
 .submittedWords {
 	float: left;
-	margin:25vh 0;
+	margin:100px 0;
 	margin-left: -20px;
 	width: 300px;
-	border-right: 4px dashed #249;
+	border-right: 4px dashed #16d;
 	box-shadow: 0 0 4px rgba(0,0,0,.01);
 }
 
@@ -78,7 +88,7 @@ button.ready:hover {
 }
 
 .submittedWordContainer:hover > .submittedWord {
-	background-color: #249;
+	background-color: #f84;
 	color: white;
 	transition: none;
 }
@@ -88,28 +98,29 @@ button.ready:hover {
 	/*background-color: #249;*/
 	/*background: linear-gradient(to right, white, #249);*/
 	height: 4px;
-	border: 2px dashed #249;
+	border: 2px dashed #f84;
 	box-sizing: border-box;
 	box-shadow: 0 0 4px rgba(0,0,0,.01);
 	transition: width 200ms ease-out;
 }
 
 .submittedWordContainer.published .progressBar {
-	border: 2px solid #249;
+	border: 2px solid #f84;
 }
 
 .submittedWordContainer.published .submittedWord {
-	background-color: #249;
+	background-color: #f84;
 	color: white;
 }
 
 
 .submittedWord {
+	color: #f84;
 	margin:5px 0;
 	padding: 10px 25px;
 	width: 75px;
 	height: 20px;
-	border:1px solid #249;
+	border:1px solid #f84;
 	border-radius: 2px;
 	text-align: center;
 	cursor:pointer;
@@ -141,4 +152,6 @@ input {
 	outline: none;
 	width: 100%;
 	text-align: center;
+	color: white;
+	background-color: #135;
 }
