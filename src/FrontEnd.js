@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { getAllLinks, postLink } from './DappFunctions'
+import { getAllLinks, postLink, backPost, backPosts } from './DappFunctions'
 
 import './FrontEnd.css'
 
@@ -7,7 +7,10 @@ class FrontEnd extends Component {
 
 	constructor(props){
 		super(props);
-		this.state = {'submittedWords': []}
+		this.state = {
+			'submittedWords': [],
+			'pendingVotes': {}
+		}
 	}
 
 	async componentWillMount() {
@@ -17,13 +20,30 @@ class FrontEnd extends Component {
     }
 
     mapPost(post) {
-    	return {'word': post.link, 'width': post.backing.toNumber()}
+    	return {'word': post.link, 'width': post.backing.toNumber()* 30, 'index': post.index}
+
     }
 
     async postLink(content) {
         const result = await postLink(content);
         const newPost = this.mapPost(result.logs[0].args);
         this.setState({ submittedWords: [...this.state.submittedWords, newPost] })
+    }
+
+    async updateVotes() {
+
+    	const indexes = Object.keys(this.state.pendingVotes);
+    	const votes = Object.values(this.state.pendingVotes);
+
+    	let result = await backPosts(indexes, votes);
+    }
+
+    setPendingVote(index) {
+    	let pendingVotes = {...this.state.pendingVotes}
+
+
+    	pendingVotes[index.toNumber()] ? pendingVotes[index.toNumber()] += 1 : pendingVotes[index.toNumber()] = 1;
+    	this.setState({pendingVotes});
     }
 
 	render() {
@@ -35,7 +55,7 @@ class FrontEnd extends Component {
 		);
 
 		const submittedWords = this.state.submittedWords.map(obj =>
-			<SubmittedWord word={obj.word} width={obj.width} />
+			<SubmittedWord word={obj.word} width={obj.width} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		return (
@@ -46,7 +66,9 @@ class FrontEnd extends Component {
 				<div className="submittedWords">
 					<NextWord onSubmit={this.postLink.bind(this)}/>
 					{submittedWords}
-					
+					<div className="saveContainer">
+						<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
+					</div>
 				</div>
 
 			</div>
@@ -66,12 +88,15 @@ class SubmittedWord extends Component {
 		}
 	}
 
-	handleClick() {
+	async handleClick() {
+
+		this.props.onClick(this.props.index);
+
 		if (this.state.published) {
 			return;
 		}
 
-		let newWidth = this.state.width + 30;
+		let newWidth = this.state.width + 30; // currently this = value * 30
 
 		if (newWidth > (300 - 127)) {
 			newWidth = 300 - 127;
@@ -79,7 +104,6 @@ class SubmittedWord extends Component {
 		}
 
 		this.setState({width: newWidth});
-
 	}
 
 	render() {

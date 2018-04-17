@@ -83,6 +83,14 @@ async function backPost(postIndex, value) {
     return result;
 }
 
+async function backPosts(postIndexes, voteValues) {
+    const tokenInstance = await getContract(token);
+    const account = await getCurrentAccount();
+
+    const result = await tokenInstance.backPosts(postIndexes, voteValues, { from: account })
+    return result;
+}
+
 /**
  * @summary Post a link to the contract
  */
@@ -134,4 +142,4 @@ async function getAllLinks(){
     return links
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpPostListener, setUpUserPostBackedListener, setUpPostBackedListener }
+export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpPostListener, setUpUserPostBackedListener, setUpPostBackedListener, backPosts }

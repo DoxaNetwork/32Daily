@@ -14,6 +14,11 @@ button {
 				2px 2px 8px rgba(0,0,0,.14);
 }
 
+.saveContainer {
+	padding-left: 150px;
+	margin-top: 30px;
+}
+
 
 
 button.ready {
@@ -105,7 +110,7 @@ button.ready:hover {
 }
 
 .submittedWordContainer.published .progressBar {
-	border: 2px solid #f84;
+	border: 2px solid #16d;
 }
 
 .submittedWordContainer.published .submittedWord {

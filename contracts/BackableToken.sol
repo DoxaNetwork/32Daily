@@ -241,6 +241,13 @@ contract BackableToken is BasicToken {
 		return true;
 	}
 
+	function backPosts(uint256[] _postIndexes, uint256[] voteValues) public returns (bool) {
+		for (uint i = 0; i < _postIndexes.length; i++) {
+			backPost(_postIndexes[i], voteValues[i]);
+		}
+		return true;
+	}
+
 	// this only removes the entire backing. we may want to have partial unbacks
 	function unback(address _to, uint256 _value) public returns (bool) {
 		require(_to != address(0));
