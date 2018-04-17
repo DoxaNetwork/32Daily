@@ -9,7 +9,7 @@ contract ContentPool is Ownable {
 	struct Item 
 	{
 		address poster;
-		string content;
+		bytes32 content;
 	}
 
 	uint32 public currentPoolVersion;
@@ -23,7 +23,7 @@ contract ContentPool is Ownable {
 		currentPoolVersion = 0;
 	}
 
-	function newContent(string _content) public 
+	function newContent(bytes32 _content) public 
 	returns (bool) 
 	{
 		Item memory newItem = Item(
@@ -41,13 +41,13 @@ contract ContentPool is Ownable {
 	}
 
 	function getItem(uint index) public view
-	returns (address poster, string content) 
+	returns (address poster, bytes32 content) 
 	{
 		require(index < poolLength());
 		return (itemList[currentPoolVersion][index].poster, itemList[currentPoolVersion][index].content);
 	}
 
-	function getIndex(string _content) public view
+	function getIndex(bytes32 _content) public view
 	returns (uint) 
 	{
 		bytes32 key = keccak256(currentPoolVersion, _content);

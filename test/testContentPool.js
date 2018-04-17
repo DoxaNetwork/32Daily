@@ -7,6 +7,12 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
+
+function toAscii(hex) {
+	let zeroPaddedString = web3.toAscii(hex);
+	return zeroPaddedString.split("\u0000")[0];
+}
+
 contract('ContentPool', function(accounts) {
 	let pool;
 	const string = 'Applebees';
@@ -18,7 +24,7 @@ contract('ContentPool', function(accounts) {
 
 	it("should retrieve by index", async function() {
 		const [address, content] = await pool.getItem(0);
-		assert.equal(content, string);
+		assert.equal(toAscii(content), string);
 	});
 
 	it("should retrieve by content", async function() {
@@ -26,7 +32,7 @@ contract('ContentPool', function(accounts) {
 		assert.equal(index.toNumber(), 0);
 
 		const [address, content] = await pool.getItem(index);
-		assert.equal(content, string);
+		assert.equal(toAscii(content), string);
 	});
 
 	it("should return the count of items stored in this version", async function() {
