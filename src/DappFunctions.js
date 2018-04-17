@@ -132,7 +132,7 @@ async function setUpPostBackedListener() {
 async function getAllLinks(){
     const tokenInstance = await getContract(token);
 
-    const count = await tokenInstance.getLinkTotalCount()
+    const count = await tokenInstance.getLinkCount()
     const indexesToRetrieve = [...Array(count.toNumber()).keys()]
     const functions = indexesToRetrieve.map(index => tokenInstance.getLinkByIndex(index))
     let results = await Promise.all(functions)
@@ -144,4 +144,23 @@ async function getAllLinks(){
     return links
 }
 
-export { getCurrentUser, getAllUsers, registerUser, backPost, postLink, getAllLinks, setUpPostListener, setUpUserPostBackedListener, setUpPostBackedListener, backPosts }
+async function clear() {
+    const tokenInstance = await getContract(token);
+    const account = await getCurrentAccount();
+
+    const result = await tokenInstance.clear({from: account});
+
+    return result;
+}
+
+export {getCurrentUser,
+        getAllUsers,
+        registerUser,
+        backPost,
+        postLink,
+        getAllLinks,
+        setUpPostListener,
+        setUpUserPostBackedListener,
+        setUpPostBackedListener,
+        backPosts,
+        clear }

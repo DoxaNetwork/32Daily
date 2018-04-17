@@ -10,7 +10,6 @@ import './ContentPool.sol'; //TODO - import interface instead of code itself
 // only registered members should be able to be elected
 // delete BackableTokenMock
 // split this contract into smaller contracts
-// -- pull out contentPool
 // -- pull out membership
 // -- pull out voting
 

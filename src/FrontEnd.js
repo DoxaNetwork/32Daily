@@ -1,7 +1,13 @@
 import React, { Component } from 'react'
-import { getAllLinks, postLink, backPost, backPosts } from './DappFunctions'
+import { getAllLinks, postLink, backPost, backPosts, clear } from './DappFunctions'
 
 import './FrontEnd.css'
+
+function toAscii(hex) {
+    var web3 = window.web3
+	let zeroPaddedString = web3.toAscii(hex);
+	return zeroPaddedString.split("\u0000")[0];
+}
 
 class FrontEnd extends Component {
 
@@ -20,7 +26,7 @@ class FrontEnd extends Component {
     }
 
     mapPost(post) {
-    	return {'word': post.link, 'width': post.backing.toNumber()* 30, 'index': post.index}
+    	return {'word': toAscii(post.link), 'width': post.backing.toNumber()* 30, 'index': post.index}
 
     }
 
@@ -44,6 +50,10 @@ class FrontEnd extends Component {
 
     	pendingVotes[index.toNumber()] ? pendingVotes[index.toNumber()] += 1 : pendingVotes[index.toNumber()] = 1;
     	this.setState({pendingVotes});
+    }
+
+    clear() {
+    	clear();
     }
 
 	render() {
@@ -70,6 +80,8 @@ class FrontEnd extends Component {
 						<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
 					</div>
 				</div>
+
+				<button className="save ready" onClick={this.clear.bind(this)}>Clear</button>
 
 			</div>
 		)
