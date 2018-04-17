@@ -23,12 +23,12 @@ contract ContentPool is Ownable {
 		currentPoolVersion = 0;
 	}
 
-	function newContent(bytes32 _content) public 
+	function newContent(address _poster, bytes32 _content) public 
 	returns (bool) 
 	{
 		Item memory newItem = Item(
 		{
-			poster: msg.sender,
+			poster: _poster,
 			content: _content
 		});
 
@@ -60,7 +60,7 @@ contract ContentPool is Ownable {
 		return itemList[currentPoolVersion].length;
 	}
 
-	function clear() public onlyOwner
+	function clear() public
 	returns (bool) 
 	{
 		currentPoolVersion++;

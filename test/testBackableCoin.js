@@ -1,4 +1,5 @@
 var BackableTokenMock = artifacts.require("./BackableTokenMock.sol");
+var ContentPool = artifacts.require("./ContentPool.sol");
 
 //var Web3 = require('web3');
 //var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
@@ -10,17 +11,31 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
+function toAscii(hex) {
+	let zeroPaddedString = web3.toAscii(hex);
+	return zeroPaddedString.split("\u0000")[0];
+}
+
 contract('BackableToken', function(accounts) {
 
+	let contentPool;
+	before(async function() {
+		contentPool = await ContentPool.new();
+	})
+
+	beforeEach(async function() {
+		await contentPool.clear();
+	})
+
 	it("should return the correct totalSupply after construction", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 100);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 100);
 		let totalSupply = await token.totalSupply();
 
 		assert.equal(totalSupply, 200)
 	})
 
 	it("should elect a user who holds enough token", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 100); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 100); 
 
 		await token.checkElection(accounts[0]);
 		await token.checkElection(accounts[1]);
@@ -32,7 +47,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should unelect a user if they send their token away", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
 
 		await token.transfer(accounts[1], 200, {from: accounts[0]});
 
@@ -43,14 +58,14 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should not allow sending to yourself", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
 
 		// can't back yourself, fool
 		await token.back(accounts[0], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("backing should elect", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900);
 
 		await token.checkElection(accounts[0]);
 		await token.back(accounts[1], 700, {from: accounts[0]});
@@ -62,7 +77,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("user can back a post", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900);
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 		// user 1 posts a link
 		await token.postLink("reddit.com", {from : accounts[1]});
@@ -87,7 +102,7 @@ contract('BackableToken', function(accounts) {
     })
     
     it("user cannot over-back a post", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900);
         await token.register.sendTransaction('enodios', {from: accounts[1]});
                 
 		// user 1 posts a link
@@ -101,7 +116,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should not allow double backing", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
@@ -109,7 +124,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should not allow sending tokens when they are already backed", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
@@ -117,7 +132,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should allow sending tokens after unbacking", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 		await token.unback(accounts[1], 700, {from: accounts[0]});
@@ -131,7 +146,7 @@ contract('BackableToken', function(accounts) {
 
 	// not yet implemented
 	// it("should increase token price as supply increases", async function() {
-	// 	let token = await BackableTokenMock.new(accounts[0], 5000, accounts[1], 0); 
+	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 5000, accounts[1], 0); 
 		
 	// 	let supplyOne = await token.totalSupply();
 
@@ -147,13 +162,13 @@ contract('BackableToken', function(accounts) {
 	// })
 
 	it("should not allow non-elected user to add link", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 900, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 900, accounts[1], 0);
 
 		await token.postLink("reddit.com", {from : accounts[0]}).should.be.rejectedWith('revert');
 	});
 
 	it("should allow a member with token to register a name", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
 
 		await token.createMember(accounts[0], 'enodios');
 
@@ -171,7 +186,7 @@ contract('BackableToken', function(accounts) {
 	});
 
 	it("should allow a new user to buy token and register a name", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -184,7 +199,7 @@ contract('BackableToken', function(accounts) {
 	});
 
 	// it("should allow a new user to buy a little token and register a name", async function() {
-	// 	let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
 
 	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -197,7 +212,7 @@ contract('BackableToken', function(accounts) {
 	// });
 
 	// it("should retrieve elected member by index", async function() {
-	// 	let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
 
 	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -209,7 +224,7 @@ contract('BackableToken', function(accounts) {
 	// })
 
 	// it("should retrieve unelected member by index", async function() {
-	// 	let token = await BackableTokenMock.new(accounts[0], 100, accounts[1], 0); 
+	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
 
 	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -221,200 +236,42 @@ contract('BackableToken', function(accounts) {
 	// })
 
 	it("should allow user to post Link", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 		await token.postLink("reddit.com", {from : accounts[1]});
 
-		let links = await token.links.call(0);
-		assert.equal("reddit.com",links);
+		let [index, owner, link, backing] = await token.getLinkByIndex(0);
+		assert.equal("reddit.com", toAscii(link));
+		assert.equal(accounts[1], owner);
 
 	})
 
 	it("should get link count", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 		await token.postLink("reddit.com", {from : accounts[1]});
 
-		let count = await token.getLinkTotalCount();
+		let count = await token.getLinkCount();
 		assert.equal(1, count);
 
 	})
 
-	it("should get link count of 2", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[1]});
-		await token.postLink("google.com", {from : accounts[1]});
-
-
-		let count = await token.getLinkTotalCount();
-		assert.equal(2, count);
-	})
-
-	it("should get link count of 2 for separate users", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.postLink("google.com", {from : accounts[1]});
-
-		let count = await token.getLinkTotalCount();
-		assert.equal(2, count);
-	})
-
-	it("should be able to get link and owner", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-
-		let [index, poster, link] = await token.getLinkByIndex( 0 );
-		assert.equal(index, 0);
-		assert.equal(poster, accounts[0]);
-		assert.equal(link, "reddit.com");
-	})
-
-	it("should be able to get link and owner for multiple posts", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.postLink("google.com", {from : accounts[1]});
-		await token.postLink("google.com", {from : accounts[0]});
-		await token.postLink("reddit.com", {from : accounts[1]});
-
-		let [index1, poster1, link1] = await token.getLinkByIndex( 0 );
-		assert.equal(index1, 0);
-		assert.equal(poster1, accounts[0]);
-		assert.equal(link1, "reddit.com");
-
-		let [index2, poster2, link2] = await token.getLinkByIndex( 1 );
-		assert.equal(index2, 1);
-		assert.equal(poster2, accounts[1]);
-		assert.equal(link2, "google.com");
-
-		let [index3, poster3, link3] = await token.getLinkByIndex( 2 );
-		assert.equal(index3, 2);
-		assert.equal(poster3, accounts[0]);
-		assert.equal(link3, "google.com");
-
-		let [index4, poster4, link4] = await token.getLinkByIndex( 3 );
-		assert.equal(index4, 3);
-		assert.equal(poster4, accounts[1]);
-		assert.equal(link4, "reddit.com");
-	})
-
-	it("should fail to get link and owner of negative index", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.postLink("google.com", {from : accounts[1]});
-		await token.getLinkByIndex(-1).should.be.rejectedWith('invalid opcode');
-	})
-
 	it("should fail to get link and owner of out of bound index at border", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.postLink("google.com", {from : accounts[1]});
-		await token.getLinkByIndex(2).should.be.rejectedWith('invalid opcode');
-	})
-
-	it("should fail to get link and owner of out of bound index way above", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.postLink("google.com", {from : accounts[1]});
-		await token.getLinkByIndex(20000).should.be.rejectedWith('invalid opcode');
-	})
-
-	// Start tests for publish
-	it("getPublishedContent with no content", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		assert.equal( await token.getPublishedContent(), 0);
-	})
-
-	it("getPublishedContent with some content", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.postLink("google.com", {from : accounts[1]});
-		await token.postLink("google.com", {from : accounts[0]});
-		await token.postLink("reddit.com", {from : accounts[1]});
-
-		assert.equal( await token.getPublishedContent(), 0);
-	})
-
-	it("getPublishedContentByIndex with no content", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.getPublishedContentByIndex(100).should.be.rejectedWith('invalid opcode');
-	})
-
-	it("publish content with no content", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		assert.equal( await token.getPublishedContent(), 0);
-	})
-
-	it("publish count equal zero before publishing at all", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 0);
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		// await token.postLink("google.com", {from : accounts[1]});
-		// await token.postLink("google.com", {from : accounts[0]});
-		// await token.postLink("reddit.com", {from : accounts[1]});
-		// await token.backPost(0, 1001);
-		// await token.backPost(1, 1001);
-		// await token.backPost(2, 1001);
-		// await token.backPost(3, 1001);
-
-		assert.equal( await token.getPublishedContent(), 0);
-	})
-
-	it("publish count equal zero before publishing at all 2", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
-
-		await token.postLink("reddit.com", {from : accounts[0]});
-		// await token.postLink("google.com", {from : accounts[1]});
-		// await token.postLink("google.com", {from : accounts[0]});
-		// await token.postLink("reddit.com", {from : accounts[1]});
-		await token.backPost(0, 1001, {from : accounts[1]});
-		// await token.backPost(1, 1001);
-		// await token.backPost(2, 1001);
-		// await token.backPost(3, 1001);
-
-		assert.equal( await token.getPublishedContent(), 0);
-	})
-
-	it("publish does not crash without posts", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
-
-		await token.publish();
-
-		assert.equal( 1, 1 );
+		await token.getLinkByIndex(2).should.be.rejectedWith('revert');
 	})
 
 	it("publish single post above threshold", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 2000);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 1001, {from : accounts[1]});
@@ -424,7 +281,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("publish single post below threshold", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 2000);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 999, {from : accounts[1]});
@@ -434,7 +291,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("publish twice with single post", async function() {
-		let token = await BackableTokenMock.new(accounts[0], 1000, accounts[1], 2000);
+		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 2000);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 1001, {from : accounts[1]});

@@ -19,7 +19,7 @@ contract('ContentPool', function(accounts) {
 
 	before("should store an item", async function() {
 		pool = await ContentPool.new();
-		await pool.newContent(string);
+		await pool.newContent(accounts[0], string);
 	})
 
 	it("should retrieve by index", async function() {

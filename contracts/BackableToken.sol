@@ -20,10 +20,9 @@ contract BackableToken is BasicToken, Ownable {
 
 	ContentPool contentPool;
 
-	function BackableToken() {
+	function BackableToken(address _contentPoolAddress) {
 		owner = msg.sender;
-		address newContentPool = new ContentPool();
-		contentPool = ContentPool(newContentPool);
+		contentPool = ContentPool(_contentPoolAddress);
 	}
 
 
@@ -238,30 +237,30 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	// function backPost(uint256 _postIndex, uint256 _value) public returns (bool) {
-	// 	// index must match an existing post
-	// 	require(_postIndex >= 0 && _postIndex < links.length );
-	// 	// user must have the available votes. if they don't, revert
-	// 	// TODO: automatically free up votes
-	// 	require(_value <= availableToBackPosts(msg.sender));
-	// 	// TODO can't back a post you have posted
+	function backPost(uint256 _postIndex, uint256 _value) public returns (bool) {
+		// index must match an existing post
+		require(_postIndex >= 0 && _postIndex < contentPool.poolLength() );
+		// user must have the available votes. if they don't, revert
+		// TODO: automatically free up votes
+		require(_value <= availableToBackPosts(msg.sender));
+		// TODO can't back a post you have posted
 
-	// 	// update the root mapping
-	// 	backedPosts[_postIndex][msg.sender] = backedPosts[_postIndex][msg.sender].add(_value);
+		// update the root mapping
+		backedPosts[_postIndex][msg.sender] = backedPosts[_postIndex][msg.sender].add(_value);
 
-	// 	// update the caches
-	// 	outgoingPostBackings[msg.sender] = outgoingPostBackings[msg.sender].add(_value);
-	// 	incomingPostBackings[_postIndex] = incomingPostBackings[_postIndex].add(_value);
-	// 	PostBacked(msg.sender, _postIndex, _value);
-	// 	return true;
-	// }
+		// update the caches
+		outgoingPostBackings[msg.sender] = outgoingPostBackings[msg.sender].add(_value);
+		incomingPostBackings[_postIndex] = incomingPostBackings[_postIndex].add(_value);
+		PostBacked(msg.sender, _postIndex, _value);
+		return true;
+	}
 
-	// function backPosts(uint256[] _postIndexes, uint256[] voteValues) public returns (bool) {
-	// 	for (uint i = 0; i < _postIndexes.length; i++) {
-	// 		backPost(_postIndexes[i], voteValues[i]);
-	// 	}
-	// 	return true;
-	// }
+	function backPosts(uint256[] _postIndexes, uint256[] voteValues) public returns (bool) {
+		for (uint i = 0; i < _postIndexes.length; i++) {
+			backPost(_postIndexes[i], voteValues[i]);
+		}
+		return true;
+	}
 
 	// this only removes the entire backing. we may want to have partial unbacks
 	function unback(address _to, uint256 _value) public returns (bool) {
@@ -321,20 +320,11 @@ contract BackableToken is BasicToken, Ownable {
 
 	function postLink(bytes32 link) public returns(bool) {
 		require(checkElection(msg.sender) == true);
-		contentPool.newContent(link);
+		contentPool.newContent(msg.sender, link);
 		// links.push(link);
 		// linkPosters.push(msg.sender);
-		LinkPosted(msg.sender, 0, getLinkTotalCount(), link);
+		LinkPosted(msg.sender, 0, contentPool.poolLength(), link);
 		return true;
-	}
-
-	/** 
-		* This function gets the total number of links
-		* @return the number of links
-	*/
-	function getLinkTotalCount() public view returns(uint256) {
-		// return links.length;
-		return contentPool.poolLength();
 	}
 
 	/** 
@@ -347,20 +337,28 @@ contract BackableToken is BasicToken, Ownable {
 		return (index, poster, content, incomingPostBackings[index]);
 	}
 
-	// function getPublishedContent() public view returns(uint256 numPub) {
-	// 	return publishIndex.length;
-	// }
+	function getLinkCount() public view
+	returns (uint)
+	{
+		return contentPool.poolLength();
+	}
 
-	// function getPublishedContentByIndex( uint256 index ) public view returns( uint256, address owner, string link, uint256 backing ) {
-	// 	return getLinkByIndex(publishIndex[index]);
-	// }
+	function getPublishedContent() public view returns(uint256 numPub) {
+		return publishIndex.length;
+	}
 
-	// function publish() public {
-	// 	publishIndex.length = 0;
-	// 	for (uint i = 0; i < links.length; i++) {
-	// 		if( incomingPostBackings[i] >= ELECTION_THRESHOLD) {
-	// 			publishIndex.push(i);
-	// 		}
-	// 	}
-	// }
+	function clear() public returns (bool){
+		contentPool.clear();
+		return true;
+	}
+
+	function publish() public returns (bool){
+		publishIndex.length = 0;
+		for (uint i = 0; i < contentPool.poolLength(); i++) {
+			if( incomingPostBackings[i] >= ELECTION_THRESHOLD) {
+				publishIndex.push(i);
+			}
+		}
+		return true;
+	}
 }
