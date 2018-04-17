@@ -11,7 +11,9 @@ async function getContract(contract) {
     let results = await getWeb3
     contract.setProvider(results.web3.currentProvider)
     // option 1: will find the address from the ./build/contracts/.json file
-    return contract.deployed() 
+    window.contract = await contract.deployed();
+    return window.contract;
+    // return contract.deployed() 
 
     // option 2: will always look for the same contract, currently the one that Travis
     //           deployed to the Ropsten test network
