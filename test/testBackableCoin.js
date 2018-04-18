@@ -1,5 +1,6 @@
 var BackableTokenMock = artifacts.require("./BackableTokenMock.sol");
 var ContentPool = artifacts.require("./ContentPool.sol");
+var MemberRegistry = artifacts.require("./MemberRegistry.sol");
 
 //var Web3 = require('web3');
 //var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
@@ -19,8 +20,10 @@ function toAscii(hex) {
 contract('BackableToken', function(accounts) {
 
 	let contentPool;
+	let memberRegistry;
 	before(async function() {
 		contentPool = await ContentPool.new();
+		memberRegistry = await MemberRegistry.new();
 	})
 
 	beforeEach(async function() {
@@ -28,56 +31,21 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should return the correct totalSupply after construction", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 100);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 100, accounts[1], 100);
 		let totalSupply = await token.totalSupply();
 
 		assert.equal(totalSupply, 200)
 	})
 
-	it("should elect a user who holds enough token", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 100); 
-
-		await token.checkElection(accounts[0]);
-		await token.checkElection(accounts[1]);
-
-		let AIsElected = await token.isElected(accounts[0]);
-		let BIsElected = await token.isElected(accounts[1]);
-		assert.equal(AIsElected, true);
-		assert.equal(BIsElected, false);
-	})
-
-	it("should unelect a user if they send their token away", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
-
-		await token.transfer(accounts[1], 200, {from: accounts[0]});
-
-		let AIsElected = await token.isElected(accounts[0]);
-		let BIsElected = await token.isElected(accounts[1]);
-		assert.equal(AIsElected, false);
-		assert.equal(BIsElected, true);
-	})
-
 	it("should not allow sending to yourself", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900); 
 
 		// can't back yourself, fool
 		await token.back(accounts[0], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
-	it("backing should elect", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900);
-
-		await token.checkElection(accounts[0]);
-		await token.back(accounts[1], 700, {from: accounts[0]});
-
-		let AIsElected = await token.isElected(accounts[0]);
-		let BIsElected = await token.isElected(accounts[1]);
-		assert.equal(AIsElected, true);
-		assert.equal(BIsElected, true);
-	})
-
 	it("user can back a post", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 		// user 1 posts a link
 		await token.postLink("reddit.com", {from : accounts[1]});
@@ -102,7 +70,7 @@ contract('BackableToken', function(accounts) {
     })
     
     it("user cannot over-back a post", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
         await token.register.sendTransaction('enodios', {from: accounts[1]});
                 
 		// user 1 posts a link
@@ -116,7 +84,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should not allow double backing", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
@@ -124,7 +92,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should not allow sending tokens when they are already backed", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 900); 
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
@@ -132,7 +100,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should allow sending tokens after unbacking", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0); 
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0); 
 
 		await token.back(accounts[1], 700, {from: accounts[0]});
 		await token.unback(accounts[1], 700, {from: accounts[0]});
@@ -144,99 +112,19 @@ contract('BackableToken', function(accounts) {
 		assert.equal(firstAccountBalance, 1000 - 400);
 	})
 
-	// not yet implemented
-	// it("should increase token price as supply increases", async function() {
-	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 5000, accounts[1], 0); 
-		
-	// 	let supplyOne = await token.totalSupply();
+	it("should allow a user to register a name and receive token", async function() {
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 0, accounts[1], 0); 
 
-	// 	await token.send(new web3.BigNumber(web3.toWei(5,'ether')));
-	// 	let supplyTwo = await token.totalSupply();
+		await token.register('enodios');
 
-	// 	await token.send(new web3.BigNumber(web3.toWei(5,'ether')));
-	// 	let supplyThree = await token.totalSupply();
+		let [username, address, balance, backing, availableToBack] = await token.getMemberByAddress(accounts[0]);
 
-	// 	let firstDispersal = supplyTwo - supplyOne;
-	// 	let secondDispersal = supplyThree - supplyTwo;
-	// 	assert.ok(secondDispersal < firstDispersal);
-	// })
-
-	it("should not allow non-elected user to add link", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 900, accounts[1], 0);
-
-		await token.postLink("reddit.com", {from : accounts[0]}).should.be.rejectedWith('revert');
+		assert.equal(toAscii(username), 'enodios');
+		assert.equal(balance.toNumber(), 1000);
 	});
-
-	it("should allow a member with token to register a name", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
-
-		await token.createMember(accounts[0], 'enodios');
-
-		let [address, username, active, elected, balance, backing] = await token.findMemberByAddress(accounts[0]);
-
-		assert.equal(username, 'enodios');
-		assert.equal(active, true);
-		assert.equal(elected, false);
-
-		let [address2, username2, active2, elected2, balance2, backing2] = await token.findMemberByUserName('enodios');
-
-		assert.equal(username2, 'enodios');
-		assert.equal(active2, true);
-		assert.equal(elected2, false);
-	});
-
-	it("should allow a new user to buy token and register a name", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
-
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-		let [address, username, active, elected, balance, backing] = await token.findMemberByAddress(accounts[1]);
-		
-		assert.ok(balance == 1000);
-		assert.equal(username, 'enodios');
-		assert.equal(active, true);
-		assert.equal(elected, true);
-	});
-
-	// it("should allow a new user to buy a little token and register a name", async function() {
-	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
-
-	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-	// 	let [address, username, active, elected, balance, backing] = await token.findMemberByAddress(accounts[1]);
-		
-	// 	assert.ok(balance < 1000);
-	// 	assert.equal(username, 'enodios');
-	// 	assert.equal(active, true);
-	// 	assert.equal(elected, false);
-	// });
-
-	// it("should retrieve elected member by index", async function() {
-	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
-
-	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-	// 	let [address, username, active, elected, balance, backing] = await token.findMemberByIndex(0);
-
-	// 	assert.equal(username, 'enodios');
-	// 	assert.equal(active, true);
-	// 	assert.equal(elected, true);
-	// })
-
-	// it("should retrieve unelected member by index", async function() {
-	// 	let token = await BackableTokenMock.new(contentPool.address, accounts[0], 100, accounts[1], 0); 
-
-	// 	await token.register.sendTransaction('enodios', {from: accounts[1]});
-
-	// 	let [address, username, active, elected, balance, backing] = await token.findMemberByIndex(0);
-
-	// 	assert.equal(username, 'enodios');
-	// 	assert.equal(active, true);
-	// 	assert.equal(elected, false);
-	// })
 
 	it("should allow user to post Link", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -249,7 +137,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should get link count", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -261,7 +149,7 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should fail to get link and owner of out of bound index at border", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 0);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0);
 
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
@@ -271,27 +159,31 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("publish single post above threshold", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 2000);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 1001, {from : accounts[1]});
 		await token.publish();
 
-		assert.equal( await token.getPublishedContent(), 1 );
+		result = await token.getPublishedContent();
+
+		assert.equal( result.toNumber(), 1 );
 	})
 
 	it("publish single post below threshold", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 2000);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.backPost(0, 999, {from : accounts[1]});
+		await token.backPost(0, 9, {from : accounts[1]});
 		await token.publish();
 
-		assert.equal( await token.getPublishedContent(), 0 );
+		result = await token.getPublishedContent();
+
+		assert.equal( result.toNumber(), 0 );
 	})
 
 	it("publish twice with single post", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, accounts[0], 1000, accounts[1], 2000);
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
 
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 1001, {from : accounts[1]});

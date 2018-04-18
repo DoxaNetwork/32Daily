@@ -34,6 +34,7 @@ contract ContentPool is Ownable {
 
 		itemList[currentPoolVersion].push(newItem);
 
+		// todo we don't need this anymore
 		bytes32 key = keccak256(currentPoolVersion, _content);
 		hashIndexMap[key] = itemList[currentPoolVersion].length-1;
 
