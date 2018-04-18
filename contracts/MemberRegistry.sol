@@ -2,9 +2,6 @@ pragma solidity ^0.4.18;
 
 contract MemberRegistry {
 
-	//first step: move all membership data structures
-	//second step? move all membership logic
-
 	struct Member {
 		bytes32 name;
 		address owner;

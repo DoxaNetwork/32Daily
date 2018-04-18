@@ -171,11 +171,41 @@ contract('BackableToken', function(accounts) {
 		blockLength = await token.getVersionLength(version);
 
 		// what is this item?
-		const [poster, content] = await token.getPublishedItem(version,length-1);
+		const [poster, content] = await token.getPublishedItem(version,blockLength-1);
 		// console.log("content: " + toAscii(content))
 
 		assert.equal(toAscii(content), 'reddit.com');
 		// assert.equal( result.toNumber(), 1 );
+	})
+
+	it("should clear incoming post votes", async function() {
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.backPost(0, 10, {from : accounts[1]});
+		
+		const votesBefore = await token.totalPostBacking(0);
+		assert.equal(votesBefore.toNumber(), 10);
+
+		await token.clear();
+
+		const votesAfter = await token.totalPostBacking(0);
+		assert.equal(votesAfter.toNumber(), 0);
+	})
+
+	it("should clear outgoing post votes", async function() {
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 10);
+
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.backPost(0, 10, {from : accounts[1]});
+		
+		const votesAvailableBefore = await token.availableToBackPosts(accounts[1]);
+		assert.equal(votesAvailableBefore.toNumber(), 0);
+		
+		await token.clear();
+
+		const votesAvailableAfter = await token.availableToBackPosts(accounts[1]);
+		assert.equal(votesAvailableAfter.toNumber(), 10);
 	})
 
 	// it("publish single post below threshold", async function() {

@@ -17,13 +17,15 @@ contract ContentPool is Ownable {
 	mapping (uint => Item[]) public itemList;
 	mapping (bytes32 => uint) public hashIndexMap;
 
-	function ContentPool() public 
+	function ContentPool() 
+	public 
 	{
 		owner = msg.sender;
 		currentVersion = 0;
 	}
 
-	function newContent(address _poster, bytes32 _content) public 
+	function newContent(address _poster, bytes32 _content) 
+	public 
 	returns (bool) 
 	{
 		Item memory newItem = Item(

@@ -33,7 +33,6 @@ contract BackableToken is BasicToken, Ownable {
 	// backer -> (backee -> amount)
 	mapping (address => mapping (address => uint256)) internal backed;
 
-	// is it better to store these or calculate them on the fly from `backed`?
 	// address -> total amount already backing someone else
 	mapping (address => uint256) internal outgoing; // outgoing backs
 	// address -> total amount backing this address
@@ -41,14 +40,12 @@ contract BackableToken is BasicToken, Ownable {
 
 
 	// ======================= data about POST BACKINGS ================================
-	// postIndex -> (backer -> amount)
-	mapping (uint256 => mapping (address => uint256)) internal backedPosts;
-
-	// backer -> postIndex
-	mapping (address => uint256) internal outgoingPostBackings;
+	// sha3(version,backer) -> postIndex
+	mapping (bytes32 => uint256) internal outgoingPostBackings;
 	
-	// postIndex -> total amount backing this post
-	mapping (uint256 => uint256) internal incomingPostBackings;
+	// sha3(version,postIndex) -> total amount backing this post
+	mapping (bytes32 => uint256) internal incomingPostBackings;
+	// uint[] internal incomingPostBackings; // this would have to be kept the same size as itemList[version]
 
 	// {version1: [content1_index, content2_index], version2: [content3_index, content4_index]}
 	// todo: this second int could be quite small (limited by number of posts in each version)
@@ -107,13 +104,15 @@ contract BackableToken is BasicToken, Ownable {
 
 	// return total held minus total outgoing backed
 	function availableToSend(address _adress) constant internal returns (uint256 available) {
+		// TODO this must take into account quantity backing posts
 		return balances[_adress].sub(outgoing[_adress]);
 	}
 
 	// return total held minus total outgoing backed towards posts
 	// TODO these calculations should only occur internally when necessary. usually the client can calculate this 
 	function availableToBackPosts(address _address) constant public returns (uint256 available) {
-		return balances[_address].sub(outgoingPostBackings[_address]);
+		bytes32 ownerKey = keccak256(contentPool.currentVersion(), _address);
+		return balances[_address].sub(outgoingPostBackings[ownerKey]);
 	}
 
 	// return total held plus total incoming backed
@@ -122,7 +121,8 @@ contract BackableToken is BasicToken, Ownable {
 	}
 
 	function totalPostBacking(uint256 _index) constant public returns (uint256 total) {
-		return incomingPostBackings[_index]; // make this public so we can remove this getter function
+		bytes32 postKey = keccak256(contentPool.currentVersion(), _index);
+		return incomingPostBackings[postKey]; // make this public so we can remove this getter function
 	}
 
 	function back(address _to, uint256 _value) public returns (bool) {
@@ -141,7 +141,8 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function backPost(uint256 _postIndex, uint256 _value) public returns (bool) {
+	function backPost(uint256 _postIndex, uint256 _value) public 
+	returns (bool) {
 		// index must match an existing post
 		require(_postIndex >= 0 && _postIndex < contentPool.poolLength() );
 		// user must have the available votes. if they don't, revert
@@ -149,17 +150,19 @@ contract BackableToken is BasicToken, Ownable {
 		require(_value <= availableToBackPosts(msg.sender));
 		// TODO can't back a post you have posted
 
-		// update the root mapping
-		backedPosts[_postIndex][msg.sender] = backedPosts[_postIndex][msg.sender].add(_value);
-
-		// update the caches
-		outgoingPostBackings[msg.sender] = outgoingPostBackings[msg.sender].add(_value);
-		incomingPostBackings[_postIndex] = incomingPostBackings[_postIndex].add(_value);
+		// this tells us how many votes a person has cast
+		bytes32 ownerKey = keccak256(contentPool.currentVersion(), msg.sender);
+		outgoingPostBackings[ownerKey] = outgoingPostBackings[ownerKey].add(_value);
+		// this tells us how many votes a post has received 
+		bytes32 postKey = keccak256(contentPool.currentVersion(), _postIndex);
+		incomingPostBackings[postKey] = incomingPostBackings[postKey].add(_value);
 		PostBacked(msg.sender, _postIndex, _value);
 		return true;
 	}
 
-	function backPosts(uint256[] _postIndexes, uint256[] voteValues) public returns (bool) {
+	function backPosts(uint256[] _postIndexes, uint256[] voteValues) public 
+	returns (bool) 
+	{
 		for (uint i = 0; i < _postIndexes.length; i++) {
 			backPost(_postIndexes[i], voteValues[i]);
 		}
@@ -167,7 +170,9 @@ contract BackableToken is BasicToken, Ownable {
 	}
 
 	// this only removes the entire backing. we may want to have partial unbacks
-	function unback(address _to, uint256 _value) public returns (bool) {
+	function unback(address _to, uint256 _value) public 
+	returns (bool) 
+	{
 		require(_to != address(0));
 		require(_to != msg.sender); // can't unback yourself, fool
 		require(backed[msg.sender][_to] != 0);
@@ -183,7 +188,9 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function transfer(address _to, uint256 _value) public returns (bool) {
+	function transfer(address _to, uint256 _value) public 
+	returns (bool) 
+	{
 		require(_to != address(0));
 		// we override transfer to replace balances[] with availableToSend[] in the next line
     	require(_value <= availableToSend(msg.sender));
@@ -209,7 +216,9 @@ contract BackableToken is BasicToken, Ownable {
 		mint(msg.sender, dispersal);
 	}
 	
-	function mint(address _to, uint256 _quantity) private returns (bool) {
+	function mint(address _to, uint256 _quantity) private 
+	returns (bool) 
+	{
 		totalSupply_ = totalSupply_.add(_quantity);
 		balances[_to] = balances[_to].add(_quantity); // TODO just use transfer here
 		Mint(_to, _quantity);
@@ -217,7 +226,9 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function postLink(bytes32 link) public returns(bool) {
+	function postLink(bytes32 link) public 
+	returns(bool) 
+	{
 		contentPool.newContent(msg.sender, link);
 		// links.push(link);
 		// linkPosters.push(msg.sender);
@@ -230,9 +241,12 @@ contract BackableToken is BasicToken, Ownable {
 		* @param index the index of the link to get
 		* @return a tuple with the owner and link at the index 
 	*/
-	function getLinkByIndex( uint256 index ) public view returns( uint256, address owner, bytes32 link, uint256 backing ) {
+	function getLinkByIndex( uint256 index ) public view 
+	returns( uint256, address owner, bytes32 link, uint256 backing ) 
+	{
 		var (poster, content) = contentPool.getItem(index);
-		return (index, poster, content, incomingPostBackings[index]);
+		bytes32 postKey = keccak256(contentPool.currentVersion(), index);
+		return (index, poster, content, incomingPostBackings[postKey]);
 	}
 
 	function getLinkCount() public view
@@ -240,10 +254,6 @@ contract BackableToken is BasicToken, Ownable {
 	{
 		return contentPool.poolLength();
 	}
-
-	// function getPublishedContent() public view returns(uint256 numPub) {
-	// 	return publishIndex.length;
-	// }
 
 	function clear() public 
 	returns (bool)
@@ -262,14 +272,11 @@ contract BackableToken is BasicToken, Ownable {
 	returns (bool)
 	{
 		uint numPublished = 0;
-		// publishIndex.length = 0;
 		for (uint i = 0; i < contentPool.poolLength(); i++) {
-			if( incomingPostBackings[i] >= PUBLISH_THRESHOLD) {
-				// mapping (uint => uint[]) publishedContent;
+			bytes32 postKey = keccak256(contentPool.currentVersion(), i);
+			if( incomingPostBackings[postKey] >= PUBLISH_THRESHOLD) {
 				numPublished++;
 				publishedContent[contentPool.currentVersion()].push(i);
-				// publishIndex.push(i);
-				// publishIndex.push([contentPool.currentPoolVersion, i]);
 			}
 		}
 		Published(numPublished);
