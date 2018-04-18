@@ -23,7 +23,9 @@ contract BackableToken is BasicToken, Ownable {
 
 	uint PUBLISH_THRESHOLD = 6;
 
-	function BackableToken(address _contentPoolAddress, address _memberRegistryAddress) {
+	function BackableToken(address _contentPoolAddress, address _memberRegistryAddress) 
+	public 
+	{
 		owner = msg.sender;
 		contentPool = ContentPool(_contentPoolAddress);
 		memberRegistry = MemberRegistry(_memberRegistryAddress);
