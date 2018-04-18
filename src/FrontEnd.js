@@ -1,5 +1,5 @@
-import React, { Component } from 'react'
-import { getAllLinks, postLink, backPost, backPosts, clear } from './DappFunctions'
+ import React, { Component } from 'react'
+import { getAllLinks, postLink, backPost, backPosts, clear, publish, getAllPastWords } from './DappFunctions'
 
 import './FrontEnd.css'
 
@@ -15,6 +15,7 @@ class FrontEnd extends Component {
 		super(props);
 		this.state = {
 			'submittedWords': [],
+			'publishedWords': [],
 			'pendingVotes': {}
 		}
 	}
@@ -22,7 +23,9 @@ class FrontEnd extends Component {
 	async componentWillMount() {
         const posts = await getAllLinks();
         const postObjs = posts.map(postObj => this.mapPost(postObj))
-        this.setState({'submittedWords': postObjs})
+
+        const publishedWords = await getAllPastWords();
+        this.setState({publishedWords, 'submittedWords': postObjs})
     }
 
     mapPost(post) {
@@ -52,12 +55,13 @@ class FrontEnd extends Component {
     	this.setState({pendingVotes});
     }
 
-    clear() {
-    	clear();
+    async publish() {
+    	await publish();
+    	await clear();
     }
 
 	render() {
-		const publishedWords = this.props.publishedWords.map(word => 
+		const publishedWords = this.state.publishedWords.map(word => 
 			<div>
 				<PublishedWord word={word} />
 				<img src="right-arrow.svg"/>
@@ -81,7 +85,7 @@ class FrontEnd extends Component {
 					</div>
 				</div>
 
-				<button className="save ready" onClick={this.clear.bind(this)}>Clear</button>
+				<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>
 
 			</div>
 		)
@@ -96,7 +100,7 @@ class SubmittedWord extends Component {
 		super(props);
 		this.state = { 
 			width: this.props.width,
-			published: false,
+			published: this.props.width >= 180,
 		}
 	}
 

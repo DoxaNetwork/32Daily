@@ -48,4 +48,14 @@ contract('ContentPool', function(accounts) {
 
 		await pool.getItem(0).should.be.rejectedWith('revert');;
 	});
+
+	it("should retrieve past content after clearing the pool", async function () {
+		await pool.clear();
+
+		const length = await pool.poolLength();
+		assert.equal(length, 0);
+
+		const [address, content] = await pool.getPastItem(0,0);
+		assert.equal(toAscii(content), string);
+	});
 })

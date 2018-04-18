@@ -12,7 +12,7 @@ contract ContentPool is Ownable {
 		bytes32 content;
 	}
 
-	uint32 public currentPoolVersion;
+	uint32 public currentVersion;
 
 	mapping (uint => Item[]) public itemList;
 	mapping (bytes32 => uint) public hashIndexMap;
@@ -20,7 +20,7 @@ contract ContentPool is Ownable {
 	function ContentPool() public 
 	{
 		owner = msg.sender;
-		currentPoolVersion = 0;
+		currentVersion = 0;
 	}
 
 	function newContent(address _poster, bytes32 _content) public 
@@ -32,39 +32,45 @@ contract ContentPool is Ownable {
 			content: _content
 		});
 
-		itemList[currentPoolVersion].push(newItem);
+		itemList[currentVersion].push(newItem);
 
 		// todo we don't need this anymore
-		bytes32 key = keccak256(currentPoolVersion, _content);
-		hashIndexMap[key] = itemList[currentPoolVersion].length-1;
+		bytes32 key = keccak256(currentVersion, _content);
+		hashIndexMap[key] = itemList[currentVersion].length-1;
 
 		return true;
 	}
 
-	function getItem(uint index) public view
+	function getItem(uint _index) public view
 	returns (address poster, bytes32 content) 
 	{
-		require(index < poolLength());
-		return (itemList[currentPoolVersion][index].poster, itemList[currentPoolVersion][index].content);
+		require(_index < poolLength());
+		return (itemList[currentVersion][_index].poster, itemList[currentVersion][_index].content);
 	}
 
 	function getIndex(bytes32 _content) public view
 	returns (uint) 
 	{
-		bytes32 key = keccak256(currentPoolVersion, _content);
+		bytes32 key = keccak256(currentVersion, _content);
 		return hashIndexMap[key];
+	}
+
+	function getPastItem(uint32 _poolVersion, uint _index) public view
+	returns (address poster, bytes32 content) 
+	{
+		return (itemList[_poolVersion][_index].poster, itemList[_poolVersion][_index].content);
 	}
 
 	function poolLength() public view 
 	returns (uint) 
 	{
-		return itemList[currentPoolVersion].length;
+		return itemList[currentVersion].length;
 	}
 
 	function clear() public
 	returns (bool) 
 	{
-		currentPoolVersion++;
+		currentVersion++;
 		return true;
 	}
 }

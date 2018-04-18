@@ -11,8 +11,8 @@ import './MemberRegistry.sol'; //TODO - import interface instead of code itself
 // only registered members should be able to be elected
 // delete BackableTokenMock
 // split this contract into smaller contracts
-// -- pull out membership
 // -- pull out voting
+// -- pull out published history 
 
 // switch tests and app to use ethjS
 
@@ -21,7 +21,7 @@ contract BackableToken is BasicToken, Ownable {
 	ContentPool contentPool;
 	MemberRegistry memberRegistry;
 
-	uint PUBLISH_THRESHOLD = 10;
+	uint PUBLISH_THRESHOLD = 6;
 
 	function BackableToken(address _contentPoolAddress, address _memberRegistryAddress) {
 		owner = msg.sender;
@@ -50,7 +50,21 @@ contract BackableToken is BasicToken, Ownable {
 	// postIndex -> total amount backing this post
 	mapping (uint256 => uint256) internal incomingPostBackings;
 
-	uint256[] publishIndex;
+	// {version1: [content1_index, content2_index], version2: [content3_index, content4_index]}
+	// todo: this second int could be quite small (limited by number of posts in each version)
+	mapping (uint32 => uint[]) private publishedContent;
+
+	function getVersionLength(uint32 version) public view
+	returns (uint) {
+		return publishedContent[version].length;
+	}
+
+	function getPublishedItem(uint32 version, uint index) public view
+	returns (address poster, bytes32 content)
+	{
+		uint poolIndex = publishedContent[version][index];
+		return contentPool.getPastItem(version, poolIndex);
+	}
 
 	// ========================= events ==================================================
 	event Mint(address indexed to, uint256 _amount);
@@ -59,6 +73,7 @@ contract BackableToken is BasicToken, Ownable {
 	// event MemberCreated();
 	// event ElectionChange();
 	// event BackingChange();
+	event Published(uint numPublished);
 
 
 	function memberCount() public view 
@@ -226,22 +241,38 @@ contract BackableToken is BasicToken, Ownable {
 		return contentPool.poolLength();
 	}
 
-	function getPublishedContent() public view returns(uint256 numPub) {
-		return publishIndex.length;
-	}
+	// function getPublishedContent() public view returns(uint256 numPub) {
+	// 	return publishIndex.length;
+	// }
 
-	function clear() public returns (bool){
+	function clear() public 
+	returns (bool)
+	{
 		contentPool.clear();
 		return true;
 	}
 
-	function publish() public returns (bool){
-		publishIndex.length = 0;
+	function currentVersion() public view
+	returns (uint32)
+	{
+		return contentPool.currentVersion();
+	}
+
+	function publish() public 
+	returns (bool)
+	{
+		uint numPublished = 0;
+		// publishIndex.length = 0;
 		for (uint i = 0; i < contentPool.poolLength(); i++) {
 			if( incomingPostBackings[i] >= PUBLISH_THRESHOLD) {
-				publishIndex.push(i);
+				// mapping (uint => uint[]) publishedContent;
+				numPublished++;
+				publishedContent[contentPool.currentVersion()].push(i);
+				// publishIndex.push(i);
+				// publishIndex.push([contentPool.currentPoolVersion, i]);
 			}
 		}
+		Published(numPublished);
 		return true;
 	}
 }

@@ -7,6 +7,12 @@ const token = contract(BackableTokenContract)
 
 const simpleCache = {};  // This can be used for simple objects, like the current user's account address
 
+
+function toAscii(hex) {
+    let zeroPaddedString = window.web3.toAscii(hex);
+    return zeroPaddedString.split("\u0000")[0];
+}
+
 async function getContract(contract) {
     let results = await getWeb3
     contract.setProvider(results.web3.currentProvider)
@@ -144,6 +150,25 @@ async function getAllLinks(){
     return links
 }
 
+async function getAllPastWords() {
+    const tokenInstance = await getContract(token);
+
+    let words = []
+    const version = await tokenInstance.currentVersion();
+    for (let v = 0; v <= version.toNumber(); v++) {
+        const blockLength = await tokenInstance.getVersionLength(v);
+        const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
+        const functions = indexesToRetrieve.map(i => tokenInstance.getPublishedItem(v, i))
+
+        let results = await Promise.all(functions)
+
+        for (const [owner, content] of results) {
+            words.push(toAscii(content))
+        }
+    }
+    return words;
+}
+
 async function clear() {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
@@ -151,6 +176,21 @@ async function clear() {
     const result = await tokenInstance.clear({from: account});
 
     return result;
+}
+
+async function publish() {
+    const tokenInstance = await getContract(token);
+    const account = await getCurrentAccount();
+
+    const result = await tokenInstance.publish({from: account});
+    const version = await tokenInstance.currentVersion();
+    const blockLength = await tokenInstance.getVersionLength(version);
+    console.log(version.toNumber(), blockLength.toNumber());
+
+    const [owner, content] = await tokenInstance.getPublishedItem(0,0);
+    console.log(toAscii(content));
+
+    // return result;
 }
 
 export {getCurrentUser,
@@ -163,4 +203,6 @@ export {getCurrentUser,
         setUpUserPostBackedListener,
         setUpPostBackedListener,
         backPosts,
-        clear }
+        clear,
+        publish,
+        getAllPastWords }
