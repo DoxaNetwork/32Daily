@@ -51,12 +51,14 @@ contract BackableToken is BasicToken, Ownable {
 	// todo: this second int could be quite small (limited by number of posts in each version)
 	mapping (uint32 => uint[]) private publishedContent;
 
-	function getVersionLength(uint32 version) public view
+	function getVersionLength(uint32 version) 
+	public view
 	returns (uint) {
 		return publishedContent[version].length;
 	}
 
-	function getPublishedItem(uint32 version, uint index) public view
+	function getPublishedItem(uint32 version, uint index) 
+	public view
 	returns (address poster, bytes32 content)
 	{
 		uint poolIndex = publishedContent[version][index];
@@ -73,27 +75,31 @@ contract BackableToken is BasicToken, Ownable {
 	event Published(uint numPublished);
 
 
-	function memberCount() public view 
+	function memberCount() 
+	public view 
 	returns (uint count) 
 	{
 		return memberRegistry.memberCount();
 	}
 
-	function getMember(uint _index) public view 
+	function getMember(uint _index) 
+	public view 
 	returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToBackPosts_) 
 	{
 		var (name, owner) = memberRegistry.getMember(_index);
 		return (name, owner, balances[owner], incoming[owner], availableToBackPosts(owner));
 	}
 
-	function getMemberByAddress(address _owner) public view 
+	function getMemberByAddress(address _owner) 
+	public view 
 	returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToBackPosts_) 
 	{
 		var (name, owner) = memberRegistry.getMemberByAddress(_owner);
 		return (name, owner, balances[owner], incoming[owner], availableToBackPosts(owner));
 	}
 
-	function register(bytes32 _name) public 
+	function register(bytes32 _name) 
+	public 
 	returns (bool) 
 	{
 		uint256 dispersal = 1000; 
@@ -103,29 +109,39 @@ contract BackableToken is BasicToken, Ownable {
 	}
 
 	// return total held minus total outgoing backed
-	function availableToSend(address _adress) constant internal returns (uint256 available) {
+	function availableToSend(address _adress) 
+	view internal 
+	returns (uint256 available) {
 		// TODO this must take into account quantity backing posts
 		return balances[_adress].sub(outgoing[_adress]);
 	}
 
 	// return total held minus total outgoing backed towards posts
 	// TODO these calculations should only occur internally when necessary. usually the client can calculate this 
-	function availableToBackPosts(address _address) constant public returns (uint256 available) {
+	function availableToBackPosts(address _address) 
+	view public 
+	returns (uint256 available) {
 		bytes32 ownerKey = keccak256(contentPool.currentVersion(), _address);
 		return balances[_address].sub(outgoingPostBackings[ownerKey]);
 	}
 
 	// return total held plus total incoming backed
-	function totalBacking(address _to) constant public returns (uint256 total) {
+	function totalBacking(address _to)
+	view public
+	returns (uint256 total) {
 		return balances[_to].add(incoming[_to]);
 	}
 
-	function totalPostBacking(uint256 _index) constant public returns (uint256 total) {
+	function totalPostBacking(uint256 _index)
+	view public 
+	returns (uint256 total) {
 		bytes32 postKey = keccak256(contentPool.currentVersion(), _index);
 		return incomingPostBackings[postKey]; // make this public so we can remove this getter function
 	}
 
-	function back(address _to, uint256 _value) public returns (bool) {
+	function back(address _to, uint256 _value) 
+	public 
+	returns (bool) {
 		require(_to != address(0));
 		require(_to != msg.sender); // can't back yourself, fool
 		require(_value <= balances[msg.sender]); // TODO unnecessary?
@@ -141,7 +157,8 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function backPost(uint256 _postIndex, uint256 _value) public 
+	function backPost(uint256 _postIndex, uint256 _value) 
+	public 
 	returns (bool) {
 		// index must match an existing post
 		require(_postIndex >= 0 && _postIndex < contentPool.poolLength() );
@@ -160,7 +177,8 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function backPosts(uint256[] _postIndexes, uint256[] voteValues) public 
+	function backPosts(uint256[] _postIndexes, uint256[] voteValues) 
+	public 
 	returns (bool) 
 	{
 		for (uint i = 0; i < _postIndexes.length; i++) {
@@ -170,7 +188,8 @@ contract BackableToken is BasicToken, Ownable {
 	}
 
 	// this only removes the entire backing. we may want to have partial unbacks
-	function unback(address _to, uint256 _value) public 
+	function unback(address _to, uint256 _value) 
+	public 
 	returns (bool) 
 	{
 		require(_to != address(0));
@@ -188,7 +207,8 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function transfer(address _to, uint256 _value) public 
+	function transfer(address _to, uint256 _value) 
+	public 
 	returns (bool) 
 	{
 		require(_to != address(0));
@@ -206,7 +226,9 @@ contract BackableToken is BasicToken, Ownable {
 	}
 	
 	// TODO this is being accidentally called when transactions are missing input data
-	function () private payable {
+	function () 
+	private payable 
+	{
 		// finney = milliether, szabo = microether
 		// TODO decide on price curve
 		// uint256 price = 1 finney + SafeMath.mul(5 szabo, totalSupply);
@@ -216,7 +238,8 @@ contract BackableToken is BasicToken, Ownable {
 		mint(msg.sender, dispersal);
 	}
 	
-	function mint(address _to, uint256 _quantity) private 
+	function mint(address _to, uint256 _quantity) 
+	private 
 	returns (bool) 
 	{
 		totalSupply_ = totalSupply_.add(_quantity);
@@ -226,7 +249,8 @@ contract BackableToken is BasicToken, Ownable {
 		return true;
 	}
 
-	function postLink(bytes32 link) public 
+	function postLink(bytes32 link) 
+	public 
 	returns(bool) 
 	{
 		contentPool.newContent(msg.sender, link);
@@ -241,7 +265,8 @@ contract BackableToken is BasicToken, Ownable {
 		* @param index the index of the link to get
 		* @return a tuple with the owner and link at the index 
 	*/
-	function getLinkByIndex( uint256 index ) public view 
+	function getLinkByIndex( uint256 index ) 
+	public view 
 	returns( uint256, address owner, bytes32 link, uint256 backing ) 
 	{
 		var (poster, content) = contentPool.getItem(index);
@@ -249,26 +274,30 @@ contract BackableToken is BasicToken, Ownable {
 		return (index, poster, content, incomingPostBackings[postKey]);
 	}
 
-	function getLinkCount() public view
+	function getLinkCount() 
+	public view
 	returns (uint)
 	{
 		return contentPool.poolLength();
 	}
 
-	function clear() public 
+	function clear() 
+	public 
 	returns (bool)
 	{
 		contentPool.clear();
 		return true;
 	}
 
-	function currentVersion() public view
+	function currentVersion() 
+	public view
 	returns (uint32)
 	{
 		return contentPool.currentVersion();
 	}
 
-	function publish() public 
+	function publish() 
+	public 
 	returns (bool)
 	{
 		uint numPublished = 0;

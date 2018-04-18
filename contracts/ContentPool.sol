@@ -43,33 +43,38 @@ contract ContentPool is Ownable {
 		return true;
 	}
 
-	function getItem(uint _index) public view
+	function getItem(uint _index) 
+	public view
 	returns (address poster, bytes32 content) 
 	{
 		require(_index < poolLength());
 		return (itemList[currentVersion][_index].poster, itemList[currentVersion][_index].content);
 	}
 
-	function getIndex(bytes32 _content) public view
+	function getIndex(bytes32 _content) 
+	public view
 	returns (uint) 
 	{
 		bytes32 key = keccak256(currentVersion, _content);
 		return hashIndexMap[key];
 	}
 
-	function getPastItem(uint32 _poolVersion, uint _index) public view
+	function getPastItem(uint32 _poolVersion, uint _index) 
+	public view
 	returns (address poster, bytes32 content) 
 	{
 		return (itemList[_poolVersion][_index].poster, itemList[_poolVersion][_index].content);
 	}
 
-	function poolLength() public view 
+	function poolLength() 
+	public view 
 	returns (uint) 
 	{
 		return itemList[currentVersion].length;
 	}
 
-	function clear() public
+	function clear() 
+	public
 	returns (bool) 
 	{
 		currentVersion++;

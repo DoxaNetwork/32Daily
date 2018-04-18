@@ -20,13 +20,15 @@ contract MemberRegistry {
 	mapping(address => uint) public addressMap;
 
 
-	function memberCount() public view
+	function memberCount() 
+	public view
 	returns (uint count)
 	{
 		return memberList.length;
 	}
 
-	function createMember(address _owner, bytes32 _name) public
+	function createMember(address _owner, bytes32 _name) 
+	public
 	returns (bool)
 	{
 		Member memory newMember = Member(
@@ -42,13 +44,15 @@ contract MemberRegistry {
 		return true;
 	}
 
-	function getMember(uint _index) public view
+	function getMember(uint _index) 
+	public view
 	returns (bytes32 name_, address owner_)
 	{
 		return (memberList[_index].name, memberList[_index].owner);
 	}
 
-	function getMemberByAddress(address _owner) public view
+	function getMemberByAddress(address _owner) 
+	public view
 	returns (bytes32 name_, address owner_) 
 	{
 		uint index = addressMap[_owner];
