@@ -7,15 +7,13 @@ var MemberRegistry = artifacts.require("./MemberRegistry.sol");
 
 const BigNumber = web3.BigNumber;
 
+const toAscii = require('../src/utils/helpers')
+
+
 require('chai')
   .use(require('chai-as-promised'))
   .use(require('chai-bignumber')(BigNumber))
   .should();
-
-function toAscii(hex) {
-	let zeroPaddedString = web3.toAscii(hex);
-	return zeroPaddedString.split("\u0000")[0];
-}
 
 contract('BackableToken', function(accounts) {
 

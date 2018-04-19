@@ -1,5 +1,6 @@
 import BackableTokenContract from '../build/contracts/BackableToken.json'
 import getWeb3 from './utils/getWeb3'
+import toAscii from './utils/helpers'
 
 
 const contract = require('truffle-contract')
@@ -7,18 +8,11 @@ const token = contract(BackableTokenContract)
 
 const simpleCache = {};  // This can be used for simple objects, like the current user's account address
 
-
-function toAscii(hex) {
-    let zeroPaddedString = window.web3.toAscii(hex);
-    return zeroPaddedString.split("\u0000")[0];
-}
-
 async function getContract(contract) {
     let results = await getWeb3
     contract.setProvider(results.web3.currentProvider)
     // option 1: will find the address from the ./build/contracts/.json file
-    window.contract = await contract.deployed();
-    return window.contract;
+    return await contract.deployed();
     // return contract.deployed() 
 
     // option 2: will always look for the same contract, currently the one that Travis
@@ -80,37 +74,6 @@ async function getCurrentUser(){
     return currentUser;
 }
 
-/**
- * @summary Back a specific post with amount
- */
-async function backPost(postIndex, value) {
-    const tokenInstance = await getContract(token);
-    const account = await getCurrentAccount();
-
-    const result = await tokenInstance.backPost(postIndex, value, { from: account })
-    return result;
-}
-
-async function backPosts(postIndexes, voteValues) {
-    const tokenInstance = await getContract(token);
-    const account = await getCurrentAccount();
-
-    const result = await tokenInstance.backPosts(postIndexes, voteValues, { from: account })
-    return result;
-}
-
-/**
- * @summary Post a link to the contract
- */
-async function postLink(text) {
-    const tokenInstance = await getContract(token);
-
-    const account = await getCurrentAccount();
-
-    const result = await tokenInstance.postLink(text, { from: account})
-    return result;
-}
-
 // TODO memoize this so only one event listener is created
 async function setUpPostListener() {
     const tokenInstance = await getContract(token);
@@ -169,23 +132,13 @@ async function getAllPastWords() {
     return words;
 }
 
-async function publish() {
-    const tokenInstance = await getContract(token);
-    const account = await getCurrentAccount();
-
-    const result = await tokenInstance.publish({from: account});
-    return result;
-}
-
 export {getCurrentUser,
+        getContract,
+        getCurrentAccount,
         getAllUsers,
         registerUser,
-        backPost,
-        postLink,
         getAllLinks,
         setUpPostListener,
         setUpUserPostBackedListener,
         setUpPostBackedListener,
-        backPosts,
-        publish,
         getAllPastWords }

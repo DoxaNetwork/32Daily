@@ -1,13 +1,16 @@
  import React, { Component } from 'react'
-import { getAllLinks, postLink, backPost, backPosts, publish, getAllPastWords } from './DappFunctions'
-
+import { getContract, getCurrentAccount, getAllLinks, getAllPastWords } from './DappFunctions'
+import toAscii from './utils/helpers'
 import './FrontEnd.css'
+import BackableTokenContract from '../build/contracts/BackableToken.json'
 
-function toAscii(hex) {
-    var web3 = window.web3
-	let zeroPaddedString = web3.toAscii(hex);
-	return zeroPaddedString.split("\u0000")[0];
-}
+
+const contract = require('truffle-contract')
+const token = contract(BackableTokenContract)
+
+let tokenInstance;
+let currentAccount;
+
 
 class FrontEnd extends Component {
 
@@ -21,6 +24,12 @@ class FrontEnd extends Component {
 	}
 
 	async componentWillMount() {
+
+		// initialize global state
+		tokenInstance = await getContract(token);
+		currentAccount = await getCurrentAccount();
+
+
         const posts = await getAllLinks();
         const postObjs = posts.map(postObj => this.mapPost(postObj))
 
@@ -30,11 +39,10 @@ class FrontEnd extends Component {
 
     mapPost(post) {
     	return {'word': toAscii(post.link), 'width': post.backing.toNumber()* 30, 'index': post.index}
-
     }
 
     async postLink(content) {
-        const result = await postLink(content);
+    	const result = await tokenInstance.postLink(content, { from: currentAccount})
         const newPost = this.mapPost(result.logs[0].args);
         this.setState({ submittedWords: [...this.state.submittedWords, newPost] })
     }
@@ -44,7 +52,7 @@ class FrontEnd extends Component {
     	const indexes = Object.keys(this.state.pendingVotes);
     	const votes = Object.values(this.state.pendingVotes);
 
-    	let result = await backPosts(indexes, votes);
+    	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
     }
 
     setPendingVote(index) {
@@ -55,8 +63,8 @@ class FrontEnd extends Component {
     	this.setState({pendingVotes});
     }
 
-    publish() {
-    	publish();
+    async publish() {
+    	const result = await tokenInstance.publish({from: currentAccount});
     }
 
 	render() {
@@ -159,7 +167,6 @@ class NextWord extends Component {
 
 	handleContentChange(event) {
         this.setState({content: event.target.value})
-        
     }
 
     async submit(content) {

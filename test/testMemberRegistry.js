@@ -1,3 +1,5 @@
+const toAscii = require('../src/utils/helpers')
+
 const MemberRegistry = artifacts.require("./MemberRegistry.sol");
 
 const BigNumber = web3.BigNumber;
@@ -7,11 +9,6 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-
-function toAscii(hex) {
-	let zeroPaddedString = web3.toAscii(hex);
-	return zeroPaddedString.split("\u0000")[0];
-}
 
 contract('MemberRegistry', function(accounts) {
 	let registry;

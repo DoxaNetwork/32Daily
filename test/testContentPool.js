@@ -1,3 +1,5 @@
+const toAscii = require('../src/utils/helpers')
+
 const ContentPool = artifacts.require("./ContentPool.sol");
 
 const BigNumber = web3.BigNumber;
@@ -6,12 +8,6 @@ require('chai')
   .use(require('chai-as-promised'))
   .use(require('chai-bignumber')(BigNumber))
   .should();
-
-
-function toAscii(hex) {
-	let zeroPaddedString = web3.toAscii(hex);
-	return zeroPaddedString.split("\u0000")[0];
-}
 
 contract('ContentPool', function(accounts) {
 	let pool;
