@@ -1,5 +1,5 @@
  import React, { Component } from 'react'
-import { getAllLinks, postLink, backPost, backPosts, clear, publish, getAllPastWords } from './DappFunctions'
+import { getAllLinks, postLink, backPost, backPosts, publish, getAllPastWords } from './DappFunctions'
 
 import './FrontEnd.css'
 
@@ -55,9 +55,8 @@ class FrontEnd extends Component {
     	this.setState({pendingVotes});
     }
 
-    async publish() {
-    	await publish();
-    	await clear();
+    publish() {
+    	publish();
     }
 
 	render() {

@@ -310,6 +310,7 @@ contract BackableToken is BasicToken, Ownable {
 				publishedContent[contentPool.currentVersion()].push(i);
 			}
 		}
+		clear();
 		Published(numPublished);
 		return true;
 	}

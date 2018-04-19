@@ -169,28 +169,12 @@ async function getAllPastWords() {
     return words;
 }
 
-async function clear() {
-    const tokenInstance = await getContract(token);
-    const account = await getCurrentAccount();
-
-    const result = await tokenInstance.clear({from: account});
-
-    return result;
-}
-
 async function publish() {
     const tokenInstance = await getContract(token);
     const account = await getCurrentAccount();
 
     const result = await tokenInstance.publish({from: account});
-    const version = await tokenInstance.currentVersion();
-    const blockLength = await tokenInstance.getVersionLength(version);
-    console.log(version.toNumber(), blockLength.toNumber());
-
-    const [owner, content] = await tokenInstance.getPublishedItem(0,0);
-    console.log(toAscii(content));
-
-    // return result;
+    return result;
 }
 
 export {getCurrentUser,
@@ -203,6 +187,5 @@ export {getCurrentUser,
         setUpUserPostBackedListener,
         setUpPostBackedListener,
         backPosts,
-        clear,
         publish,
         getAllPastWords }
