@@ -1,13 +1,11 @@
  import React, { Component } from 'react'
 import { getContract, getCurrentAccount, getAllLinks, getAllPastWords } from './DappFunctions'
+import BackableTokenContract from '../build/contracts/BackableToken.json'
 import toAscii from './utils/helpers'
 import './FrontEnd.css'
-import BackableTokenContract from '../build/contracts/BackableToken.json'
+import contract from 'truffle-contract'
 
-
-const contract = require('truffle-contract')
 const token = contract(BackableTokenContract)
-
 let tokenInstance;
 let currentAccount;
 
@@ -24,7 +22,6 @@ class FrontEnd extends Component {
 	}
 
 	async componentWillMount() {
-
 		// initialize global state
 		tokenInstance = await getContract(token);
 		currentAccount = await getCurrentAccount();
@@ -48,7 +45,6 @@ class FrontEnd extends Component {
     }
 
     async updateVotes() {
-
     	const indexes = Object.keys(this.state.pendingVotes);
     	const votes = Object.values(this.state.pendingVotes);
 
@@ -57,7 +53,6 @@ class FrontEnd extends Component {
 
     setPendingVote(index) {
     	let pendingVotes = {...this.state.pendingVotes}
-
 
     	pendingVotes[index.toNumber()] ? pendingVotes[index.toNumber()] += 1 : pendingVotes[index.toNumber()] = 1;
     	this.setState({pendingVotes});
@@ -98,8 +93,6 @@ class FrontEnd extends Component {
 		)
 	}
 }
-export default FrontEnd
-
 
 class SubmittedWord extends Component {
 
@@ -194,3 +187,5 @@ class NextWord extends Component {
 		)
 	}
 }
+
+export default FrontEnd
