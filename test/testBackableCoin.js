@@ -19,9 +19,11 @@ contract('BackableToken', function(accounts) {
 
 	let contentPool;
 	let memberRegistry;
+	let token;
 	before(async function() {
 		contentPool = await ContentPool.new();
 		memberRegistry = await MemberRegistry.new();
+		token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
 	})
 
 	beforeEach(async function() {
@@ -29,22 +31,17 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should return the correct totalSupply after construction", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 100, accounts[1], 100);
 		let totalSupply = await token.totalSupply();
 
-		assert.equal(totalSupply, 200)
+		assert.equal(totalSupply, 1900)
 	})
 
-	it("should not allow sending to yourself", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900); 
-
-		// can't back yourself, fool
+	it("should not allow backing yourself", async function() {
 		await token.back(accounts[0], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("user can back a post", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
-		await token.register.sendTransaction('enodios', {from: accounts[1]});
+		await token.register('enodios', {from: accounts[1]});
 		// user 1 posts a link
 		await token.postLink("reddit.com", {from : accounts[1]});
 
@@ -68,8 +65,7 @@ contract('BackableToken', function(accounts) {
     })
     
     it("user cannot over-back a post", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
-        await token.register.sendTransaction('enodios', {from: accounts[1]});
+        await token.register('enodios', {from: accounts[1]});
                 
 		// user 1 posts a link
 		await token.postLink("reddit.com", {from : accounts[1]});
@@ -82,24 +78,20 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should not allow double backing", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900); 
-
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
 		await token.back(accounts[1], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("should not allow sending tokens when they are already backed", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900); 
-
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
 		await token.back(accounts[1], 700, {from: accounts[0]});
 
 		await token.transfer(accounts[1], 400, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	it("should allow sending tokens after unbacking", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0); 
-
+		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
 		await token.back(accounts[1], 700, {from: accounts[0]});
 		await token.unback(accounts[1], 700, {from: accounts[0]});
 
@@ -111,19 +103,15 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should allow a user to register a name and receive token", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 0, accounts[1], 0); 
-
 		await token.register('enodios');
 
 		let [username, address, balance, backing, availableToBack] = await token.getMemberByAddress(accounts[0]);
 
 		assert.equal(toAscii(username), 'enodios');
-		assert.equal(balance.toNumber(), 1000);
+		assert.equal(balance.toNumber(), 2000);
 	});
 
 	it("should allow user to post Link", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0);
-
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 		await token.postLink("reddit.com", {from : accounts[1]});
@@ -135,8 +123,6 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should get link count", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0);
-
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 		await token.postLink("reddit.com", {from : accounts[1]});
@@ -147,8 +133,6 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should fail to get link and owner of out of bound index at border", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 0);
-
 		await token.register.sendTransaction('enodios', {from: accounts[1]});
 
 		await token.postLink("reddit.com", {from : accounts[0]});
@@ -157,8 +141,6 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("publish single post above threshold", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
-
 		await token.postLink("reddit2.com", {from : accounts[0]});
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(1, 10, {from : accounts[1]});
@@ -177,8 +159,6 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should clear incoming post votes", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
-
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 10, {from : accounts[1]});
 		
@@ -192,23 +172,20 @@ contract('BackableToken', function(accounts) {
 	})
 
 	it("should clear outgoing post votes", async function() {
-		let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 10);
-
+		token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
 		await token.postLink("reddit.com", {from : accounts[0]});
 		await token.backPost(0, 10, {from : accounts[1]});
 		
 		const votesAvailableBefore = await token.availableToBackPosts(accounts[1]);
-		assert.equal(votesAvailableBefore.toNumber(), 0);
+		assert.equal(votesAvailableBefore.toNumber(), 890);
 		
 		await token.clear();
 
 		const votesAvailableAfter = await token.availableToBackPosts(accounts[1]);
-		assert.equal(votesAvailableAfter.toNumber(), 10);
+		assert.equal(votesAvailableAfter.toNumber(), 900);
 	})
 
 	// it("publish single post below threshold", async function() {
-	// 	let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
-
 	// 	await token.postLink("reddit.com", {from : accounts[0]});
 	// 	await token.backPost(0, 9, {from : accounts[1]});
 	// 	await token.publish();
@@ -219,8 +196,6 @@ contract('BackableToken', function(accounts) {
 	// })
 
 	// it("publish twice with single post", async function() {
-	// 	let token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 2000);
-
 	// 	await token.postLink("reddit.com", {from : accounts[0]});
 	// 	await token.backPost(0, 1001, {from : accounts[1]});
 	// 	await token.publish();
