@@ -117,8 +117,18 @@ async function getAllPastWords() {
     const tokenInstance = await getContract(token);
 
     let words = []
+    let date = new Date();
     const version = await tokenInstance.currentVersion();
-    for (let v = 0; v <= version.toNumber(); v++) {
+    let v;
+    if (version.toNumber() >= 3) {
+        date.setDate(date.getDate()- 3);
+        v = version.toNumber() - 3;
+    } else {
+        v = 0;
+        date.setDate(date.getDate()-version.toNumber());
+    }
+
+    for (; v < version.toNumber(); v++) {
         const blockLength = await tokenInstance.getVersionLength(v);
         const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
         const functions = indexesToRetrieve.map(i => tokenInstance.getPublishedItem(v, i))
@@ -126,8 +136,9 @@ async function getAllPastWords() {
         let results = await Promise.all(functions)
 
         for (const [owner, content] of results) {
-            words.push(toAscii(content))
+            words.push({content:toAscii(content), date:date.toLocaleDateString()})
         }
+        date.setDate(date.getDate()+1)
     }
     return words;
 }

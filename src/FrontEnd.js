@@ -1,4 +1,4 @@
- import React, { Component } from 'react'
+import React, { Component } from 'react'
 import { getContract, getCurrentAccount, getAllLinks, getAllPastWords } from './DappFunctions'
 import BackableTokenContract from '../build/contracts/BackableToken.json'
 import toAscii from './utils/helpers'
@@ -35,7 +35,7 @@ class FrontEnd extends Component {
     }
 
     mapPost(post) {
-    	return {'word': toAscii(post.link), 'width': post.backing.toNumber()* 30, 'index': post.index}
+    	return {'word': toAscii(post.link), 'width': post.backing.toNumber()* 50, 'index': post.index}
     }
 
     async postLink(content) {
@@ -63,9 +63,10 @@ class FrontEnd extends Component {
     }
 
 	render() {
-		const publishedWords = this.state.publishedWords.map(word => 
-			<div key={word}>
-				<PublishedWord  word={word} />
+		const publishedWords = this.state.publishedWords.map(obj => 
+			<div key={obj.content}>
+				<PublishedWord  word={obj.content} />
+				<span className="blockDate">{obj.date}</span>
 				<img src="right-arrow.svg"/>
 			</div>
 		);
@@ -75,19 +76,22 @@ class FrontEnd extends Component {
 		);
 
 		return (
-			<div>
+			<div className="appContainer">
 				<div className="wordStream">
 					{publishedWords}
 				</div>
-				<div className="submittedWords">
+				<div className="wordFactory">
+					<div className="submittedWords">
+						{submittedWords}
+					</div>
 					<NextWord onSubmit={this.postLink.bind(this)}/>
-					{submittedWords}
 					<div className="saveContainer">
 						<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
+						<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>
 					</div>
 				</div>
 
-				<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>
+				
 
 			</div>
 		)
@@ -96,11 +100,17 @@ class FrontEnd extends Component {
 
 class SubmittedWord extends Component {
 
+	
 	constructor(props) {
 		super(props);
+
+		const maxVotes = 6;
+		this.multiplier = 50;
+		this.fullWidth = this.multiplier * maxVotes;
+
 		this.state = { 
 			width: this.props.width,
-			published: this.props.width >= 180,
+			published: this.props.width >= this.fullWidth,
 		}
 	}
 
@@ -112,10 +122,10 @@ class SubmittedWord extends Component {
 			return;
 		}
 
-		let newWidth = this.state.width + 30; // currently this = value * 30
+		let newWidth = this.state.width + this.multiplier; // currently this = value * 30
 
-		if (newWidth > (300 - 127)) {
-			newWidth = 300 - 127;
+		if (newWidth >= this.fullWidth) {
+			newWidth = this.fullWidth;
 			this.setState({published: true});
 		}
 
@@ -126,11 +136,12 @@ class SubmittedWord extends Component {
 		return (
 
 			<div className={this.state.published ? "published submittedWordContainer" : "submittedWordContainer"} onClick={this.handleClick.bind(this)}>
-				<div className="progressBar" style={{ width: `${this.state.width}px	`}}></div>
-				<div className="submittedWord" >
+				<div className="submittedWord">
 					{this.props.word}
 				</div>
+				<div className="votingBar2" style={{width: `${this.state.width}px`}}> </div>
 			</div>
+
 		)
 	}
 }
@@ -177,7 +188,6 @@ class NextWord extends Component {
 		return (
 			<div className="nextWordContainer">
 				<div className="submittedWordContainer">
-					<div className="progressBar" style={{ width: '4px'}}></div>
 					<div  className="nextWord">
 						<input type="text" placeholder="your word" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
 					</div>
