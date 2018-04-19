@@ -105,8 +105,8 @@ class SubmittedWord extends Component {
 		super(props);
 
 		const maxVotes = 6;
-		this.multiplier = 50;
-		this.fullWidth = this.multiplier * maxVotes;
+		this.fullWidth = 255;
+		this.multiplier = this.fullWidth / maxVotes;
 
 		this.state = { 
 			width: this.props.width,
@@ -136,6 +136,9 @@ class SubmittedWord extends Component {
 		return (
 
 			<div className={this.state.published ? "published submittedWordContainer" : "submittedWordContainer"} onClick={this.handleClick.bind(this)}>
+				<div className="voteCount">
+					{this.state.width / this.multiplier}
+				</div>
 				<div className="submittedWord">
 					{this.props.word}
 				</div>

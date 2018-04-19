@@ -122,7 +122,7 @@ button.ready:hover {
 
 	border-bottom: 5px solid #fff;
 	/*border-radius: 10px 10px 0 0;*/
-	border-radius: 6px;
+	border-radius: 0 6px 6px 0 ;
 }
 
 .submittedWordContainer:hover > .submittedWord {
@@ -150,6 +150,18 @@ button.ready:hover {
 	margin-top: 20px;
 }
 
+.voteCount {
+	padding: 0 15px;
+	background-color: #16d;
+	color: white;
+	height: 45px;
+	line-height: 45px;
+	border-radius: 6px 0 0 6px;
+	width:35px;
+	/*box-sizing: border-box;*/
+	text-align: center;
+}
+
 .votingBar2 {
 	position: absolute;
 	border: 5px solid #16d;
@@ -157,7 +169,7 @@ button.ready:hover {
 	border-right: none;
 	border-left: none;
 	width: 249px;
-	margin-left: 0px;
+	margin-left: 45px;
 	height: 44px;
 	box-sizing: border-box;
 	border-bottom-left-radius: 6px;
