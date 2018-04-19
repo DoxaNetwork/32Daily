@@ -35,7 +35,7 @@ class FrontEnd extends Component {
     }
 
     mapPost(post) {
-    	return {'word': toAscii(post.link), 'width': post.backing.toNumber()* 50, 'index': post.index}
+    	return {'word': toAscii(post.link), 'backing': post.backing.toNumber(), 'index': post.index}
     }
 
     async postLink(content) {
@@ -72,7 +72,7 @@ class FrontEnd extends Component {
 		);
 
 		const submittedWords = this.state.submittedWords.map(obj =>
-			<SubmittedWord key={obj.index} word={obj.word} width={obj.width} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
+			<SubmittedWord key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		return (
@@ -104,32 +104,36 @@ class SubmittedWord extends Component {
 	constructor(props) {
 		super(props);
 
-		const maxVotes = 6;
-		this.fullWidth = 255;
-		this.multiplier = this.fullWidth / maxVotes;
+		this.maxVotes = 6;
 
 		this.state = { 
-			width: this.props.width,
-			published: this.props.width >= this.fullWidth,
+			backing: this.props.backing,
+			published: this.props.backing >= this.maxVotes,
 		}
 	}
 
+	mapVotesToPixels(votes) {
+		const maxVotes = 6;
+		const fullWidth = 255;
+		const multiplier = fullWidth / maxVotes;
+
+		return votes * multiplier;
+
+	}
+
 	async handleClick() {
-
-		this.props.onClick(this.props.index);
-
-		if (this.state.published) {
+		if(this.state.published) {
 			return;
 		}
 
-		let newWidth = this.state.width + this.multiplier; // currently this = value * 30
+		this.props.onClick(this.props.index);
 
-		if (newWidth >= this.fullWidth) {
-			newWidth = this.fullWidth;
+		const backing = this.state.backing + 1;
+		if (backing >= this.maxVotes) {
 			this.setState({published: true});
 		}
 
-		this.setState({width: newWidth});
+		this.setState({backing})
 	}
 
 	render() {
@@ -137,12 +141,12 @@ class SubmittedWord extends Component {
 
 			<div className={this.state.published ? "published submittedWordContainer" : "submittedWordContainer"} onClick={this.handleClick.bind(this)}>
 				<div className="voteCount">
-					{this.state.width / this.multiplier}
+					{this.state.backing}
 				</div>
 				<div className="submittedWord">
 					{this.props.word}
 				</div>
-				<div className="votingBar2" style={{width: `${this.state.width}px`}}> </div>
+				<div className="votingBar2" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`}}> </div>
 			</div>
 
 		)
