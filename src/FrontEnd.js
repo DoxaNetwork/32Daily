@@ -69,14 +69,14 @@ class FrontEnd extends Component {
 
 	render() {
 		const publishedWords = this.state.publishedWords.map(word => 
-			<div>
-				<PublishedWord word={word} />
+			<div key={word}>
+				<PublishedWord  word={word} />
 				<img src="right-arrow.svg"/>
 			</div>
 		);
 
 		const submittedWords = this.state.submittedWords.map(obj =>
-			<SubmittedWord word={obj.word} width={obj.width} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
+			<SubmittedWord key={obj.index} word={obj.word} width={obj.width} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		return (
