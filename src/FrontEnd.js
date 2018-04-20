@@ -110,7 +110,7 @@ class SubmittedWord extends Component {
 
 	mapVotesToPixels(votes) {
 		const maxVotes = 6;
-		const fullWidth = 246;
+		const fullWidth = 346;
 		const multiplier = fullWidth / maxVotes;
 
 		return votes * multiplier;
@@ -119,7 +119,7 @@ class SubmittedWord extends Component {
 
 	mapVotesToMargin(votes) {
 		const pixels = this.mapVotesToPixels(votes);
-		const maxMargin = 246;
+		const maxMargin = 346;
 
 		return maxMargin - pixels;
 	}
@@ -147,7 +147,7 @@ class SubmittedWord extends Component {
 					{this.props.word}
 				</div>
 				<div className="voteCount">
-					{this.state.backing}
+					{6-this.state.backing}
 				</div>
 				<div className="votingBar2" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`, margin: `0 0 0 ${this.mapVotesToMargin(this.state.backing)}px`}}> </div>
 			</div>
