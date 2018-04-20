@@ -115,6 +115,7 @@ async function getAllLinks(){
 
 async function getAllPastWords() {
     const tokenInstance = await getContract(token);
+    
 
     let words = []
     let date = new Date();
@@ -136,7 +137,8 @@ async function getAllPastWords() {
         let results = await Promise.all(functions)
 
         for (const [owner, content] of results) {
-            words.push({content:toAscii(content), date:date.toLocaleDateString()})
+            var options = {month: 'long', day: 'numeric' };
+            words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', options)})
         }
         date.setDate(date.getDate()+1)
     }

@@ -4,10 +4,12 @@ html {
 
 .appContainer {
 	display: flex;
-	margin-top:200px;
+	margin:200px auto;
+	justify-content: center;
 }
 
 .blockDate {
+	display: none;
 	color: #123;
 	position: relative;
 	top: -70px;
@@ -16,7 +18,7 @@ html {
 button {
 	/*border: 1px solid #16d;*/
 	background-color: #16d;
-	border-radius: 6px;
+	border-radius: 10px;
 	width: 127px;
 	padding: 7px;
 	color: #fff;
@@ -44,29 +46,37 @@ button.ready:hover {
 
 .wordStream {
 	padding-right: 30px;
-	display: flex;
+	border-bottom: 5px dotted #16d;
+	/*display: flex;*/
 }
 
 .wordFactory {
-	padding-top: 65px;
+	margin-left: 65px;
+	border-left: 5px dotted #16d;
+	padding-left: 30px;
 }
 
 .word {
-	margin:20px 35px 0;
-	padding: 10px 25px;
+	width: 100%;
+	text-align: center;
+	padding: 10px 20px;
+	height: 20px;
 	background-color:#fff;
 	color: black;
-	border-radius: 6px;
-	border:5px solid #16d;
-	border-top: none;
-	border-left: none;
-	border-right: none;
-	box-shadow: 0 0 4px rgba(0,0,0,.14),
-				2px 2px 8px rgba(0,0,0,.14);
+	border-radius: 0 10px 10px 0;
+	border-bottom: 10px solid #16d;
+	
 				/*0 -4px 8px rgba(0,0,0,.28);*/
 }
 
-
+.publishedWordContainer {
+	display: flex;
+	margin:10px 0;
+	width: 300px;
+	border-radius: 10px;
+	box-shadow: 0 0 4px rgba(0,0,0,.14),
+				2px 2px 8px rgba(0,0,0,.14);
+}
 .nextWordContainer {
 	display: flex;
 	justify-content: space-between;
@@ -82,7 +92,7 @@ button.ready:hover {
 	width: 300px;
 	box-sizing: border-box;
 	/*border:1px solid #16d;*/
-	border-radius: 6px;
+	border-radius: 10px;
 	transition: all 200ms ease-in-out;
 }
 
@@ -91,8 +101,9 @@ button.ready:hover {
 	/*float: left;*/
 	/*margin:225px 0;*/
 	/*margin-left: -120px;*/
-	width: 300px;
 	border-top: 5px dotted #16d;
+	padding-top: 20px;
+	width: 300px;
 	box-shadow: 0 0 4px rgba(0,0,0,.01);
 }
 
@@ -103,7 +114,7 @@ button.ready:hover {
 	cursor: pointer;
 	/*border:1px solid #16d;*/
 	/*border-top: 5px solid #16d;*/
-	border-radius: 6px;
+	border-radius: 10px;
 	box-shadow: 0 0 4px rgba(0,0,0,.14),
 				2px 2px 8px rgba(0,0,0,.14);
 	margin:10px 0;
@@ -120,9 +131,8 @@ button.ready:hover {
 	transition: all 200ms ease-out;
 	position: relative;
 
-	border-bottom: 5px solid #fff;
-	/*border-radius: 10px 10px 0 0;*/
-	border-radius: 0 6px 6px 0 ;
+	border-top: 10px solid #fff;
+	border-radius: 10px 0 0 10px;
 }
 
 .submittedWordContainer:hover > .submittedWord {
@@ -154,31 +164,43 @@ button.ready:hover {
 	padding: 0 15px;
 	background-color: #16d;
 	color: white;
-	height: 45px;
-	line-height: 45px;
-	border-radius: 6px 0 0 6px;
+	height: 50px;
+	line-height: 50px;
+	border-radius: 0 10px 10px 0;
 	width:35px;
+	/*box-sizing: border-box;*/
+	text-align: center;
+}
+
+.date {
+	padding: 0 15px;
+	background-color: #16d;
+	color: white;
+	height: 50px;
+	line-height: 45px;
+	border-radius: 10px 0 0 10px;
+	width:100px;
 	/*box-sizing: border-box;*/
 	text-align: center;
 }
 
 .votingBar2 {
 	position: absolute;
-	border: 5px solid #16d;
-	border-top: none;
+	border: 10px solid #16d;
+	border-bottom: none;
 	border-right: none;
 	border-left: none;
 	width: 249px;
 	margin-left: 45px;
-	height: 44px;
+	height: 50px;
 	box-sizing: border-box;
-	border-bottom-left-radius: 6px;
-	transition: all 200ms ease-out
+	border-bottom-left-radius: 10px;
+	transition: all 300ms ease-in-out;
 }
 
 .submittedWordContainer.published .votingBar2 {
 	/*border: 2px solid #16d;*/
-	border-bottom-right-radius: 6px;
+	border-top-left-radius: 10px;
 }
 
 .submittedWordContainer.published .submittedWord {

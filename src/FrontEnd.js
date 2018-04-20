@@ -64,11 +64,7 @@ class FrontEnd extends Component {
 
 	render() {
 		const publishedWords = this.state.publishedWords.map(obj => 
-			<div key={obj.content}>
-				<PublishedWord  word={obj.content} />
-				<span className="blockDate">{obj.date}</span>
-				<img src="right-arrow.svg"/>
-			</div>
+			<PublishedWord  word={obj} />
 		);
 
 		const submittedWords = this.state.submittedWords.map(obj =>
@@ -114,11 +110,18 @@ class SubmittedWord extends Component {
 
 	mapVotesToPixels(votes) {
 		const maxVotes = 6;
-		const fullWidth = 255;
+		const fullWidth = 246;
 		const multiplier = fullWidth / maxVotes;
 
 		return votes * multiplier;
 
+	}
+
+	mapVotesToMargin(votes) {
+		const pixels = this.mapVotesToPixels(votes);
+		const maxMargin = 246;
+
+		return maxMargin - pixels;
 	}
 
 	async handleClick() {
@@ -140,13 +143,13 @@ class SubmittedWord extends Component {
 		return (
 
 			<div className={this.state.published ? "published submittedWordContainer" : "submittedWordContainer"} onClick={this.handleClick.bind(this)}>
-				<div className="voteCount">
-					{this.state.backing}
-				</div>
 				<div className="submittedWord">
 					{this.props.word}
 				</div>
-				<div className="votingBar2" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`}}> </div>
+				<div className="voteCount">
+					{this.state.backing}
+				</div>
+				<div className="votingBar2" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`, margin: `0 0 0 ${this.mapVotesToMargin(this.state.backing)}px`}}> </div>
 			</div>
 
 		)
@@ -161,8 +164,15 @@ class PublishedWord extends Component {
 
 	render() {
 		return (
-			<div className="word">
-				{this.props.word}
+			<div key={this.props.word.content}>
+				<div className="publishedWordContainer">
+					<div className="date">
+						{this.props.word.date}
+					</div>
+					<div className="word">
+						{this.props.word.content}
+					</div>
+				</div>
 			</div>
 		)
 	}
