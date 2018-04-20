@@ -58,13 +58,14 @@ button.ready:hover {
 
 .word {
 	width: 100%;
+	line-height: 28px;
 	text-align: center;
 	padding: 10px 20px;
-	height: 20px;
+	height: 23px;
 	background-color:#fff;
 	color: black;
 	border-radius: 0 10px 10px 0;
-	border-bottom: 10px solid #16d;
+	border-bottom: 7px solid #16d;
 	
 				/*0 -4px 8px rgba(0,0,0,.28);*/
 }
@@ -124,14 +125,14 @@ button.ready:hover {
 	color: black;
 	padding: 10px 20px;
 	width: 100%;
-	height: 20px;
+	height: 23px;
 	
 	text-align: center;
 	cursor:pointer;
 	transition: all 200ms ease-out;
 	position: relative;
 
-	border-top: 10px solid #fff;
+	border-top: 7px solid #fff;
 	border-radius: 10px 0 0 10px;
 }
 
@@ -177,7 +178,7 @@ button.ready:hover {
 	background-color: #16d;
 	color: white;
 	height: 50px;
-	line-height: 45px;
+	line-height: 50px;
 	border-radius: 10px 0 0 10px;
 	width:100px;
 	/*box-sizing: border-box;*/
@@ -186,7 +187,7 @@ button.ready:hover {
 
 .votingBar2 {
 	position: absolute;
-	border: 10px solid #16d;
+	border: 7px solid #16d;
 	border-bottom: none;
 	border-right: none;
 	border-left: none;
