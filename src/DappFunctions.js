@@ -121,9 +121,10 @@ async function getAllPastWords() {
     let date = new Date();
     const version = await tokenInstance.currentVersion();
     let v;
-    if (version.toNumber() >= 3) {
-        date.setDate(date.getDate()- 3);
-        v = version.toNumber() - 3;
+    const numBack = 5;
+    if (version.toNumber() >= numBack) {
+        date.setDate(date.getDate()- numBack);
+        v = version.toNumber() - numBack;
     } else {
         v = 0;
         date.setDate(date.getDate()-version.toNumber());
@@ -136,9 +137,12 @@ async function getAllPastWords() {
 
         let results = await Promise.all(functions)
 
+        const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
         for (const [owner, content] of results) {
             var options = {month: 'long', day: 'numeric' };
-            words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', options)})
+            // words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', options)})
+            words.push({content:toAscii(content), date:dayOfWeek[date.getDay()]})
         }
         date.setDate(date.getDate()+1)
     }

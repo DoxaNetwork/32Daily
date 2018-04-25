@@ -1,4 +1,9 @@
 import React, { Component } from 'react'
+import { BrowserRouter as Router, Route, Link } from "react-router-dom"; 
+// import ReactCSSTransitionGroup from 'react-addons-css-transition-group'; // ES6
+import { CSSTransitionGroup } from 'react-transition-group' // ES6
+
+
 import { getContract, getCurrentAccount, getAllLinks, getAllPastWords } from './DappFunctions'
 import BackableTokenContract from '../build/contracts/BackableToken.json'
 import toAscii from './utils/helpers'
@@ -17,7 +22,8 @@ class FrontEnd extends Component {
 		this.state = {
 			'submittedWords': [],
 			'publishedWords': [],
-			'pendingVotes': {}
+			'pendingVotes': {},
+			'creation': false
 		}
 	}
 
@@ -41,7 +47,7 @@ class FrontEnd extends Component {
     async postLink(content) {
     	const result = await tokenInstance.postLink(content, { from: currentAccount})
         const newPost = this.mapPost(result.logs[0].args);
-        this.setState({ submittedWords: [...this.state.submittedWords, newPost] })
+        this.setState({ submittedWords: [newPost, ...this.state.submittedWords ] })
     }
 
     async updateVotes() {
@@ -62,6 +68,15 @@ class FrontEnd extends Component {
     	const result = await tokenInstance.publish({from: currentAccount});
     }
 
+    setCreation() {
+    	this.setState({creation: true})
+
+    }
+
+    creationClass() {
+    	return this.state.creation ? 'border': '';
+    }
+
 	render() {
 		const publishedWords = this.state.publishedWords.map(obj => 
 			<PublishedWord  word={obj} />
@@ -71,12 +86,67 @@ class FrontEnd extends Component {
 			<SubmittedWord key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
-		return (
-			<div className="appContainer">
-				<div className="wordStream">
-					{publishedWords}
+		const submittedWordsBlock = this.state.creation ? (
+			<CSSTransitionGroup
+				transitionName="example"
+				transitionAppear={true}
+			    transitionAppearTimeout={20000}
+			    transitionEnter={false}
+			    transitionLeave={false}>
+
+				<div className="wordFactory" >
+					<div className="submittedWords">
+					What comes next?
+						<CSSTransitionGroup
+          					transitionName="example"
+          					transitionEnterTimeout={5000}
+          					transitionLeaveTimeout={300}>
+							{submittedWords}
+						</CSSTransitionGroup>
+					</div>
 				</div>
-				<div className="wordFactory">
+			</CSSTransitionGroup>
+			) : ('');
+
+		return (
+			<div>
+				<div className="topContainer">
+					<div className="dontpanic">thirtytwo daily</div>
+					<div className="appContainer">
+						
+						{submittedWordsBlock}
+						 
+						<div className={`wordStream ${this.creationClass()}`}>
+							<div className={`wordStreamInner ${this.creationClass()}`}>
+							<CSSTransitionGroup
+		          				transitionName="example"
+		          				transitionEnterTimeout={5000}
+		          				transitionLeaveTimeout={300}>
+								{publishedWords}
+							</CSSTransitionGroup>
+							</div>
+							<NextWord showCreation={this.setCreation.bind(this)} onSubmit={this.postLink.bind(this)}/>
+						</div>
+					</div>
+				</div>
+				<div className="footer">
+				<div className="saveContainer">
+									<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
+									<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>
+								</div>
+				</div>
+			</div>
+		)
+	}
+}
+
+
+/*<div className="saveContainer">
+									<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
+									<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>
+								</div>
+
+/*<div className="wordFactory">
 					<div className="submittedWords">
 						{submittedWords}
 					</div>
@@ -85,14 +155,8 @@ class FrontEnd extends Component {
 						<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
 						<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>
 					</div>
-				</div>
-
+				</div>*/
 				
-
-			</div>
-		)
-	}
-}
 
 class SubmittedWord extends Component {
 
@@ -121,7 +185,9 @@ class SubmittedWord extends Component {
 		const pixels = this.mapVotesToPixels(votes);
 		const maxMargin = 346;
 
-		return maxMargin - pixels;
+		// return maxMargin - pixels;
+
+		return 54;
 	}
 
 	async handleClick() {
@@ -143,11 +209,11 @@ class SubmittedWord extends Component {
 		return (
 
 			<div className={this.state.published ? "published submittedWordContainer" : "submittedWordContainer"} onClick={this.handleClick.bind(this)}>
-				<div className="submittedWord">
-					{this.props.word}
-				</div>
 				<div className="voteCount">
 					{6-this.state.backing}
+				</div>
+				<div className="submittedWord">
+					{this.props.word}
 				</div>
 				<div className="votingBar2" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`, margin: `0 0 0 ${this.mapVotesToMargin(this.state.backing)}px`}}> </div>
 			</div>
@@ -166,11 +232,11 @@ class PublishedWord extends Component {
 		return (
 			<div key={this.props.word.content}>
 				<div className="publishedWordContainer">
-					<div className="date">
-						{this.props.word.date}
-					</div>
 					<div className="word">
 						{this.props.word.content}
+					</div>
+					<div className="date">
+						{this.props.word.date}
 					</div>
 				</div>
 			</div>
@@ -192,10 +258,12 @@ class NextWord extends Component {
 
     async submit(content) {
     	await this.props.onSubmit(content);
+    	this.props.showCreation();
     	this.setState({content: ''})
     }
 
     isReady() {
+    	return 'ready';
     	if (this.state.content !== '') {
     		return 'ready';
         }
@@ -206,10 +274,10 @@ class NextWord extends Component {
 			<div className="nextWordContainer">
 				<div className="submittedWordContainer">
 					<div  className="nextWord">
-						<input type="text" placeholder="your word" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+						<input type="text" placeholder="what comes next?" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
 					</div>
+					<button className={this.isReady()} onClick={() => this.submit(this.state.content)}>Submit</button>
 				</div>
-				<button className={this.isReady()} onClick={() => this.submit(this.state.content)}>Submit</button>
 			</div>
 		)
 	}
