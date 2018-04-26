@@ -11,15 +11,28 @@ html {
 }
 
 .example-appear {
-	width:0;
+	width:0 !important;
   opacity: 0.01;
   /*transition: opacity 5s ease-in;*/
 }
 
 .example-appear.example-appear-active {
   opacity: 1;
-  width: 400px;
+  width: 400px !important;
   transition: all 300ms ease-out;
+  /*transition: width 10s ease-in;*/
+}
+
+.example2-appear {
+	height:0;
+  opacity: 0.01;
+  /*transition: opacity 5s ease-in;*/
+}
+
+.example2-appear.example2-appear-active {
+  opacity: 1;
+  height: 45px;
+  transition: all 400ms ease-out;
   /*transition: width 10s ease-in;*/
 }
 
@@ -86,11 +99,20 @@ button {
 }*/
 
 button.ready:hover {
-	background-color: #123;
-	border: 1px solid #123;
+	background-color: #888;
+	border: 1px solid #888;
 	/*color: #fff;*/
 }
 
+.subtitle {
+	margin-top: 20px;
+	font-size: 12pt;
+}
+
+.dontpanic div {
+	font-family: 'Cutive Mono', monospace;
+	
+}
 .dontpanic {
 	color: #16d;
 	/*font-weight: 800;*/
@@ -98,7 +120,6 @@ button.ready:hover {
 	padding-bottom: 30px;
 	/*font-family: 'Comfortaa', cursive;*/
 	/*font-family: 'Titillium Web', sans-serif;*/
-	font-family: 'Cutive Mono', monospace;
 
 
 	padding-top:30px;
@@ -119,7 +140,44 @@ button.ready:hover {
 	/*border-bottom: 5px dotted #16d;*/
 	/*display: flex;*/
 	/*padding-left: 40px;*/
+}
 
+.nextWordContainer.save button {
+	border-radius: 10px;
+	width:100%;
+	/*width: unset;/*/
+}
+
+.nextWordContainer.save {
+	padding: 0;
+	margin-left:0;
+	width: unset;
+	margin: 10px 0;
+
+}
+
+.showSubmissions {
+	margin-left: 40px;
+}
+
+.link {
+	color: #888;
+	cursor: pointer;
+}
+
+.showHistory {
+	margin-bottom: 20px;
+	margin-left: 40px;
+}
+
+.link:hover {
+	color: #16d;
+	/*text-decoration: underline;*/
+}
+
+.showSubmissions.border {
+	content: 'Hide';
+	/*display: none;*/
 }
 .wordStream.border {
 	margin-left: 0;
@@ -137,13 +195,18 @@ button.ready:hover {
 	/*margin-left: 65px;*/
 	/*border-left: 5px dotted #16d;*/
 	padding-left: 30px;
-	margin-top: 265px;
+	margin-top: 120px;
+	/*margin-top: 265px;*/
 	margin-right: 40px;
 }
 
 /*.border {
 
 }*/
+
+.wordFactoryTitle {
+	
+}
 
 .word {
 	width: 100%;
@@ -178,6 +241,7 @@ button.ready:hover {
 	justify-content: space-between;
 	padding-right:20px;
 	margin-bottom: 30px;
+	margin: 50px 0 10px;
 	width: 460px;
 	padding-left: 40px;
 }

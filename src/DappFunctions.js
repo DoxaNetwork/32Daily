@@ -149,6 +149,42 @@ async function getAllPastWords() {
     return words;
 }
 
+async function getPreHistory() {
+    const tokenInstance = await getContract(token);
+    
+
+    let words = []
+    let date = new Date();
+    const version = await tokenInstance.currentVersion();
+    // let v;
+    const numBack = 5;
+    // if (version.toNumber() >= numBack) {
+    //     date.setDate(date.getDate() - numBack);
+    //     v = version.toNumber() - numBack;
+    // } else {
+    //     v = 0;
+    //     date.setDate(date.getDate()-version.toNumber());
+    // }
+
+    for (let v = 0; v < version.toNumber() - numBack; v++) {
+        const blockLength = await tokenInstance.getVersionLength(v);
+        const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
+        const functions = indexesToRetrieve.map(i => tokenInstance.getPublishedItem(v, i))
+
+        let results = await Promise.all(functions)
+
+        const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+        for (const [owner, content] of results) {
+            var options = {month: 'long', day: 'numeric' };
+            words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', options)})
+            // words.push({content:toAscii(content), date:dayOfWeek[date.getDay()]})
+        }
+        date.setDate(date.getDate()+1)
+    }
+    return words;
+}
+
 export {getCurrentUser,
         getContract,
         getCurrentAccount,
@@ -158,4 +194,5 @@ export {getCurrentUser,
         setUpPostListener,
         setUpUserPostBackedListener,
         setUpPostBackedListener,
-        getAllPastWords }
+        getAllPastWords,
+        getPreHistory }
