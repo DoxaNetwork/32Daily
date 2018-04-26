@@ -24,15 +24,17 @@ html {
 }
 
 .example2-appear {
-	height:0;
-  opacity: 0.01;
+	width:0 !important;
+  /*opacity: 0.01;*/
   /*transition: opacity 5s ease-in;*/
 }
 
 .example2-appear.example2-appear-active {
-  opacity: 1;
-  height: 45px;
-  transition: all 400ms ease-out;
+  /*opacity: 1;*/
+  /*width: unset;*/
+	width:0 !important;
+
+  transition: width 400ms ease-out;
   /*transition: width 10s ease-in;*/
 }
 
@@ -364,6 +366,7 @@ button.ready:hover {
 	box-sizing: 3px;
 	width: 75%;
 	border-bottom: 3px solid lightgray;
+	transition: width 1500ms ease-out;
 }
 
 .votingBar2 {

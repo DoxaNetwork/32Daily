@@ -118,6 +118,9 @@ class FrontEnd extends Component {
 			// <NextWord showCreation={this.setCreation.bind(this)} onSubmit={this.postLink.bind(this)}/>
 			);
 
+		const currentTime = new Date();
+		const timeConsumedPercent = (currentTime.getUTCHours() * 60 + currentTime.getUTCMinutes()) / (24 * 60) * 100;
+
 		const submittedWordsBlock = this.state.creation ? (
 			<CSSTransitionGroup
 				transitionName="example"
@@ -152,7 +155,14 @@ class FrontEnd extends Component {
 						<div>Thirtytwo Daily</div>
 						<div className="subtitle">A communal story, created one line per day</div>
 					</div>
-						<div className="timeBar"></div>
+					<CSSTransitionGroup
+						transitionName="example2"
+						transitionAppear={true}
+					    transitionAppearTimeout={400}
+					    transitionEnter={false}
+					    transitionLeave={false}>
+						<div className="timeBar" style={{width: `${timeConsumedPercent}%`}}></div>
+					</CSSTransitionGroup>
 					<div className="appContainer">
 						
 						{submittedWordsBlock}
