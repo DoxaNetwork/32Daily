@@ -119,7 +119,14 @@ class FrontEnd extends Component {
 			);
 
 		const currentTime = new Date();
+		const hoursRemaining = 23 - currentTime.getUTCHours();
+		const minutesRemaining = 60 - currentTime.getUTCMinutes();
 		const timeConsumedPercent = (currentTime.getUTCHours() * 60 + currentTime.getUTCMinutes()) / (24 * 60) * 100;
+
+		const endTime = new Date()
+		endTime.setHours(endTime.getHours() + (23-endTime.getUTCHours()))
+		endTime.setMinutes(endTime.getMinutes() + (60-endTime.getUTCMinutes()));
+		console.log(endTime.toLocaleTimeString())
 
 		const submittedWordsBlock = this.state.creation ? (
 			<CSSTransitionGroup
@@ -132,7 +139,8 @@ class FrontEnd extends Component {
 				<div className="wordFactory" >
 					<div className="submittedWords">
 						<div className="wordFactoryTitle">
-							What comes next?
+							<div>What comes next?</div>
+							<div>Voting ends in {hoursRemaining} hours and {minutesRemaining} minutes</div>
 						</div>
 						<div style={{height:'50px', margin: 'auto', textAlign: 'center'}}>
 						{save}
