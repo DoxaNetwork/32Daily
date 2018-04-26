@@ -125,7 +125,7 @@ button.ready:hover {
 	padding-top:30px;
 	background-color: #fff;
 	/*border-radius:3px;/*/
-	border-bottom: 2px solid #16d;
+	border-bottom: 3px solid #16d;
 
 	/*width:480px;*/
 	margin:auto;
@@ -195,7 +195,7 @@ button.ready:hover {
 	/*margin-left: 65px;*/
 	/*border-left: 5px dotted #16d;*/
 	padding-left: 30px;
-	margin-top: 120px;
+	margin-top: -60px;
 	/*margin-top: 265px;*/
 	margin-right: 40px;
 }
@@ -205,7 +205,7 @@ button.ready:hover {
 }*/
 
 .wordFactoryTitle {
-	
+
 }
 
 .word {
@@ -357,6 +357,13 @@ button.ready:hover {
 
 	/*right*/
 	border-radius: 0 10px 10px 0;
+}
+
+.timeBar {
+	margin-top: -3px;
+	box-sizing: 3px;
+	width: 75%;
+	border-bottom: 3px solid lightgray;
 }
 
 .votingBar2 {

@@ -152,6 +152,7 @@ class FrontEnd extends Component {
 						<div>Thirtytwo Daily</div>
 						<div className="subtitle">A communal story, created one line per day</div>
 					</div>
+						<div className="timeBar"></div>
 					<div className="appContainer">
 						
 						{submittedWordsBlock}
