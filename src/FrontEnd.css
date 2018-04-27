@@ -17,13 +17,8 @@ html {
   transition: all 300ms ease-out;
 }
 
-.example2-appear {
+.timeBar-appear {
 	width:0 !important;
-}
-
-.example2-appear.example2-appear-active {
-	width:0 !important;
-  transition: width 400ms ease-out;
 }
 
 .example-enter {
@@ -46,13 +41,8 @@ html {
 
 .appContainer {
 	display: flex;
-	margin:0 auto;
 	justify-content: center;
-	padding-top:70px;
-}
-
-.topContainer {
-	text-align: center;
+	padding-top: 70px;
 }
 
 .blockDate {
@@ -78,7 +68,7 @@ button {
 	margin-top: 30px;
 }
 
-button.ready:hover {
+button:hover {
 	background-color: #888;
 	border: 1px solid #888;
 }
@@ -88,11 +78,11 @@ button.ready:hover {
 	font-size: 12pt;
 }
 
-.dontpanic div {
+.header div {
 	font-family: 'Cutive Mono', monospace;
 	
 }
-.dontpanic {
+.header {
 	color: #16d;
 	font-size:56pt;
 	padding-bottom: 30px;
@@ -103,7 +93,7 @@ button.ready:hover {
 	text-align: center;
 }
 
-.wordStream {
+.history {
 	margin-left: -40px;
 }
 
@@ -141,7 +131,7 @@ button.ready:hover {
 .showSubmissions.border {
 	content: 'Hide';
 }
-.wordStream.border {
+.history.border {
 	margin-left: 0;
 }
 

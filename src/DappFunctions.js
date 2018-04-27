@@ -96,7 +96,7 @@ async function setUpPostBackedListener() {
 }
 
 /**
- * @summary  Retrieve all linksthat have been submitted to the site
+ * @summary  Retrieve all links that have been submitted to the site
  */
 async function getAllLinks(){
     const tokenInstance = await getContract(token);
@@ -108,7 +108,7 @@ async function getAllLinks(){
 
     let links = []
     for (const [index, owner, link, backing] of results) {
-        links.push({index, owner, link, backing})
+        links.push({'word': toAscii(link), 'backing': backing.toNumber(), 'index': index})
     }
     return links
 }
