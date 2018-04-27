@@ -4,38 +4,26 @@ html {
 
 * {
 	font-family: monospace;
-	/*font-family: 'Roboto', sans-serif;*/
-	/*font-family: 'Cutive Mono', monospace;*/
-	/*font-family: 'PT Mono', monospace;*/
-	/*font-family: 'Comfortaa', cursive;*/
 }
 
 .example-appear {
-	width:0 !important;
+  width:0 !important;
   opacity: 0.01;
-  /*transition: opacity 5s ease-in;*/
 }
 
 .example-appear.example-appear-active {
   opacity: 1;
   width: 400px !important;
   transition: all 300ms ease-out;
-  /*transition: width 10s ease-in;*/
 }
 
 .example2-appear {
 	width:0 !important;
-  /*opacity: 0.01;*/
-  /*transition: opacity 5s ease-in;*/
 }
 
 .example2-appear.example2-appear-active {
-  /*opacity: 1;*/
-  /*width: unset;*/
 	width:0 !important;
-
   transition: width 400ms ease-out;
-  /*transition: width 10s ease-in;*/
 }
 
 .example-enter {
@@ -65,7 +53,6 @@ html {
 
 .topContainer {
 	text-align: center;
-	/*margin: 100px auto;*/
 }
 
 .blockDate {
@@ -84,8 +71,6 @@ button {
 	padding: 0px;
 	color: #fff;
 	transition: all 200ms ease-in-out;
-	/*box-shadow: 0 0 4px rgba(0,0,0,.14),
-				2px 2px 8px rgba(0,0,0,.14);*/
 }
 
 .saveContainer {
@@ -93,17 +78,9 @@ button {
 	margin-top: 30px;
 }
 
-
-
-/*button.ready {
-	background-color: #16d;
-	color: #fff;
-}*/
-
 button.ready:hover {
 	background-color: #888;
 	border: 1px solid #888;
-	/*color: #fff;*/
 }
 
 .subtitle {
@@ -117,37 +94,22 @@ button.ready:hover {
 }
 .dontpanic {
 	color: #16d;
-	/*font-weight: 800;*/
 	font-size:56pt;
 	padding-bottom: 30px;
-	/*font-family: 'Comfortaa', cursive;*/
-	/*font-family: 'Titillium Web', sans-serif;*/
-
-
 	padding-top:30px;
 	background-color: #fff;
-	/*border-radius:3px;/*/
 	border-bottom: 3px solid #16d;
-
-	/*width:480px;*/
 	margin:auto;
 	text-align: center;
-
 }
 
 .wordStream {
 	margin-left: -40px;
-	/*border-left: 2px solid #16d;*/
-	/*padding-right: 30px;*/
-	/*border-bottom: 5px dotted #16d;*/
-	/*display: flex;*/
-	/*padding-left: 40px;*/
 }
 
 .nextWordContainer.save button {
 	border-radius: 10px;
 	width:100%;
-	/*width: unset;/*/
 }
 
 .nextWordContainer.save {
@@ -174,12 +136,10 @@ button.ready:hover {
 
 .link:hover {
 	color: #16d;
-	/*text-decoration: underline;*/
 }
 
 .showSubmissions.border {
 	content: 'Hide';
-	/*display: none;*/
 }
 .wordStream.border {
 	margin-left: 0;
@@ -194,20 +154,9 @@ button.ready:hover {
 }
 
 .wordFactory {
-	/*margin-left: 65px;*/
-	/*border-left: 5px dotted #16d;*/
 	padding-left: 30px;
 	margin-top: -60px;
-	/*margin-top: 265px;*/
 	margin-right: 40px;
-}
-
-/*.border {
-
-}*/
-
-.wordFactoryTitle {
-
 }
 
 .word {
@@ -219,24 +168,13 @@ button.ready:hover {
 	background-color:#fff;
 	color: black;
 	border-radius: 10px 0 0 10px;
-	/*border-bottom: 3px solid white;*/
-	/*left*/
-	/*border-radius: 10px 0 0 10px;*/
-
-	/*right*/
-	/*border-radius: 0 10px 10px 0;*/
-
-				/*0 -4px 8px rgba(0,0,0,.28);*/
 }
 
 
 .publishedWordContainer {
 	display: flex;
 	margin:0 0 10px;
-	/*width: 400px;*/
 	border-radius: 10px;
-	/*box-shadow: 0 0 4px rgba(0,0,0,.14),
-				2px 2px 8px rgba(0,0,0,.14);*/
 }
 .nextWordContainer {
 	display: flex;
@@ -250,25 +188,17 @@ button.ready:hover {
 .nextWord {
 	color: black;
 	background-color: #fff;
-	/*padding: 10px;*/
 	height: 45px;
 	line-height: 45px;
 	width: 355px;
 	box-sizing: border-box;
-	/*border:1px solid #16d;*/
 	border-radius: 10px;
 	transition: all 200ms ease-in-out;
 }
 
-
 .submittedWords {
-	/*float: left;*/
-	/*margin:225px 0;*/
-	/*margin-left: -120px;*/
-	/*border-top: 5px dotted #16d;*/
 	padding-top: 20px;
 	width: 400px;
-	/*box-shadow: 0 0 4px rgba(0,0,0,.01);*/
 }
 
 .submittedWordContainer {
@@ -276,11 +206,7 @@ button.ready:hover {
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-	/*border:1px solid #16d;*/
-	/*border-top: 5px solid #16d;*/
 	border-radius: 10px;
-	/*box-shadow: 0 0 4px rgba(0,0,0,.14),
-				2px 2px 8px rgba(0,0,0,.14);*/
 	margin:10px 0;
 }
 
@@ -297,27 +223,19 @@ button.ready:hover {
 	position: relative;
 
 	border-bottom: 7px solid #fff;
-	/*left*/
-	/*border-radius: 10px 0 0 10px;*/
-	/*right*/
 	border-radius: 0 10px 10px 0;
 }
 
 .submittedWordContainer:hover > .submittedWord {
 	background-color: #16d;
-	/*border-radius: 10px 10px 0 0;*/
 	color: white;
 	transition: none;
 }
 
 .progressBar {
-	/*width: 93px important!;*/
-	/*background-color: #249;*/
-	/*background: linear-gradient(to right, black, #249);*/
 	height: 4px;
 	border: 2px dashed #16d;
 	box-sizing: border-box;
-	/*box-shadow: 0 0 4px rgba(0,0,0,.01);*/
 	transition: width 200ms ease-out;
 }
 
@@ -335,13 +253,8 @@ button.ready:hover {
 	height: 50px;
 	line-height: 50px;
 	width:35px;
-	/*box-sizing: border-box;*/
 	text-align: center;
-
-	/*left*/
 	border-radius: 10px 0 0 10px;
-	/*right*/
-	/*border-radius: 0 10px 10px 0;*/
 }
 
 .date {
@@ -351,13 +264,7 @@ button.ready:hover {
 	height: 50px;
 	line-height: 50px;
 	width:100px;
-	/*box-sizing: border-box;*/
 	text-align: center;
-
-	/*left*/
-	/*border-radius: 10px 0 0 10px;*/
-
-	/*right*/
 	border-radius: 0 10px 10px 0;
 }
 
@@ -376,34 +283,11 @@ button.ready:hover {
 	margin-left: 45px;
 	height: 50px;
 	box-sizing: border-box;
-	/*border-bottom--radius: 10px;*/
 	transition: all 300ms ease-in-out;
 }
 
 .submittedWordContainer.published .votingBar2 {
-	/*border: 2px solid #16d;*/
-
-	/*left*/
-	/*border-bottom-left-radius: 10px;*/
-	/*right*/
 	border-bottom-right-radius: 10px;
-}
-
-.submittedWordContainer.published .submittedWord {
-	/*background-color: #16d;*/
-	/*color: black;*/
-}
-
-
-
-
-.nextWord:hover {
-	/*border: 2px solid #249;*/
-
-	/*width: 300px;*/
-	/*height: 100px;*/
-	/*font-size: 4em;*/
-	/*transition: border 200ms ease-in-out;*/
 }
 
 img {
