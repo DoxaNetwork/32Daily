@@ -39,30 +39,22 @@ class FrontEnd extends Component {
     }
 
     async postLink(content) {
-    	this.setState({creation: true})
     	const result = await tokenInstance.postLink(content, { from: currentAccount})
         const newPost = this.mapPost(result.logs[0].args);
-        this.setState({ submittedWords: [newPost, ...this.state.submittedWords ] })
+        this.setState({ creation: true, submittedWords: [newPost, ...this.state.submittedWords ] })
     }
 
     async publish() {
     	const result = await tokenInstance.publish({from: currentAccount});
     }
 
-    toggleCreation() {
+    toggleSubmissionView() {
     	this.setState({creation: !this.state.creation})	
     }
 
-    creationClass() {
-    	return this.state.creation ? 'border': '';
-    }
-
-
-    submissionText() {
-    	return this.state.creation ? 'Hide current submissions' : 'Show current submissions';
-    }
-
 	render() {
+		const submissionLink = this.state.creation ? 'Hide current submissions' : 'Show current submissions';
+
 		const submittedWordsBlock = this.state.creation ? (
 			<SubmittedWords submittedWords={this.state.submittedWords}/>
 			) : ('');
@@ -75,7 +67,7 @@ class FrontEnd extends Component {
 					<div>
 						<PublishedWords/>
 						<NextWord onSubmit={this.postLink.bind(this)}/>
-						<div className="showSubmissions link" onClick={this.toggleCreation.bind(this)}>{this.submissionText()}</div>
+						<div className="showSubmissions link" onClick={this.toggleSubmissionView.bind(this)}>{submissionLink}</div>
 					</div>
 				</div>
 

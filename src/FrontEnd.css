@@ -88,7 +88,7 @@ button:hover {
 	padding-bottom: 30px;
 	padding-top:30px;
 	background-color: #fff;
-	border-bottom: 3px solid #16d;
+	border-bottom: 4px solid #16d;
 	margin:auto;
 	text-align: center;
 }
@@ -259,10 +259,13 @@ button:hover {
 }
 
 .timeBar {
-	margin-top: -3px;
-	box-sizing: 3px;
+	margin-top: -5px;
+	/*box-sizing: 3px;*/
+	height: 2px;
 	width: 75%;
-	border-bottom: 3px solid lightgray;
+	border-bottom: 3px solid whitesmoke;
+	background-color: lightgray;
+	border-top: 2px solid white;
 	transition: width 1500ms ease-out;
 }
 
