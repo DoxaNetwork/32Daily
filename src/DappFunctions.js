@@ -108,7 +108,7 @@ async function getAllLinks(){
 
     let links = []
     for (const [index, owner, link, backing] of results) {
-        links.push({'word': toAscii(link), 'backing': backing.toNumber(), 'index': index})
+        links.push({'word': toAscii(link), 'backing': backing.toNumber(), 'index': index.toNumber()})
     }
     return links
 }

@@ -147,13 +147,16 @@ class SubmittedWords extends Component {
     	let pendingVotes = {...this.state.pendingVotes}
     	this.setState({totalVotes: this.state.totalVotes + 1})
 
-    	pendingVotes[index] ? pendingVotes[index.toNumber()] += 1 : pendingVotes[index.toNumber()] = 1;
+    	pendingVotes[index] ? pendingVotes[index] += 1 : pendingVotes[index] = 1;
     	this.setState({pendingVotes, unsavedVotes: true});
     }
 
     async persistVotes() {
     	const indexes = Object.keys(this.state.pendingVotes);
     	const votes = Object.values(this.state.pendingVotes);
+    	console.log('here')
+
+    	console.log(indexes, votes)
 
     	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
     	this.setState({unsavedVotes: false});
@@ -168,7 +171,16 @@ class SubmittedWords extends Component {
 			<SubmittedWord totalVotes={this.state.totalVotes} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
-		const saveButton ='';
+		const saveButton = this.state.unsavedVotes ? (
+			<CSSTransitionGroup
+				transitionName="width"
+				transitionAppear={true}
+			    transitionAppearTimeout={20000}
+			    transitionEnter={false}
+			    transitionLeave={false}>
+			    <Save onClick={this.persistVotes.bind(this)}/>
+			    </CSSTransitionGroup>
+			   ) : '';
 
 		return (
 			<CSSTransitionGroup
@@ -186,7 +198,7 @@ class SubmittedWords extends Component {
 							<div>You have {this.state.tokenBalance} total votes</div>
 							<div>You have {this.state.availableVotes} available votes</div>
 						</div>
-						<div style={{height:'50px', margin: 'auto', textAlign: 'center'}}>
+						<div className="saveContainer">
 							{saveButton}
 						</div>
 						<CSSTransitionGroup
@@ -208,11 +220,8 @@ class SubmittedWord extends Component {
 	constructor(props) {
 		super(props);
 
-		// this.maxVotes = 6;
-
 		this.state = { 
 			backing: this.props.backing,
-			published: this.props.backing >= this.maxVotes,
 			pending: false,
 		}
 	}
@@ -224,7 +233,7 @@ class SubmittedWord extends Component {
 		// }
 		// return votes / this.props.maxVote * fullWidth;
 
-		const fullWidth = 343;
+		const fullWidth = 340;
 
 		return this.props.totalVotes == 0 ? 0 : votes / this.props.totalVotes * fullWidth;
 
@@ -304,10 +313,6 @@ class PublishedWords extends Component {
  
 class PublishedWord extends Component {
 
-	constructor(props) {
-		super(props);
-	}
-
 	render() {
 		return (
 			<div key={this.props.word.content}>
@@ -356,20 +361,13 @@ class NextWord extends Component {
 }
 
 class Save extends Component {
-
-	constructor(props) {
-		super(props);
-		this.state = {content: ''}
+	async submit() {
+		await this.props.onClick()
 	}
-
-    async submit(content) {
-    	await this.props.onSubmit(content);
-    }
-
 	render() {
 		return (
 			<div className="nextWordContainer save">
-				<button onClick={() => this.submit(this.state.content)}>Save</button>
+				<button onClick={() => this.submit()}>Save</button>
 			</div>
 		)
 	}

@@ -258,7 +258,7 @@ contract BackableToken is BasicToken, Ownable {
 	{
 		contentPool.newContent(msg.sender, link);
 		mint(msg.sender, SUBMISSION_MINT);
-		LinkPosted(msg.sender, 0, contentPool.poolLength(), link);
+		LinkPosted(msg.sender, 0, contentPool.poolLength() - 1, link);
 		return true;
 	}
 

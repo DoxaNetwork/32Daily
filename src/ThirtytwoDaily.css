@@ -17,8 +17,8 @@ html {
 }
 
 button {
-	border: 1px solid var(--main-color);
-	background-color: var(--main-color);
+	border: 1px solid var(--secondary-color);
+	background-color: var(--secondary-color);
 	border-radius:  0 10px 10px 0;
 	width: 127px;
 	height:45px;
@@ -28,8 +28,8 @@ button {
 }
 
 button:hover {
-	background-color: var(--secondary-color);
-	border: 1px solid var(--secondary-color);
+	background-color: var(--main-color);
+	border: 1px solid var(--main-color);
 }
 
 input {
@@ -48,6 +48,12 @@ input {
 
 .link:hover {
 	color: var(--main-color);
+}
+
+.appContainer {
+	display: flex;
+	justify-content: center;
+	padding-top: 70px;
 }
 
 /* ==================== Header ==================== */
@@ -114,19 +120,6 @@ input {
   transition: opacity 300ms ease-in;
 }
 
-.appContainer {
-	display: flex;
-	justify-content: center;
-	padding-top: 70px;
-}
-
-
-.saveContainer {
-	padding-left: 150px;
-	margin-top: 30px;
-}
-
-
 /* ==================== History ====================*/
 .showHistory {
 	margin-bottom: 20px;
@@ -160,13 +153,18 @@ input {
 .nextWordContainer.save button {
 	border-radius: 10px;
 	width:100%;
+	/*background-color: var(--secondary-color);*/
 }
 
+.saveContainer {
+	height: 50px;
+	margin: 10px 0;
+}
 .nextWordContainer.save {
 	padding: 0;
 	margin-left:0;
 	width: unset;
-	margin: 10px 0;
+	margin: 0;
 }
 
 .showSubmissions {
@@ -226,7 +224,7 @@ input {
 
 .submittedWord {
 	color: black;
-	width: 100%;
+	width: 340px;
 	height: 100%;
 	box-sizing: border-box;
 	line-height: 43px;	
@@ -247,12 +245,13 @@ input {
 }
 
 .voteCount {
-	padding: 0 15px;
+	/*padding: 0 15px;*/
 	background-color: var(--main-color);
 	color: white;
 	height: 50px;
 	line-height: 50px;
-	width:35px;
+	width:60px;
+	box-sizing: border-box;
 	text-align: center;
 	border-radius: 10px 0 0 10px;
 	transition: all 300ms ease-in-out;
