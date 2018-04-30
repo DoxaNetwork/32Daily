@@ -1,18 +1,18 @@
 import React, { Component } from 'react'
-import { BrowserRouter as Router, Route, Link } from "react-router-dom"; 
 import { CSSTransitionGroup } from 'react-transition-group'
 import contract from 'truffle-contract'
 
 import { getContract, getCurrentAccount, getAllLinks, getAllPastWords, getPreHistory } from './DappFunctions'
 import BackableTokenContract from '../build/contracts/BackableToken.json'
 import toAscii from './utils/helpers'
-import './FrontEnd.css'
+import './ThirtytwoDaily.css'
 
 const token = contract(BackableTokenContract)
 let tokenInstance;
 let currentAccount;
 
-class FrontEnd extends Component {
+
+class ThirtytwoDaily extends Component {
 
 	constructor(props){
 		super(props);
@@ -20,7 +20,7 @@ class FrontEnd extends Component {
 			'submittedWords': [],
 			'pendingVotes': {},
 			'unsavedVotes': false,
-			'creation': false
+			'showSubmissions': false
 		}
 	}
 
@@ -41,7 +41,7 @@ class FrontEnd extends Component {
     async postLink(content) {
     	const result = await tokenInstance.postLink(content, { from: currentAccount})
         const newPost = this.mapPost(result.logs[0].args);
-        this.setState({ creation: true, submittedWords: [newPost, ...this.state.submittedWords ] })
+        this.setState({ showSubmissions: true, submittedWords: [newPost, ...this.state.submittedWords ] })
     }
 
     async publish() {
@@ -49,13 +49,13 @@ class FrontEnd extends Component {
     }
 
     toggleSubmissionView() {
-    	this.setState({creation: !this.state.creation})	
+    	this.setState({showSubmissions: !this.state.showSubmissions})	
     }
 
 	render() {
-		const submissionLink = this.state.creation ? 'Hide current submissions' : 'Show current submissions';
+		const submissionLink = this.state.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
 
-		const submittedWordsBlock = this.state.creation ? (
+		const submittedWordsBlock = this.state.showSubmissions ? (
 			<SubmittedWords submittedWords={this.state.submittedWords}/>
 			) : ('');
 
@@ -78,46 +78,31 @@ class FrontEnd extends Component {
 	}
 }
 
-class PublishedWords extends Component {
 
-	constructor(props) {
-		super(props);
-		this.state = {
-			'publishedWords': []
-		}
-	}
-
-	async componentWillMount() {
-        const publishedWords = await getAllPastWords();
-
-        this.setState({publishedWords})
-    }
-
-	async loadFullHistory() {
-    	const publishedWords = await getPreHistory();
-    	this.setState({ publishedWords: [...publishedWords, ...this.state.publishedWords ] })
-    }
-
+class Header extends Component {
 	render() {
-		const publishedWords = this.state.publishedWords.map(word => 
-			<PublishedWord  key={word.content} word={word} />
-		);
+		const currentTime = new Date();
+		const timeConsumedPercent = (currentTime.getUTCHours() * 60 + currentTime.getUTCMinutes()) / (24 * 60) * 100;
 
 		return (
 			<div>
-				<div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>Show full history</div>
-				<div className="wordStreamInner">
-					<CSSTransitionGroup
-          				transitionName="example"
-          				transitionEnterTimeout={5000}
-          				transitionLeaveTimeout={300}>
-						{publishedWords}
-					</CSSTransitionGroup>
+				<div className="header">
+					<div>Thirtytwo Daily</div>
+					<div className="subtitle">A communal story, created one line per day</div>
 				</div>
+				<CSSTransitionGroup
+					transitionName="timeBar"
+					transitionAppear={true}
+				    transitionAppearTimeout={400}
+				    transitionEnter={false}
+				    transitionLeave={false}>
+					<div className="timeBar" style={{width: `${timeConsumedPercent}%`}}></div>
+				</CSSTransitionGroup>
 			</div>
 		)
 	}
 }
+
 
 class SubmittedWords extends Component {
 
@@ -154,27 +139,17 @@ class SubmittedWords extends Component {
 			<SubmittedWord key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
-		// const saveButton = this.state.unsavedVotes ? ( 
-		// 	<CSSTransitionGroup
-		// 		transitionName="example"
-		// 		transitionAppear={true}
-		// 	    transitionAppearTimeout={20000}
-		// 	    transitionEnter={false}
-		// 	    transitionLeave={false}>
-		// 		<Save showCreation={this.setCreation.bind(this)} onSubmit={this.postLink.bind(this)}/>
-		// 	</CSSTransitionGroup>
-		// 	) : ( '' );
 		const saveButton ='';
 
 		return (
 			<CSSTransitionGroup
-				transitionName="example"
+				transitionName="width"
 				transitionAppear={true}
 			    transitionAppearTimeout={20000}
 			    transitionEnter={false}
 			    transitionLeave={false}>
 
-				<div className="wordFactory" >
+				<div className="wordFactory">
 					<div className="submittedWords">
 						<div className="wordFactoryTitle">
 							<div>What comes next?</div>
@@ -184,7 +159,7 @@ class SubmittedWords extends Component {
 							{saveButton}
 						</div>
 						<CSSTransitionGroup
-          					transitionName="example"
+          					transitionName="opacity"
           					transitionEnterTimeout={5000}
           					transitionLeaveTimeout={300}>
 							{submittedWords}
@@ -196,29 +171,6 @@ class SubmittedWords extends Component {
 	}
 }
 
-class Header extends Component {
-	render() {
-		const currentTime = new Date();
-		const timeConsumedPercent = (currentTime.getUTCHours() * 60 + currentTime.getUTCMinutes()) / (24 * 60) * 100;
-
-		return (
-			<div>
-				<div className="header">
-					<div>Thirtytwo Daily</div>
-					<div className="subtitle">A communal story, created one line per day</div>
-				</div>
-				<CSSTransitionGroup
-					transitionName="timeBar"
-					transitionAppear={true}
-				    transitionAppearTimeout={400}
-				    transitionEnter={false}
-				    transitionLeave={false}>
-					<div className="timeBar" style={{width: `${timeConsumedPercent}%`}}></div>
-				</CSSTransitionGroup>
-			</div>
-		)
-	}
-}				
 
 class SubmittedWord extends Component {
 
@@ -239,12 +191,6 @@ class SubmittedWord extends Component {
 		const multiplier = fullWidth / maxVotes;
 
 		return votes * multiplier;
-	}
-
-	mapVotesToMargin(votes) {
-		const pixels = this.mapVotesToPixels(votes);
-		const maxMargin = 346;
-		return 54;
 	}
 
 	async handleClick() {
@@ -272,12 +218,54 @@ class SubmittedWord extends Component {
 				<div className="submittedWord">
 					{this.props.word}
 				</div>
-				<div className="votingBar2" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`, margin: `0 0 0 ${this.mapVotesToMargin(this.state.backing)}px`}}> </div>
+				<div className="votingBar" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`}}> </div>
 			</div>
 
 		)
 	}
+}	
+
+
+class PublishedWords extends Component {
+
+	constructor(props) {
+		super(props);
+		this.state = {
+			'publishedWords': []
+		}
+	}
+
+	async componentWillMount() {
+        const publishedWords = await getAllPastWords();
+        this.setState({publishedWords})
+    }
+
+	async loadFullHistory() {
+    	const publishedWords = await getPreHistory();
+    	this.setState({ publishedWords: [...publishedWords, ...this.state.publishedWords ] })
+    }
+
+	render() {
+		const publishedWords = this.state.publishedWords.map(word => 
+			<PublishedWord  key={word.content} word={word} />
+		);
+
+		return (
+			<div>
+				<div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>Show full history</div>
+				<div className="wordStreamInner">
+					<CSSTransitionGroup
+          				transitionName="opacity"
+          				transitionEnterTimeout={5000}
+          				transitionLeaveTimeout={300}>
+						{publishedWords}
+					</CSSTransitionGroup>
+				</div>
+			</div>
+		)
+	}
 }
+
  
 class PublishedWord extends Component {
 
@@ -351,7 +339,5 @@ class Save extends Component {
 		)
 	}
 }
-/*<button className="save ready" onClick={this.updateVotes.bind(this)}>Save</button>
-					<button className="save ready" onClick={this.publish.bind(this)}>Publish</button>*/
 
-export default FrontEnd
+export default ThirtytwoDaily

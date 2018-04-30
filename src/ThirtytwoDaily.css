@@ -1,3 +1,5 @@
+/* ==================== Global ==================== */
+
 html {
 	background-color: whitesmoke;
 }
@@ -6,52 +8,6 @@ html {
 	font-family: monospace;
 }
 
-.example-appear {
-  width:0 !important;
-  opacity: 0.01;
-}
-
-.example-appear.example-appear-active {
-  opacity: 1;
-  width: 400px !important;
-  transition: all 300ms ease-out;
-}
-
-.timeBar-appear {
-	width:0 !important;
-}
-
-.example-enter {
-  opacity: 0.01;
-}
-
-.example-enter.example-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
-}
-
-.example-leave {
-  opacity: 1;
-}
-
-.example-leave.example-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in;
-}
-
-.appContainer {
-	display: flex;
-	justify-content: center;
-	padding-top: 70px;
-}
-
-.blockDate {
-	display: none;
-	color: #123;
-	position: relative;
-	top: -70px;
-	left: 45px;
-}
 button {
 	border: 1px solid #16d;
 	background-color: #16d;
@@ -63,25 +19,30 @@ button {
 	transition: all 200ms ease-in-out;
 }
 
-.saveContainer {
-	padding-left: 150px;
-	margin-top: 30px;
-}
-
 button:hover {
 	background-color: #888;
 	border: 1px solid #888;
 }
 
-.subtitle {
-	margin-top: 20px;
-	font-size: 12pt;
+input {
+	border: none;
+	outline: none;
+	width: 100%;
+	text-align: center;
+	color: black;
+	background-color: #fff;
 }
 
-.header div {
-	font-family: 'Cutive Mono', monospace;
-	
+.link {
+	color: #888;
+	cursor: pointer;
 }
+
+.link:hover {
+	color: #16d;
+}
+
+/* ==================== Header ==================== */
 .header {
 	color: #16d;
 	font-size:56pt;
@@ -93,60 +54,79 @@ button:hover {
 	text-align: center;
 }
 
-.history {
-	margin-left: -40px;
+.subtitle {
+	margin-top: 20px;
+	font-size: 12pt;
 }
 
-.nextWordContainer.save button {
-	border-radius: 10px;
-	width:100%;
+.header div {
+	font-family: 'Cutive Mono', monospace;
+}
+.timeBar {
+	margin-top: -5px;
+	height: 2px;
+	width: 75%;
+	border-bottom: 3px solid whitesmoke;
+	background-color: lightgray;
+	border-top: 2px solid white;
+	transition: width 1500ms ease-out;
 }
 
-.nextWordContainer.save {
-	padding: 0;
-	margin-left:0;
-	width: unset;
-	margin: 10px 0;
-
+/* ==================== Animations ==================== */
+.width-appear {
+  width:0 !important;
+  opacity: 0.01;
 }
 
-.showSubmissions {
-	margin-left: 40px;
+.width-appear.width-appear-active {
+  opacity: 1;
+  width: 400px !important;
+  transition: all 300ms ease-out;
 }
 
-.link {
-	color: #888;
-	cursor: pointer;
+.timeBar-appear {
+	width:0 !important;
 }
 
+.opacity-enter {
+  opacity: 0.01;
+}
+
+.opacity-enter.opacity-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+
+.opacity-leave {
+  opacity: 1;
+}
+
+.opacity-leave.opacity-leave-active {
+  opacity: 0.01;
+  transition: opacity 300ms ease-in;
+}
+
+.appContainer {
+	display: flex;
+	justify-content: center;
+	padding-top: 70px;
+}
+
+
+.saveContainer {
+	padding-left: 150px;
+	margin-top: 30px;
+}
+
+
+/* ==================== History ====================*/
 .showHistory {
 	margin-bottom: 20px;
 	margin-left: 40px;
 }
 
-.link:hover {
-	color: #16d;
-}
-
-.showSubmissions.border {
-	content: 'Hide';
-}
-.history.border {
-	margin-left: 0;
-}
-
 .wordStreamInner {
-	padding-left: 40px;
-	
-}
-.wordStreamInner.border {
-	border-left: 2px solid lightgray;
-}
-
-.wordFactory {
-	padding-left: 30px;
-	margin-top: -60px;
-	margin-right: 40px;
+	padding-left: 40px;	
 }
 
 .word {
@@ -160,11 +140,29 @@ button:hover {
 	border-radius: 10px 0 0 10px;
 }
 
-
 .publishedWordContainer {
 	display: flex;
 	margin:0 0 10px;
 	border-radius: 10px;
+}
+
+
+
+/* ==================== Word submission ==================== */
+.nextWordContainer.save button {
+	border-radius: 10px;
+	width:100%;
+}
+
+.nextWordContainer.save {
+	padding: 0;
+	margin-left:0;
+	width: unset;
+	margin: 10px 0;
+}
+
+.showSubmissions {
+	margin-left: 40px;
 }
 .nextWordContainer {
 	display: flex;
@@ -184,6 +182,13 @@ button:hover {
 	box-sizing: border-box;
 	border-radius: 10px;
 	transition: all 200ms ease-in-out;
+}
+
+/* ==================== Word voting ==================== */
+.wordFactory {
+	padding-left: 30px;
+	margin-top: -60px;
+	margin-right: 40px;
 }
 
 .submittedWords {
@@ -222,20 +227,6 @@ button:hover {
 	transition: none;
 }
 
-.progressBar {
-	height: 4px;
-	border: 2px dashed #16d;
-	box-sizing: border-box;
-	transition: width 200ms ease-out;
-}
-
-.votingBar {
-	width: 20px;
-	background-color: #16d;
-	height: 20px;
-	margin-top: 20px;
-}
-
 .voteCount {
 	padding: 0 15px;
 	background-color: #16d;
@@ -258,44 +249,17 @@ button:hover {
 	border-radius: 0 10px 10px 0;
 }
 
-.timeBar {
-	margin-top: -5px;
-	/*box-sizing: 3px;*/
-	height: 2px;
-	width: 75%;
-	border-bottom: 3px solid whitesmoke;
-	background-color: lightgray;
-	border-top: 2px solid white;
-	transition: width 1500ms ease-out;
-}
-
-.votingBar2 {
+.votingBar {
 	position: absolute;
 	border-bottom: 7px solid #16d;
 	width: 249px;
-	margin-left: 45px;
+	margin-left: 54px;
 	height: 50px;
 	box-sizing: border-box;
 	transition: all 300ms ease-in-out;
 }
 
-.submittedWordContainer.published .votingBar2 {
+.submittedWordContainer.published .votingBar {
 	border-bottom-right-radius: 10px;
 }
 
-img {
-	width: 20px;
-	float: right;
-	position: relative;
-	bottom: 30px;
-	left: 7px;
-}
-
-input {
-	border: none;
-	outline: none;
-	width: 100%;
-	text-align: center;
-	color: black;
-	background-color: #fff;
-}

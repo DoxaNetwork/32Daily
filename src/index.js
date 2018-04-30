@@ -1,10 +1,10 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import App from './App'
-import FrontEnd from './FrontEnd'
+import ThirtytwoDaily from './ThirtytwoDaily'
 
 ReactDOM.render(
   // <App name="Travis">Hello!</App>,
-  <FrontEnd></FrontEnd>,
+  <ThirtytwoDaily></ThirtytwoDaily>,
   document.getElementById('root')
 );
