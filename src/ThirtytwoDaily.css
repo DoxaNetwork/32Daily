@@ -1,7 +1,15 @@
 /* ==================== Global ==================== */
+:root {
+	--main-color: #16d;
+	--secondary-color: #469;
+	--light-gray: lightgray;
+	--gray: #888;
+	--white: white;
+	--darkwhite: whitesmoke;
+}
 
 html {
-	background-color: whitesmoke;
+	background-color: var(--darkwhite);
 }
 
 * {
@@ -9,19 +17,19 @@ html {
 }
 
 button {
-	border: 1px solid #16d;
-	background-color: #16d;
+	border: 1px solid var(--main-color);
+	background-color: var(--main-color);
 	border-radius:  0 10px 10px 0;
 	width: 127px;
 	height:45px;
 	padding: 0px;
-	color: #fff;
+	color: var(--white);
 	transition: all 200ms ease-in-out;
 }
 
 button:hover {
-	background-color: #888;
-	border: 1px solid #888;
+	background-color: var(--secondary-color);
+	border: 1px solid var(--secondary-color);
 }
 
 input {
@@ -30,26 +38,26 @@ input {
 	width: 100%;
 	text-align: center;
 	color: black;
-	background-color: #fff;
+	background-color: var(--white);
 }
 
 .link {
-	color: #888;
+	color: var(--gray);
 	cursor: pointer;
 }
 
 .link:hover {
-	color: #16d;
+	color: var(--main-color);
 }
 
 /* ==================== Header ==================== */
 .header {
-	color: #16d;
+	color: var(--main-color);
 	font-size:56pt;
 	padding-bottom: 30px;
 	padding-top:30px;
-	background-color: #fff;
-	border-bottom: 4px solid #16d;
+	background-color: var(--white);
+	border-bottom: 4px solid var(--main-color);
 	margin:auto;
 	text-align: center;
 }
@@ -66,7 +74,7 @@ input {
 	margin-top: -5px;
 	height: 2px;
 	width: 75%;
-	border-bottom: 3px solid whitesmoke;
+	border-bottom: 3px solid var(--darkwhite);
 	background-color: lightgray;
 	border-top: 2px solid white;
 	transition: width 1500ms ease-out;
@@ -135,7 +143,7 @@ input {
 	text-align: left;
 	padding: 10px 20px;
 	height: 30px;
-	background-color:#fff;
+	background-color:var(--white);
 	color: black;
 	border-radius: 10px 0 0 10px;
 }
@@ -175,7 +183,7 @@ input {
 }
 .nextWord {
 	color: black;
-	background-color: #fff;
+	background-color: var(--white);
 	height: 45px;
 	line-height: 45px;
 	width: 355px;
@@ -197,51 +205,63 @@ input {
 }
 
 .submittedWordContainer {
-	background-color: #fff;
+	background-color: var(--white);
 	display: flex;
 	align-items: center;
 	cursor: pointer;
 	border-radius: 10px;
 	margin:10px 0;
+	height: 50px;
+	overflow: hidden;
+	position: relative;
+}
+.submittedWordContainer.pending .voteCount {
+	background-color: var(--secondary-color);
+}
+
+.submittedWordContainer.pending .votingBar {
+	background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
+	background-color: var(--secondary-color);
 }
 
 .submittedWord {
 	color: black;
-	padding: 10px 20px;
 	width: 100%;
-	height: 23px;
-	line-height: 28px;
-	
+	height: 100%;
+	box-sizing: border-box;
+	line-height: 43px;	
 	text-align: center;
 	cursor:pointer;
-	transition: all 200ms ease-out;
-	position: relative;
-
-	border-bottom: 7px solid #fff;
-	border-radius: 0 10px 10px 0;
+	transition: background 300ms ease-out;
+	border-top: 3px solid lightgray;
 }
 
 .submittedWordContainer:hover > .submittedWord {
-	background-color: #16d;
+	background-color: var(--main-color);
 	color: white;
 	transition: none;
 }
 
+.submittedWordContainer.pending:hover > .submittedWord {
+	background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
+}
+
 .voteCount {
 	padding: 0 15px;
-	background-color: #16d;
+	background-color: var(--main-color);
 	color: white;
 	height: 50px;
 	line-height: 50px;
 	width:35px;
 	text-align: center;
 	border-radius: 10px 0 0 10px;
+	transition: all 300ms ease-in-out;
 }
 
 .date {
 	padding: 0 15px;
 	background-color: white;
-	color: #888;
+	color: var(--gray);
 	height: 50px;
 	line-height: 50px;
 	width:100px;
@@ -251,15 +271,11 @@ input {
 
 .votingBar {
 	position: absolute;
-	border-bottom: 7px solid #16d;
-	width: 249px;
-	margin-left: 54px;
-	height: 50px;
+	margin-left: 60px;
+	height: 3px;
+	background-color: var(--main-color);
+	top: 0px;
 	box-sizing: border-box;
 	transition: all 300ms ease-in-out;
-}
-
-.submittedWordContainer.published .votingBar {
-	border-bottom-right-radius: 10px;
 }
 

@@ -30,7 +30,6 @@ class ThirtytwoDaily extends Component {
 		currentAccount = await getCurrentAccount();
 
         const submittedWords = await getAllLinks();
-
         this.setState({submittedWords})
     }
 
@@ -124,7 +123,8 @@ class SubmittedWords extends Component {
 			'pendingVotes': {},
 			'unsavedVotes': false,
 			'tokenBalance': 0,
-			'availableVotes': 0
+			'availableVotes': 0,
+			'totalVotes': 0
 		}
 	}
 
@@ -135,11 +135,17 @@ class SubmittedWords extends Component {
 		const tokenBalance = tokenBalanceBN.toNumber()
 		const availableVotes = availableVotesBN.toNumber()
 
-        this.setState({tokenBalance, availableVotes})
+		let totalVotes = 0;
+        for (let i = 0; i < this.props.submittedWords.length; i++) {
+    		totalVotes += this.props.submittedWords[i].backing;
+        }
+
+        this.setState({totalVotes, tokenBalance, availableVotes})
     }
 
-	setPendingVote(index) {
+	setPendingVote(index, currentVotes) {
     	let pendingVotes = {...this.state.pendingVotes}
+    	this.setState({totalVotes: this.state.totalVotes + 1})
 
     	pendingVotes[index] ? pendingVotes[index.toNumber()] += 1 : pendingVotes[index.toNumber()] = 1;
     	this.setState({pendingVotes, unsavedVotes: true});
@@ -159,7 +165,7 @@ class SubmittedWords extends Component {
 		const minutesRemaining = 60 - currentTime.getUTCMinutes();
 
 		const submittedWords = this.props.submittedWords.map(obj =>
-			<SubmittedWord key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
+			<SubmittedWord totalVotes={this.state.totalVotes} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		const saveButton ='';
@@ -202,41 +208,45 @@ class SubmittedWord extends Component {
 	constructor(props) {
 		super(props);
 
-		this.maxVotes = 6;
+		// this.maxVotes = 6;
 
 		this.state = { 
 			backing: this.props.backing,
 			published: this.props.backing >= this.maxVotes,
+			pending: false,
 		}
 	}
 
 	mapVotesToPixels(votes) {
-		const maxVotes = 6;
-		const fullWidth = 346;
-		const multiplier = fullWidth / maxVotes;
+		// const fullWidth = 343;
+		// if (this.props.maxVote == 0) {
+		// 	return 0;
+		// }
+		// return votes / this.props.maxVote * fullWidth;
 
-		return votes * multiplier;
+		const fullWidth = 343;
+
+		return this.props.totalVotes == 0 ? 0 : votes / this.props.totalVotes * fullWidth;
+
+		// const maxVotes = 6;
+		// const multiplier = fullWidth / maxVotes;
+
+		// return votes * multiplier;
 	}
 
 	async handleClick() {
-		if(this.state.published) {
-			return;
-		}
-
-		this.props.onClick(this.props.index);
+		this.props.onClick(this.props.index, this.state.backing);
 
 		const backing = this.state.backing + 1;
-		if (backing >= this.maxVotes) {
-			this.setState({published: true});
-		}
 
-		this.setState({backing})
+		this.setState({backing, pending: true})
 	}
 
 	render() {
-		return (
+		const pendingClass = this.state.pending ? 'pending' : ''
 
-			<div className={this.state.published ? "published submittedWordContainer" : "submittedWordContainer"} onClick={this.handleClick.bind(this)}>
+		return (
+			<div className={`submittedWordContainer ${pendingClass}`} onClick={this.handleClick.bind(this)}>
 				<div className="voteCount">
 					{this.state.backing}
 				</div>
