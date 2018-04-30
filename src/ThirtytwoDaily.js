@@ -38,9 +38,20 @@ class ThirtytwoDaily extends Component {
     	return {'word': toAscii(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
     }
 
+    getEventsByType(events, type) {
+    	let matchedEvents = []
+    	for (let i = 0; i < events.length; i++) {
+    		if (events[i].event === type) {
+    			matchedEvents.push(events[i])
+    		}
+    	}
+    	return matchedEvents;
+    }
+
     async postLink(content) {
     	const result = await tokenInstance.postLink(content, { from: currentAccount})
-        const newPost = this.mapPost(result.logs[0].args);
+    	const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
+        const newPost = this.mapPost(filteredEvents[0].args);
         this.setState({ showSubmissions: true, submittedWords: [newPost, ...this.state.submittedWords ] })
     }
 
@@ -112,8 +123,20 @@ class SubmittedWords extends Component {
 		this.state = {
 			'pendingVotes': {},
 			'unsavedVotes': false,
+			'tokenBalance': 0,
+			'availableVotes': 0
 		}
 	}
+
+	async componentWillMount() {
+		const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
+		const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+
+		const tokenBalance = tokenBalanceBN.toNumber()
+		const availableVotes = availableVotesBN.toNumber()
+
+        this.setState({tokenBalance, availableVotes})
+    }
 
 	setPendingVote(index) {
     	let pendingVotes = {...this.state.pendingVotes}
@@ -154,6 +177,8 @@ class SubmittedWords extends Component {
 						<div className="wordFactoryTitle">
 							<div>What comes next?</div>
 							<div>Voting ends in {hoursRemaining} hours and {minutesRemaining} minutes</div>
+							<div>You have {this.state.tokenBalance} total votes</div>
+							<div>You have {this.state.availableVotes} available votes</div>
 						</div>
 						<div style={{height:'50px', margin: 'auto', textAlign: 'center'}}>
 							{saveButton}
