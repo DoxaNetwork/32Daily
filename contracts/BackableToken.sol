@@ -22,6 +22,7 @@ contract BackableToken is BasicToken, Ownable {
 	MemberRegistry memberRegistry;
 
 	uint PUBLISH_THRESHOLD = 6;
+	uint SUBMISSION_MINT = 1;
 
 	function BackableToken(address _contentPoolAddress, address _memberRegistryAddress) 
 	public 
@@ -245,7 +246,7 @@ contract BackableToken is BasicToken, Ownable {
 	returns (bool) 
 	{
 		totalSupply_ = totalSupply_.add(_quantity);
-		balances[_to] = balances[_to].add(_quantity); // TODO just use transfer here
+		balances[_to] = balances[_to].add(_quantity);
 		Mint(_to, _quantity);
 		Transfer(0x0, _to, _quantity);
 		return true;
@@ -256,8 +257,7 @@ contract BackableToken is BasicToken, Ownable {
 	returns(bool) 
 	{
 		contentPool.newContent(msg.sender, link);
-		// links.push(link);
-		// linkPosters.push(msg.sender);
+		mint(msg.sender, SUBMISSION_MINT);
 		LinkPosted(msg.sender, 0, contentPool.poolLength(), link);
 		return true;
 	}
