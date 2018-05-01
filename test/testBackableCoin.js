@@ -195,24 +195,26 @@ contract('BackableToken', function(accounts) {
 		assert.equal(votesAvailableAfter.toNumber(), 900);
 	})
 
-	// it("publish single post below threshold", async function() {
-	// 	await token.postLink("reddit.com", {from : accounts[0]});
-	// 	await token.backPost(0, 9, {from : accounts[1]});
-	// 	await token.publish();
+	it("should publish top post", async function() {
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.postLink("facebook.com", {from : accounts[1]});
+		await token.backPost(0, 9, {from : accounts[1]});
+		await token.publish();
 
-	// 	result = await token.getPublishedContent();
+		[poster, content] = await token.getPublishedItem(0,0);
 
-	// 	assert.equal( result.toNumber(), 0 );
-	// })
+		assert.equal(poster, accounts[0]);
+		assert.equal(toAscii(content), 'reddit.com');
+	})
 
-	// it("publish twice with single post", async function() {
-	// 	await token.postLink("reddit.com", {from : accounts[0]});
-	// 	await token.backPost(0, 1001, {from : accounts[1]});
-	// 	await token.publish();
-	// 	await token.publish();
+	it("should publish first post in case of tie", async function() {
+		await token.postLink("facebook.com", {from : accounts[1]});
+		await token.postLink("reddit.com", {from : accounts[0]});
+		await token.publish();
 
-	// 	const count = await token.getPublishedContent()
-	// 	assert.equal( count, 1 );
-	// })
+		[poster, content] = await token.getPublishedItem(0,0);
 
+		assert.equal(poster, accounts[1]);
+		assert.equal(toAscii(content), 'facebook.com');
+	})
 })

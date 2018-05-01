@@ -75,7 +75,7 @@ contract BackableToken is BasicToken, Ownable {
 	// event MemberCreated();
 	// event ElectionChange();
 	// event BackingChange();
-	event Published(uint numPublished);
+	event Published(uint version, uint index);
 
 
 	function memberCount() 
@@ -302,16 +302,23 @@ contract BackableToken is BasicToken, Ownable {
 	public 
 	returns (bool)
 	{
-		uint numPublished = 0;
+		uint maxVotes = 0;
+		uint indexToPublish = 0;
+		bool somethingSelected = false;
+
 		for (uint i = 0; i < contentPool.poolLength(); i++) {
 			bytes32 postKey = keccak256(contentPool.currentVersion(), i);
-			if( incomingPostBackings[postKey] >= PUBLISH_THRESHOLD) {
-				numPublished++;
-				publishedContent[contentPool.currentVersion()].push(i);
+			if (!somethingSelected || incomingPostBackings[postKey] > maxVotes) {
+				maxVotes = incomingPostBackings[postKey];
+				indexToPublish = i;
+				somethingSelected = true;
 			}
 		}
+		if(somethingSelected) {
+			publishedContent[contentPool.currentVersion()].push(indexToPublish);
+			Published(contentPool.currentVersion(), 0);
+		}
 		clear();
-		Published(numPublished);
 		return true;
 	}
 }
