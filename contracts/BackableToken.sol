@@ -21,15 +21,24 @@ contract BackableToken is BasicToken, Ownable {
 	ContentPool contentPool;
 	MemberRegistry memberRegistry;
 
-	uint PUBLISH_THRESHOLD = 6;
 	uint SUBMISSION_MINT = 1;
+	uint public nextPublishTime;
 
 	function BackableToken(address _contentPoolAddress, address _memberRegistryAddress) 
 	public 
 	{
-		owner = msg.sender;
 		contentPool = ContentPool(_contentPoolAddress);
 		memberRegistry = MemberRegistry(_memberRegistryAddress);
+
+		owner = msg.sender;
+		nextPublishTime = nextUTCMidnight(now);
+	}
+
+	function nextUTCMidnight(uint timestamp)
+	public pure
+	returns (uint)
+	{
+		return (timestamp / 1 days) * 1 days + 1 days;
 	}
 
 	// ======================= data about BACKINGS =====================================
@@ -302,6 +311,7 @@ contract BackableToken is BasicToken, Ownable {
 	public 
 	returns (bool)
 	{
+		require(now > nextPublishTime);
 		uint maxVotes = 0;
 		uint indexToPublish = 0;
 		bool somethingSelected = false;
@@ -319,6 +329,7 @@ contract BackableToken is BasicToken, Ownable {
 			Published(contentPool.currentVersion(), 0);
 		}
 		clear();
+		nextPublishTime = nextUTCMidnight(now);
 		return true;
 	}
 }

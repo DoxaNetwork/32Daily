@@ -217,4 +217,13 @@ contract('BackableToken', function(accounts) {
 		assert.equal(poster, accounts[1]);
 		assert.equal(toAscii(content), 'facebook.com');
 	})
+
+	it("should set nextPublishTime as next UTC midnight", async function() {
+		const nextPublishTime = await token.nextPublishTime();
+
+		const jsTimestamp = Math.round((new Date()).getTime() / 1000);
+		const nextUTCMidnight = Math.floor(jsTimestamp / 86400) * 86400 + 86400;
+
+		assert.equal(nextPublishTime.toNumber(), nextUTCMidnight)
+	})
 })
