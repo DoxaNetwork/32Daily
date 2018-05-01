@@ -292,3 +292,16 @@ input {
 	transition: all 300ms ease-in-out;
 }
 
+
+/* ==================== Admin controls ==================== */
+
+.publishButton {
+	background-color: var(--white);
+	border-bottom: 2px solid var(--light-gray);
+	padding: 10px;
+	text-align: center;
+}
+
+.publishButton button {
+	border-radius: 10px;
+}

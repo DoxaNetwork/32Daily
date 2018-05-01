@@ -20,7 +20,8 @@ class ThirtytwoDaily extends Component {
 			'submittedWords': [],
 			'pendingVotes': {},
 			'unsavedVotes': false,
-			'showSubmissions': false
+			'showSubmissions': false,
+			owner: false,
 		}
 	}
 
@@ -28,9 +29,10 @@ class ThirtytwoDaily extends Component {
 		// initialize global state
 		tokenInstance = await getContract(token);
 		currentAccount = await getCurrentAccount();
+		const owner = await tokenInstance.owner();
 
         const submittedWords = await getAllLinks();
-        this.setState({submittedWords})
+        this.setState({submittedWords, owner: owner === currentAccount})
     }
 
     mapPost(post) {
@@ -69,8 +71,15 @@ class ThirtytwoDaily extends Component {
 			<SubmittedWords submittedWords={this.state.submittedWords}/>
 			) : ('');
 
+		const publishButton = this.state.owner ? (
+			<div className="publishButton">
+				<button onClick={this.publish.bind(this)}>Publish</button>
+			</div>
+			) : '';
+
 		return (
 			<div>
+				{publishButton}
 				<Header/>
 				<div className="appContainer">
 					{submittedWordsBlock}
@@ -144,19 +153,18 @@ class SubmittedWords extends Component {
     }
 
 	setPendingVote(index, currentVotes) {
+		if(this.state.availableVotes == 0 ) return false;
     	let pendingVotes = {...this.state.pendingVotes}
     	this.setState({totalVotes: this.state.totalVotes + 1})
 
     	pendingVotes[index] ? pendingVotes[index] += 1 : pendingVotes[index] = 1;
-    	this.setState({pendingVotes, unsavedVotes: true});
+    	this.setState({pendingVotes, unsavedVotes: true, totalVotes: this.state.totalVotes + 1, availableVotes: this.state.availableVotes - 1});
+    	return true;
     }
 
     async persistVotes() {
     	const indexes = Object.keys(this.state.pendingVotes);
     	const votes = Object.values(this.state.pendingVotes);
-    	console.log('here')
-
-    	console.log(indexes, votes)
 
     	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
     	this.setState({unsavedVotes: false});
@@ -227,28 +235,17 @@ class SubmittedWord extends Component {
 	}
 
 	mapVotesToPixels(votes) {
-		// const fullWidth = 343;
-		// if (this.props.maxVote == 0) {
-		// 	return 0;
-		// }
-		// return votes / this.props.maxVote * fullWidth;
-
 		const fullWidth = 340;
-
 		return this.props.totalVotes == 0 ? 0 : votes / this.props.totalVotes * fullWidth;
-
-		// const maxVotes = 6;
-		// const multiplier = fullWidth / maxVotes;
-
-		// return votes * multiplier;
 	}
 
-	async handleClick() {
-		this.props.onClick(this.props.index, this.state.backing);
+	handleClick() {
+		const availableVotes = this.props.onClick(this.props.index, this.state.backing);
 
-		const backing = this.state.backing + 1;
-
-		this.setState({backing, pending: true})
+		if (availableVotes) {
+			const backing = this.state.backing + 1;
+			this.setState({backing, pending: true})
+		}
 	}
 
 	render() {
@@ -264,7 +261,6 @@ class SubmittedWord extends Component {
 				</div>
 				<div className="votingBar" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`}}> </div>
 			</div>
-
 		)
 	}
 }	
@@ -376,7 +372,7 @@ class Save extends Component {
 	render() {
 		return (
 			<div className="nextWordContainer save">
-				<button onClick={() => this.submit()}>Save</button>
+				<button className="unsaved" onClick={() => this.submit()}>Save</button>
 			</div>
 		)
 	}
