@@ -334,11 +334,15 @@ class NextWord extends Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {content: ''}
+		this.state = {
+			content: '',
+			charactersRemaining: 32
+		}
 	}
 
 	handleContentChange(event) {
-        this.setState({content: event.target.value})
+		const charactersRemaining = 32 - event.target.value.length;
+        this.setState({content: event.target.value, charactersRemaining})
     }
 
     async submit(content) {
@@ -347,11 +351,13 @@ class NextWord extends Component {
     }
 
 	render() {
+		const tooManyCharacters = this.state.charactersRemaining < 0 ? 'red' : '';
 		return (
 			<div className="nextWordContainer">
 				<div className="submittedWordContainer">
 					<div  className="nextWord">
 						<input type="text" placeholder="what comes next?" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+						<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
 					</div>
 					<button onClick={() => this.submit(this.state.content)}>Submit</button>
 				</div>

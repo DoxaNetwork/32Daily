@@ -35,10 +35,14 @@ button:hover {
 input {
 	border: none;
 	outline: none;
-	width: 100%;
+	width: 290px;
 	text-align: center;
 	color: black;
 	background-color: var(--white);
+}
+
+.red {
+	color: red !important;
 }
 
 .link {
@@ -188,6 +192,11 @@ input {
 	box-sizing: border-box;
 	border-radius: 10px;
 	transition: all 200ms ease-in-out;
+}
+
+.characterCount {
+	color: var(--gray);
+	padding: 0 10px;
 }
 
 /* ==================== Word voting ==================== */
