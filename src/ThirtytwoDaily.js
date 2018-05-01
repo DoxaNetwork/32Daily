@@ -345,22 +345,25 @@ class NextWord extends Component {
         this.setState({content: event.target.value, charactersRemaining})
     }
 
-    async submit(content) {
-    	await this.props.onSubmit(content);
-    	this.setState({content: ''})
+    submit(event) {
+    	this.props.onSubmit(this.state.content);
+    	this.setState({content: '', charactersRemaining: 32})
+    	event.preventDefault();
     }
 
 	render() {
 		const tooManyCharacters = this.state.charactersRemaining < 0 ? 'red' : '';
+		const unsavedState = this.state.charactersRemaining < 32 ? 'unsaved' : '';
+
 		return (
 			<div className="nextWordContainer">
-				<div className="submittedWordContainer">
+				<form onSubmit={this.submit.bind(this)} className="submittedWordContainer">
 					<div  className="nextWord">
-						<input type="text" placeholder="what comes next?" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+						<input required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="what comes next?" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
 						<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
 					</div>
-					<button onClick={() => this.submit(this.state.content)}>Submit</button>
-				</div>
+					<button className={`${unsavedState}`}type="submit">Submit</button>
+				</form>
 			</div>
 		)
 	}

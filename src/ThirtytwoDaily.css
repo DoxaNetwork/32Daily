@@ -17,14 +17,19 @@ html {
 }
 
 button {
-	border: 1px solid var(--secondary-color);
-	background-color: var(--secondary-color);
+	border: 1px solid var(--main-color);
+	background-color: var(--main-color);
 	border-radius:  0 10px 10px 0;
 	width: 127px;
-	height:45px;
+	height:50px;
 	padding: 0px;
 	color: var(--white);
 	transition: all 200ms ease-in-out;
+}
+
+button.unsaved {
+	border: 1px solid var(--secondary-color);
+	background-color: var(--secondary-color);
 }
 
 button:hover {
