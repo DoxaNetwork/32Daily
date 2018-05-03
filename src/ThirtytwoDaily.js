@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 import contract from 'truffle-contract'
 
-import { getContract, getCurrentAccount, getAllLinks, getAllPastWords, getPreHistory } from './DappFunctions'
+import { getContract, getCurrentAccount, getAllLinks, preLoadHistory, getPreHistory } from './DappFunctions'
 import BackableTokenContract from '../build/contracts/BackableToken.json'
 import toAscii from './utils/helpers'
 import './ThirtytwoDaily.css'
@@ -284,18 +284,19 @@ class PublishedWords extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			'publishedWords': []
+			'publishedWords': [],
+			'allPreLoaded': false
 		}
 	}
 
 	async componentWillMount() {
-        const publishedWords = await getAllPastWords();
-        this.setState({publishedWords})
+        const [publishedWords, allPreLoaded] = await preLoadHistory();
+        this.setState({publishedWords, allPreLoaded})
     }
 
 	async loadFullHistory() {
     	const publishedWords = await getPreHistory();
-    	this.setState({ publishedWords: [...publishedWords, ...this.state.publishedWords ] })
+    	this.setState({ publishedWords: [...publishedWords, ...this.state.publishedWords ], allPreLoaded: true})
     }
 
 	render() {
@@ -303,9 +304,11 @@ class PublishedWords extends Component {
 			<PublishedWord  key={word.content} word={word} />
 		);
 
+		const showAllHistoryLink = this.state.allPreLoaded ? '' : <div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>Show full history</div>;
+
 		return (
 			<div>
-				<div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>Show full history</div>
+				{showAllHistoryLink}
 				<div className="wordStreamInner">
 					<CSSTransitionGroup
           				transitionName="opacity"
