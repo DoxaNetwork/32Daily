@@ -63,7 +63,7 @@ input {
 .appContainer {
 	display: flex;
 	justify-content: center;
-	padding-top: 45px;
+	padding-top: 55px;
 }
 
 .sectionTitle {
@@ -96,11 +96,20 @@ input {
 .timeBar {
 	margin-top: -5px;
 	height: 2px;
-	width: 75%;
 	border-bottom: 3px solid var(--darkwhite);
 	background-color: lightgray;
 	border-top: 2px solid white;
-	transition: width 1500ms ease-out;
+	transition: width 1200ms ease-out;
+}
+
+.timerText {
+	color: var(--main-color);
+	text-align: right;
+	padding: 3px 15px;
+	position: absolute;
+	box-sizing: border-box;
+	width: 100%;
+	margin-top: -28px;
 }
 
 /* ==================== Animations ==================== */
@@ -167,13 +176,15 @@ input {
 /* ==================== Word submission ==================== */
 .nextWordContainer.save button {
 	border-radius: 10px;
-	width:100%;
+	width: 75%;
+	margin:auto;
+	height:40px;
 	/*background-color: var(--secondary-color);*/
 }
 
 .saveContainer {
 	height: 50px;
-	margin: 10px 0;
+	margin: 15px 0 25px;
 }
 .nextWordContainer.save {
 	padding: 0;
@@ -219,8 +230,13 @@ input {
 	border-right: 2px solid var(--lightgray);
 }
 
+.wordFactoryTitle {
+	width: 75%;
+	margin:auto;
+}
+
 .submittedWords {
-	padding-top: 20px;
+	padding-top: 30px;
 	width: 400px;
 }
 
@@ -298,6 +314,29 @@ input {
 	top: 0px;
 	box-sizing: border-box;
 	transition: all 300ms ease-in-out;
+}
+
+.votesSpent {
+	background-color: var(--lightgray);
+	transition: width 300ms ease-out;
+}
+
+.votesRemaining {
+	background-color: var(--main-color);
+	transition: width 300ms ease-out;
+}
+
+.voteBarsContainer {
+	border-radius: 15px;
+	display: flex;
+	overflow: hidden;
+	height: 5px;
+}
+
+.voteText {
+	text-align: center;
+	color: gray;
+	margin-bottom: 10px;
 }
 
 

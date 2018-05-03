@@ -12,6 +12,7 @@ let tokenInstance;
 let currentAccount;
 
 
+
 class ThirtytwoDaily extends Component {
 
 	constructor(props){
@@ -80,7 +81,7 @@ class ThirtytwoDaily extends Component {
 		return (
 			<div>
 				{publishButton}
-				<Header/>
+				<Header showTimerText={this.state.showSubmissions}/>
 				<div className="appContainer">
 					<div>
 					
@@ -106,9 +107,17 @@ class ThirtytwoDaily extends Component {
 class Header extends Component {
 	render() {
 		const currentTime = new Date();
+		const hoursRemaining = 23 - currentTime.getUTCHours();
+		const minutesRemaining = 60 - currentTime.getUTCMinutes();
 		const timeConsumedPercent = (currentTime.getUTCHours() * 60 + currentTime.getUTCMinutes()) / (24 * 60) * 100;
 
+		const timerText = this.props.showTimerText ? (
+			
+				<div className="timerText">{hoursRemaining} hours and {minutesRemaining} minutes remaining</div> 
+			
+			) : '';
 		return (
+
 			<div>
 				<div className="header">
 					<div>Thirtytwo Daily</div>
@@ -122,6 +131,8 @@ class Header extends Component {
 				    transitionLeave={false}>
 					<div className="timeBar" style={{width: `${timeConsumedPercent}%`}}></div>
 				</CSSTransitionGroup>
+					{timerText}
+				
 			</div>
 		)
 	}
@@ -176,24 +187,17 @@ class SubmittedWords extends Component {
     }
 
 	render() {
-		const currentTime = new Date();
-		const hoursRemaining = 23 - currentTime.getUTCHours();
-		const minutesRemaining = 60 - currentTime.getUTCMinutes();
 
 		const submittedWords = this.props.submittedWords.map(obj =>
 			<SubmittedWord totalVotes={this.state.totalVotes} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		const saveButton = this.state.unsavedVotes ? (
-			<CSSTransitionGroup
-				transitionName="width"
-				transitionAppear={true}
-			    transitionAppearTimeout={20000}
-			    transitionEnter={false}
-			    transitionLeave={false}>
 			    <Save onClick={this.persistVotes.bind(this)}/>
-			    </CSSTransitionGroup>
 			   ) : '';
+
+		const votesRemainingPercent = this.state.availableVotes / this.state.tokenBalance * 100;
+		const votesSpentPercent = 100 - votesRemainingPercent;
 
 		return (
 			<CSSTransitionGroup
@@ -209,9 +213,11 @@ class SubmittedWords extends Component {
 			    <div className="sectionTitle">Choose the next line</div>
 					<div className="submittedWords">
 						<div className="wordFactoryTitle">
-							<div>Voting ends in {hoursRemaining} hours and {minutesRemaining} minutes</div>
-							<div>You have {this.state.tokenBalance} total votes</div>
-							<div>You have {this.state.availableVotes} available votes</div>
+							<div className="voteText">{this.state.availableVotes} of your {this.state.tokenBalance} votes remaining</div>
+							<div className="voteBarsContainer">
+								<div style={{width:`${votesRemainingPercent}%`}} className="votesRemaining"></div>
+								<div style={{width:`${votesSpentPercent}%`}} className="votesSpent"></div>
+							</div>
 						</div>
 						<div className="saveContainer">
 							{saveButton}
