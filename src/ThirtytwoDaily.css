@@ -134,7 +134,7 @@ input {
 
 .opacity-enter.opacity-enter-active {
   opacity: 1;
-  transition: opacity 500ms ease-in;
+  transition: opacity 300ms ease-in;
 }
 
 .opacity-leave {
