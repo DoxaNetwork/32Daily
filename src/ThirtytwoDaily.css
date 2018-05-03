@@ -2,7 +2,7 @@
 :root {
 	--main-color: #16d;
 	--secondary-color: #469;
-	--light-gray: lightgray;
+	--lightgray: lightgray;
 	--gray: #888;
 	--white: white;
 	--darkwhite: whitesmoke;
@@ -53,6 +53,7 @@ input {
 .link {
 	color: var(--gray);
 	cursor: pointer;
+	text-align: center;
 }
 
 .link:hover {
@@ -62,7 +63,14 @@ input {
 .appContainer {
 	display: flex;
 	justify-content: center;
-	padding-top: 70px;
+	padding-top: 45px;
+}
+
+.sectionTitle {
+	font-size: 16pt;
+	color: var(--main-color);
+	text-align: center;
+	margin-bottom: 20px;
 }
 
 /* ==================== Header ==================== */
@@ -132,11 +140,9 @@ input {
 /* ==================== History ====================*/
 .showHistory {
 	margin-bottom: 20px;
-	margin-left: 40px;
 }
 
 .wordStreamInner {
-	padding-left: 40px;	
 }
 
 .word {
@@ -177,16 +183,16 @@ input {
 }
 
 .showSubmissions {
-	margin-left: 40px;
+}
+
+.nextWordBlock {
+	margin-top: 40px;
 }
 .nextWordContainer {
 	display: flex;
 	justify-content: space-between;
-	padding-right:20px;
-	margin-bottom: 30px;
-	margin: 50px 0 10px;
+	margin: 20px 0 10px;
 	width: 460px;
-	padding-left: 40px;
 }
 .nextWord {
 	color: black;
@@ -207,8 +213,10 @@ input {
 /* ==================== Word voting ==================== */
 .wordFactory {
 	padding-left: 30px;
-	margin-top: -60px;
+	/*margin-top: -60px;*/
 	margin-right: 40px;
+	padding-right: 40px;
+	border-right: 2px solid var(--lightgray);
 }
 
 .submittedWords {
@@ -297,7 +305,7 @@ input {
 
 .publishButton {
 	background-color: var(--white);
-	border-bottom: 2px solid var(--light-gray);
+	border-bottom: 2px solid var(--lightgray);
 	padding: 10px;
 	text-align: center;
 }

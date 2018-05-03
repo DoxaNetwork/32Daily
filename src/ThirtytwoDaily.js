@@ -82,9 +82,14 @@ class ThirtytwoDaily extends Component {
 				{publishButton}
 				<Header/>
 				<div className="appContainer">
-					{submittedWordsBlock}
 					<div>
+					
+					{submittedWordsBlock}
+					</div>
+					<div>
+						<div className="sectionTitle">The story so far</div>
 						<PublishedWords/>
+
 						<NextWord onSubmit={this.postLink.bind(this)}/>
 						<div className="showSubmissions link" onClick={this.toggleSubmissionView.bind(this)}>{submissionLink}</div>
 					</div>
@@ -198,10 +203,12 @@ class SubmittedWords extends Component {
 			    transitionEnter={false}
 			    transitionLeave={false}>
 
+			    
+
 				<div className="wordFactory">
+			    <div className="sectionTitle">Choose the next line</div>
 					<div className="submittedWords">
 						<div className="wordFactoryTitle">
-							<div>What comes next?</div>
 							<div>Voting ends in {hoursRemaining} hours and {minutesRemaining} minutes</div>
 							<div>You have {this.state.tokenBalance} total votes</div>
 							<div>You have {this.state.availableVotes} available votes</div>
@@ -352,14 +359,17 @@ class NextWord extends Component {
 		const unsavedState = this.state.charactersRemaining < 32 ? 'unsaved' : '';
 
 		return (
-			<div className="nextWordContainer">
-				<form onSubmit={this.submit.bind(this)} className="submittedWordContainer">
-					<div  className="nextWord">
-						<input required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="what comes next?" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
-						<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
-					</div>
-					<button className={`${unsavedState}`}type="submit">Submit</button>
-				</form>
+			<div className="nextWordBlock">
+				<div className="sectionTitle">Continue the story</div>
+				<div className="nextWordContainer">
+					<form onSubmit={this.submit.bind(this)} className="submittedWordContainer">
+						<div  className="nextWord">
+							<input autoComplete="off" required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="Suggest the next line" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+							<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
+						</div>
+						<button className={`${unsavedState}`}type="submit">Submit</button>
+					</form>
+				</div>
 			</div>
 		)
 	}
