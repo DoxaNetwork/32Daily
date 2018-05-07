@@ -12,6 +12,10 @@ html {
 	background-color: var(--darkwhite);
 }
 
+body {
+	margin: 0;
+}
+
 * {
 	font-family: monospace;
 }
@@ -43,6 +47,7 @@ input {
 	/*width: 290px;*/
 	text-align: center;
 	color: black;
+	flex-grow: 1;
 	background-color: var(--white);
 }
 
@@ -391,12 +396,26 @@ input {
 	button {
 		width: 100px;
 	}
+
+	.rightSide {
+		width: 100%
+	}
+
+	.hidden {
+		display: none;
+	}
 }
 
-.rightSide {
-	width: 100%;
-}
 
-.hidden {
-	display: none;
+
+@media only screen and (min-width: 650px) {
+	.wordFactory {
+		padding-right: 20px;
+		margin-right: -20px;
+	}
+
+	.rightSide {
+		width: 50%;
+		padding: 0 20px;
+	}
 }
