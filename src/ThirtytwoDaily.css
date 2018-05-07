@@ -19,7 +19,7 @@ html {
 button {
 	border: 1px solid var(--main-color);
 	background-color: var(--main-color);
-	border-radius:  0 10px 10px 0;
+	/*border-radius:  0 10px 10px 0;*/
 	width: 127px;
 	height:50px;
 	padding: 0px;
@@ -198,6 +198,7 @@ input {
 }
 
 .showSubmissions {
+	margin-top:20px;
 }
 
 .nextWordBlock {
@@ -209,19 +210,29 @@ input {
 	margin: 20px 5px 10px;
 	/*width: 460px; */
 	/*here*/
+	height: 50px;
+	border-radius: 10px;
+	overflow: hidden;
+
+	/*background-color: var(--white);
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+	margin:10px 5px;
+	position: relative;*/
 }
 .nextWord {
 	color: black;
 	background-color: var(--white);
-	height: 45px;
-	line-height: 45px;
+	height: 50px;
+	line-height: 50px;
 	/*width: 355px;*/
 	/*here*/
 	flex-grow: 1;
 	display: flex;
 	justify-content: space-between;
 	box-sizing: border-box;
-	border-radius: 10px;
+	/*border-radius: 10px;*/
 	transition: all 200ms ease-in-out;
 	padding: 0 5px 0 15px;
 }
@@ -233,10 +244,10 @@ input {
 
 /* ==================== Word voting ==================== */
 .wordFactory {
-	padding-left: 30px;
+	/*padding-left: 30px;*/
 	/*margin-top: -60px;*/
-	margin-right: 40px;
-	padding-right: 40px;
+	/*margin-right: 40px;*/
+	/*padding-right: 40px;*/
 	border-right: 2px solid var(--lightgray);
 }
 
@@ -247,7 +258,7 @@ input {
 
 .submittedWords {
 	padding-top: 30px;
-	width: 400px;
+	/*width: 400px;*/
 }
 
 .submittedWordContainer {
@@ -256,11 +267,11 @@ input {
 	align-items: center;
 	cursor: pointer;
 	border-radius: 10px;
-	margin:10px 0;
+	margin:10px 5px;
 	height: 50px;
 	overflow: hidden;
 	position: relative;
-	width: 100%;
+	/*width: 100%;*/
 	/*justify-content: space-between;*/
 }
 .submittedWordContainer.pending .voteCount {
@@ -274,7 +285,8 @@ input {
 
 .submittedWord {
 	color: black;
-	width: 340px;
+	/*width: 340px;*/
+	flex-grow: 1;
 	height: 100%;
 	box-sizing: border-box;
 	line-height: 43px;	
@@ -383,4 +395,8 @@ input {
 
 .rightSide {
 	width: 100%;
+}
+
+.hidden {
+	display: none;
 }

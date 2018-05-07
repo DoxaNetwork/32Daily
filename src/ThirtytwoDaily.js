@@ -69,7 +69,9 @@ class ThirtytwoDaily extends Component {
 		const submissionLink = this.state.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
 
 		const submittedWordsBlock = this.state.showSubmissions ? (
-			<SubmittedWords submittedWords={this.state.submittedWords}/>
+			<div className="rightSide">
+				<SubmittedWords submittedWords={this.state.submittedWords}/>
+			</div>
 			) : ('');
 
 		const publishButton = this.state.owner ? (
@@ -78,23 +80,22 @@ class ThirtytwoDaily extends Component {
 			</div>
 			) : '';
 
+		const hidden = this.state.showSubmissions ? 'hidden' : '';
+
 		return (
 			<div>
 				{publishButton}
 				<Header showTimerText={this.state.showSubmissions}/>
 				<div className="appContainer">
-					<div>
-					
 					{submittedWordsBlock}
-					</div>
-					<div className="rightSide">
+					<div className={`rightSide ${hidden}`}>
 						<div className="sectionTitle">The story so far</div>
 						<PublishedWords/>
 
 						<NextWord onSubmit={this.postLink.bind(this)}/>
-						<div className="showSubmissions link" onClick={this.toggleSubmissionView.bind(this)}>{submissionLink}</div>
 					</div>
 				</div>
+				<div className="showSubmissions link" onClick={this.toggleSubmissionView.bind(this)}>{submissionLink}</div>
 
 				<div className="footer">
 				</div>
@@ -200,15 +201,7 @@ class SubmittedWords extends Component {
 		const votesSpentPercent = 100 - votesRemainingPercent;
 
 		return (
-			<CSSTransitionGroup
-				transitionName="width"
-				transitionAppear={true}
-			    transitionAppearTimeout={20000}
-			    transitionEnter={false}
-			    transitionLeave={false}>
-
-			    
-
+			<div>
 				<div className="wordFactory">
 			    <div className="sectionTitle">Choose the next line</div>
 					<div className="submittedWords">
@@ -230,7 +223,7 @@ class SubmittedWords extends Component {
 						</CSSTransitionGroup>
 					</div>
 				</div>
-			</CSSTransitionGroup>
+			</div>
 		)
 	}
 }
@@ -248,7 +241,7 @@ class SubmittedWord extends Component {
 	}
 
 	mapVotesToPixels(votes) {
-		const fullWidth = 340;
+		const fullWidth = 300;
 		return this.props.totalVotes == 0 ? 0 : votes / this.props.totalVotes * fullWidth;
 	}
 
@@ -370,15 +363,13 @@ class NextWord extends Component {
 		return (
 			<div className="nextWordBlock">
 				<div className="sectionTitle">Continue the story</div>
-				<div className="nextWordContainer">
-					<form onSubmit={this.submit.bind(this)} className="submittedWordContainer">
-						<div  className="nextWord">
-							<input autoComplete="off" required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="Suggest the next line" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
-							<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
-						</div>
-						<button className={`${unsavedState}`}type="submit">Submit</button>
-					</form>
-				</div>
+				<form onSubmit={this.submit.bind(this)} className="nextWordContainer">
+					<div  className="nextWord">
+						<input autoComplete="off" required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="Suggest the next line" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+						<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
+					</div>
+					<button className={`${unsavedState}`}type="submit">Submit</button>
+				</form>
 			</div>
 		)
 	}
