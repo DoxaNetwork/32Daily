@@ -40,7 +40,7 @@ button:hover {
 input {
 	border: none;
 	outline: none;
-	width: 290px;
+	/*width: 290px;*/
 	text-align: center;
 	color: black;
 	background-color: var(--white);
@@ -87,7 +87,7 @@ input {
 
 .subtitle {
 	margin-top: 20px;
-	font-size: 12pt;
+	font-size: 0.3em;
 }
 
 .header div {
@@ -155,20 +155,24 @@ input {
 }
 
 .word {
-	width: 100%;
+	/*width: 100%;*/
+	/*here?*/
 	line-height: 30px;
 	text-align: left;
-	padding: 10px 20px;
+	padding: 10px 15px;
 	height: 30px;
 	background-color:var(--white);
 	color: black;
-	border-radius: 10px 0 0 10px;
+	/*border-radius: 10px 0 0 10px;*/
 }
 
 .publishedWordContainer {
 	display: flex;
-	margin:0 0 10px;
+	margin:0 5px 5px;
 	border-radius: 10px;
+	overflow: hidden;
+	justify-content: space-between;
+	background-color: var(--white)
 }
 
 
@@ -202,18 +206,24 @@ input {
 .nextWordContainer {
 	display: flex;
 	justify-content: space-between;
-	margin: 20px 0 10px;
-	width: 460px;
+	margin: 20px 5px 10px;
+	/*width: 460px; */
+	/*here*/
 }
 .nextWord {
 	color: black;
 	background-color: var(--white);
 	height: 45px;
 	line-height: 45px;
-	width: 355px;
+	/*width: 355px;*/
+	/*here*/
+	flex-grow: 1;
+	display: flex;
+	justify-content: space-between;
 	box-sizing: border-box;
 	border-radius: 10px;
 	transition: all 200ms ease-in-out;
+	padding: 0 5px 0 15px;
 }
 
 .characterCount {
@@ -250,6 +260,8 @@ input {
 	height: 50px;
 	overflow: hidden;
 	position: relative;
+	width: 100%;
+	/*justify-content: space-between;*/
 }
 .submittedWordContainer.pending .voteCount {
 	background-color: var(--secondary-color);
@@ -301,7 +313,7 @@ input {
 	color: var(--gray);
 	height: 50px;
 	line-height: 50px;
-	width:100px;
+	/*width:100px;*/
 	text-align: center;
 	border-radius: 0 10px 10px 0;
 }
@@ -351,4 +363,24 @@ input {
 
 .publishButton button {
 	border-radius: 10px;
+}
+
+/* mobile */
+
+@media only screen and (max-width: 649px) {
+	.header {
+		font-size: 40pt;
+	}
+
+	.subtitle {
+		padding: 0 70px;
+	}
+
+	button {
+		width: 100px;
+	}
+}
+
+.rightSide {
+	width: 100%;
 }

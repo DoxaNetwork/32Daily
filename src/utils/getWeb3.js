@@ -19,8 +19,8 @@ let getWeb3 = new Promise(function(resolve, reject) {
 
       resolve(results)
     } else {
-      // Fallback to localhost if no web3 injection.
-      var provider = new Web3.providers.HttpProvider('http://localhost:8545')
+      // Fallback to infura if no web3 injection.
+      var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/f6NOUQqHkXc64NJgRwvj')
 
       web3 = new Web3(provider)
 

@@ -87,7 +87,7 @@ class ThirtytwoDaily extends Component {
 					
 					{submittedWordsBlock}
 					</div>
-					<div>
+					<div className="rightSide">
 						<div className="sectionTitle">The story so far</div>
 						<PublishedWords/>
 
