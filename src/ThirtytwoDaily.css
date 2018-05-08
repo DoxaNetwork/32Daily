@@ -331,7 +331,7 @@ input {
 	color: var(--gray);
 	height: 50px;
 	line-height: 50px;
-	/*width:100px;*/
+	width:65px;
 	text-align: center;
 	border-radius: 0 10px 10px 0;
 }
