@@ -226,7 +226,7 @@ class SubmittedWords extends Component {
     }
 
 	setPendingVote(index) {
-		if(this.state.availableVotes == 0 ) return false;
+		if(this.props.availableVotes - this.state.totalPendingVotes == 0 ) return false;
 
     	let pendingVotes = {...this.state.pendingVotes}
     	pendingVotes[index] ? pendingVotes[index] += 1 : pendingVotes[index] = 1;
@@ -237,7 +237,11 @@ class SubmittedWords extends Component {
 
     async persistVotes() {
     	await this.props.persistVotes(this.state.pendingVotes)
-    	this.setState({unsavedVotes: false, totalPendingVotes: 0});
+    	this.clearVotes()
+    }
+
+    clearVotes() {
+    	this.setState({pendingVotes: {}, unsavedVotes: false, totalPendingVotes: 0})
     }
 
 	render() {
@@ -252,7 +256,10 @@ class SubmittedWords extends Component {
 		);
 
 		const saveButton = this.state.unsavedVotes ? (
-			    <Save onClick={this.persistVotes.bind(this)}/>
+				<div className="saveContainer">
+				    <Button text="Save" onClick={this.persistVotes.bind(this)}/>
+				    <Button text="Clear" onClick={this.clearVotes.bind(this)}/>
+			    </div>
 			   ) : '';
 
 		const votesRemainingPercent = availableVotes / this.props.tokenBalance * 100;
@@ -273,7 +280,7 @@ class SubmittedWords extends Component {
 								<div style={{width:`${votesSpentPercent}%`}} className="votesSpent"></div>
 							</div>
 						</div>
-						<div className="saveContainer">
+						<div className="saveSpaceHolder">
 							{saveButton}
 						</div>
 						<CSSTransitionGroup
@@ -436,15 +443,13 @@ class NextWord extends Component {
 	}
 }
 
-class Save extends Component {
+class Button extends Component {
 	async submit() {
 		await this.props.onClick()
 	}
 	render() {
 		return (
-			<div className="nextWordContainer save">
-				<button className="unsaved" onClick={() => this.submit()}>Save</button>
-			</div>
+			<button className="save unsaved" onClick={() => this.submit()}>{this.props.text}</button>
 		)
 	}
 }

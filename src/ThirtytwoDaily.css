@@ -184,17 +184,24 @@ input {
 
 
 /* ==================== Word submission ==================== */
-.nextWordContainer.save button {
+button.save {
 	border-radius: 10px;
-	width: 75%;
-	margin:auto;
+	width: 50%;
+	margin: 0 5px;
+	/*margin:auto;*/
 	height:40px;
 }
 
-.saveContainer {
+.saveSpaceHolder {
 	height: 50px;
 	margin: 15px 0 25px;
 }
+
+.saveContainer {
+	display: flex;
+	margin: 0 12.5%;
+}
+
 .nextWordContainer.save {
 	padding: 0;
 	margin-left:0;
