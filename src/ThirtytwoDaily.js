@@ -11,8 +11,7 @@ const token = contract(BackableTokenContract)
 let tokenInstance;
 let currentAccount;
 
-
-
+	
 class ThirtytwoDaily extends Component {
 
 	constructor(props){
@@ -33,6 +32,7 @@ class ThirtytwoDaily extends Component {
 		const owner = await tokenInstance.owner();
 
         const submittedWords = await getAllLinks();
+        submittedWords.sort((a, b) => {return b.backing - a.backing})
         this.setState({submittedWords, owner: owner === currentAccount})
     }
 
