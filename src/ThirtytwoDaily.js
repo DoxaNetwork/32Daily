@@ -32,6 +32,7 @@ class ThirtytwoDaily extends Component {
 		const owner = await tokenInstance.owner();
 
         const submittedWords = await getAllLinks();
+        submittedWords.sort((a, b) => {return b.backing - a.backing})
         this.setState({submittedWords, owner: owner === currentAccount})
     }
 
@@ -63,6 +64,7 @@ class ThirtytwoDaily extends Component {
 
     	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
 
+    	submittedWords.sort((a, b) => {return b.backing - a.backing})
     	this.setState({submittedWords})
     	return result;
 
@@ -72,7 +74,7 @@ class ThirtytwoDaily extends Component {
     	const result = await tokenInstance.postLink(content, { from: currentAccount})
     	const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
         const newPost = this.mapPost(filteredEvents[0].args);
-        this.setState({ showSubmissions: true, submittedWords: [newPost, ...this.state.submittedWords ] })
+        this.setState({ showSubmissions: true, submittedWords: [...this.state.submittedWords, newPost ] })
     }
 
     async publish() {
@@ -85,8 +87,6 @@ class ThirtytwoDaily extends Component {
 
 	render() {
 		const submissionLink = this.state.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
-
-		this.state.submittedWords.sort((a, b) => {return b.backing - a.backing})
 
 		const submittedWordsBlock = this.state.showSubmissions ? (
 			<div className="rightSide">
