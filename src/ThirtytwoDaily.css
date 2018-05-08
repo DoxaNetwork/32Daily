@@ -23,7 +23,6 @@ body {
 button {
 	border: 1px solid var(--main-color);
 	background-color: var(--main-color);
-	/*border-radius:  0 10px 10px 0;*/
 	width: 127px;
 	height:50px;
 	padding: 0px;
@@ -44,7 +43,6 @@ button:hover {
 input {
 	border: none;
 	outline: none;
-	/*width: 290px;*/
 	text-align: center;
 	color: black;
 	flex-grow: 1;
@@ -160,15 +158,12 @@ input {
 }
 
 .word {
-	/*width: 100%;*/
-	/*here?*/
 	line-height: 30px;
 	text-align: left;
 	padding: 10px 15px;
 	height: 30px;
 	background-color:var(--white);
 	color: black;
-	/*border-radius: 10px 0 0 10px;*/
 }
 
 .publishedWordContainer {
@@ -188,7 +183,6 @@ input {
 	width: 75%;
 	margin:auto;
 	height:40px;
-	/*background-color: var(--secondary-color);*/
 }
 
 .saveContainer {
@@ -213,31 +207,19 @@ input {
 	display: flex;
 	justify-content: space-between;
 	margin: 20px 5px 10px;
-	/*width: 460px; */
-	/*here*/
 	height: 50px;
 	border-radius: 10px;
 	overflow: hidden;
-
-	/*background-color: var(--white);
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-	margin:10px 5px;
-	position: relative;*/
 }
 .nextWord {
 	color: black;
 	background-color: var(--white);
 	height: 50px;
 	line-height: 50px;
-	/*width: 355px;*/
-	/*here*/
 	flex-grow: 1;
 	display: flex;
 	justify-content: space-between;
 	box-sizing: border-box;
-	/*border-radius: 10px;*/
 	transition: all 200ms ease-in-out;
 	padding: 0 5px 0 15px;
 }
@@ -249,10 +231,6 @@ input {
 
 /* ==================== Word voting ==================== */
 .wordFactory {
-	/*padding-left: 30px;*/
-	/*margin-top: -60px;*/
-	/*margin-right: 40px;*/
-	/*padding-right: 40px;*/
 	border-right: 2px solid var(--lightgray);
 }
 
@@ -263,7 +241,6 @@ input {
 
 .submittedWords {
 	padding-top: 30px;
-	/*width: 400px;*/
 }
 
 .submittedWordContainer {
@@ -275,9 +252,6 @@ input {
 	margin:10px 5px;
 	height: 50px;
 	overflow: hidden;
-	/*position: relative;*/
-	/*width: 100%;*/
-	/*justify-content: space-between;*/
 }
 .submittedWordContainer.pending .voteCount {
 	background-color: var(--secondary-color);
@@ -290,7 +264,6 @@ input {
 
 .submittedWord {
 	color: black;
-	/*width: 340px;*/
 	flex-grow: 1;
 	height: 100%;
 	box-sizing: border-box;
@@ -313,7 +286,6 @@ input {
 }
 
 .voteCount {
-	/*padding: 0 15px;*/
 	background-color: var(--main-color);
 	color: white;
 	height: 50px;
