@@ -4,7 +4,7 @@ import contract from 'truffle-contract'
 
 import { getContract, getCurrentAccount, getAllLinks, preLoadHistory, getPreHistory } from './DappFunctions'
 import BackableTokenContract from '../build/contracts/BackableToken.json'
-import toAscii from './utils/helpers'
+import { toAscii, dayOfWeek, month } from './utils/helpers'
 import './ThirtytwoDaily.css'
 
 const token = contract(BackableTokenContract)
@@ -242,6 +242,9 @@ class SubmittedWords extends Component {
 
 	render() {
 
+		const tomorrow = new Date();
+		tomorrow.setDate(tomorrow.getDate() + 1)
+
 		const availableVotes = this.props.availableVotes - this.state.totalPendingVotes;
 
 		const submittedWords = this.props.submittedWords.map(obj =>
@@ -258,7 +261,10 @@ class SubmittedWords extends Component {
 		return (
 			<div>
 				<div className="wordFactory">
-			    <div className="sectionTitle">Choose the next line</div>
+			    <div className="sectionTitle">
+			    	<div>Choose the next line</div>
+			    	<div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
+			    </div>
 					<div className="submittedWords">
 						<div className="wordFactoryTitle">
 							<div className="voteText">{availableVotes} of your {this.props.tokenBalance} votes remaining</div>

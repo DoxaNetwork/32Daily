@@ -1,6 +1,6 @@
 import BackableTokenContract from '../build/contracts/BackableToken.json'
 import getWeb3 from './utils/getWeb3'
-import toAscii from './utils/helpers'
+import {toAscii, dayOfWeek} from './utils/helpers'
 
 
 const contract = require('truffle-contract')

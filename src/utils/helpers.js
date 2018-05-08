@@ -6,4 +6,14 @@ function toAscii(hex) {
     return zeroPaddedString.split("\u0000")[0];
 }
 
-module.exports = toAscii;
+function dayOfWeek(date) {
+	const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    return daysOfWeek[date.getUTCDay()];
+}
+
+function month(date) {
+	const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+	return months[date.getUTCMonth()];
+}
+
+module.exports = { toAscii, dayOfWeek, month };

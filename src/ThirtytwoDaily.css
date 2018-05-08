@@ -77,6 +77,11 @@ input {
 	margin-bottom: 20px;
 }
 
+.sectionSubTitle {
+	font-size: 0.7em;
+	color: var(--gray);
+}
+
 /* ==================== Header ==================== */
 .header {
 	color: var(--main-color);
