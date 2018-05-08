@@ -22,6 +22,8 @@ class ThirtytwoDaily extends Component {
 			'unsavedVotes': false,
 			'showSubmissions': false,
 			owner: false,
+			tokenBalance: 0,
+			availableVotes: 0
 		}
 	}
 
@@ -33,7 +35,19 @@ class ThirtytwoDaily extends Component {
 
         const submittedWords = await getAllLinks();
         submittedWords.sort((a, b) => {return b.backing - a.backing})
-        this.setState({submittedWords, owner: owner === currentAccount})
+
+        const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
+    	const tokenBalance = tokenBalanceBN.toNumber();
+
+    	const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+		const availableVotes = availableVotesBN.toNumber()
+
+        this.setState({
+        	tokenBalance, 
+        	availableVotes,
+        	submittedWords, 
+        	owner: owner === currentAccount
+        })
     }
 
     mapPost(post) {
@@ -65,16 +79,33 @@ class ThirtytwoDaily extends Component {
     	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
 
     	submittedWords.sort((a, b) => {return b.backing - a.backing})
-    	this.setState({submittedWords})
+
+    	const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+		const availableVotes = availableVotesBN.toNumber()
+
+    	this.setState({submittedWords, availableVotes})
     	return result;
 
     }
 
     async postLink(content) {
     	const result = await tokenInstance.postLink(content, { from: currentAccount})
+
+    	const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
+    	const tokenBalance = tokenBalanceBN.toNumber();
+
+    	const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+		const availableVotes = availableVotesBN.toNumber()
+
     	const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
         const newPost = this.mapPost(filteredEvents[0].args);
-        this.setState({ showSubmissions: true, submittedWords: [...this.state.submittedWords, newPost ] })
+
+        this.setState({
+        	tokenBalance,
+        	availableVotes, 
+        	showSubmissions: true, 
+        	submittedWords: [...this.state.submittedWords, newPost ]
+        })
     }
 
     async publish() {
@@ -90,7 +121,7 @@ class ThirtytwoDaily extends Component {
 
 		const submittedWordsBlock = this.state.showSubmissions ? (
 			<div className="rightSide">
-				<SubmittedWords persistVotes={this.persistVotes.bind(this)} submittedWords={this.state.submittedWords}/>
+				<SubmittedWords availableVotes={this.state.availableVotes} tokenBalance={this.state.tokenBalance} persistVotes={this.persistVotes.bind(this)} submittedWords={this.state.submittedWords}/>
 			</div>
 			) : ('');
 
@@ -154,7 +185,7 @@ class Header extends Component {
 			<div>
 				<div className="header">
 					<div>Thirtytwo Daily</div>
-					<div className="subtitle">A communal story, created one line per day</div>
+					<div className="subtitle">A communal story created one line per day</div>
 				</div>
 				<CSSTransitionGroup
 					transitionName="timeBar"
@@ -180,53 +211,48 @@ class SubmittedWords extends Component {
 		this.state = {
 			'pendingVotes': {},
 			'unsavedVotes': false,
-			'tokenBalance': 0,
-			'availableVotes': 0,
-			'totalVotes': 0
+			'totalVotesCast': 0,
+			'totalPendingVotes': 0
 		}
 	}
 
 	async componentWillMount() {
-		const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
-		const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
-
-		const tokenBalance = tokenBalanceBN.toNumber()
-		const availableVotes = availableVotesBN.toNumber()
-
-		let totalVotes = 0;
+		let totalVotesCast = 0;
         for (let i = 0; i < this.props.submittedWords.length; i++) {
-    		totalVotes += this.props.submittedWords[i].backing;
+    		totalVotesCast += this.props.submittedWords[i].backing;
         }
 
-        this.setState({totalVotes, tokenBalance, availableVotes})
+        this.setState({totalVotesCast})
     }
 
-	setPendingVote(index, currentVotes) {
+	setPendingVote(index) {
 		if(this.state.availableVotes == 0 ) return false;
 
     	let pendingVotes = {...this.state.pendingVotes}
     	pendingVotes[index] ? pendingVotes[index] += 1 : pendingVotes[index] = 1;
 
-    	this.setState({pendingVotes, unsavedVotes: true, totalVotes: this.state.totalVotes + 1, availableVotes: this.state.availableVotes - 1});
+    	this.setState({pendingVotes, unsavedVotes: true, totalVotesCast: this.state.totalVotesCast + 1, totalPendingVotes: this.state.totalPendingVotes+1});
     	return true;
     }
 
     async persistVotes() {
     	await this.props.persistVotes(this.state.pendingVotes)
-    	this.setState({unsavedVotes: false});
+    	this.setState({unsavedVotes: false, totalPendingVotes: 0});
     }
 
 	render() {
 
+		const availableVotes = this.props.availableVotes - this.state.totalPendingVotes;
+
 		const submittedWords = this.props.submittedWords.map(obj =>
-			<SubmittedWord totalVotes={this.state.totalVotes} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
+			<SubmittedWord totalVotesCast={this.state.totalVotesCast} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		const saveButton = this.state.unsavedVotes ? (
 			    <Save onClick={this.persistVotes.bind(this)}/>
 			   ) : '';
 
-		const votesRemainingPercent = this.state.availableVotes / this.state.tokenBalance * 100;
+		const votesRemainingPercent = availableVotes / this.props.tokenBalance * 100;
 		const votesSpentPercent = 100 - votesRemainingPercent;
 
 		return (
@@ -235,7 +261,7 @@ class SubmittedWords extends Component {
 			    <div className="sectionTitle">Choose the next line</div>
 					<div className="submittedWords">
 						<div className="wordFactoryTitle">
-							<div className="voteText">{this.state.availableVotes} of your {this.state.tokenBalance} votes remaining</div>
+							<div className="voteText">{availableVotes} of your {this.props.tokenBalance} votes remaining</div>
 							<div className="voteBarsContainer">
 								<div style={{width:`${votesRemainingPercent}%`}} className="votesRemaining"></div>
 								<div style={{width:`${votesSpentPercent}%`}} className="votesSpent"></div>
@@ -270,7 +296,7 @@ class SubmittedWord extends Component {
 	}
 
 	mapVotesToPercent() {
-		return this.props.totalVotes == 0 ? 0 : this.state.backing / this.props.totalVotes * 100;
+		return this.props.totalVotesCast == 0 ? 0 : this.state.backing / this.props.totalVotesCast * 100;
 	}
 
 	handleClick() {
