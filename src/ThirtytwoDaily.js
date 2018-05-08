@@ -240,9 +240,8 @@ class SubmittedWord extends Component {
 		}
 	}
 
-	mapVotesToPixels(votes) {
-		const fullWidth = 300;
-		return this.props.totalVotes == 0 ? 0 : votes / this.props.totalVotes * fullWidth;
+	mapVotesToPercent() {
+		return this.props.totalVotes == 0 ? 0 : this.state.backing / this.props.totalVotes * 100;
 	}
 
 	handleClick() {
@@ -256,6 +255,7 @@ class SubmittedWord extends Component {
 
 	render() {
 		const pendingClass = this.state.pending ? 'pending' : ''
+		const votesPercent = this.mapVotesToPercent()
 
 		return (
 			<div className={`submittedWordContainer ${pendingClass}`} onClick={this.handleClick.bind(this)}>
@@ -264,8 +264,8 @@ class SubmittedWord extends Component {
 				</div>
 				<div className="submittedWord">
 					{this.props.word}
+					<div className="votingBar" style={{width: `${votesPercent}%`}}> </div>
 				</div>
-				<div className="votingBar" style={{width: `${this.mapVotesToPixels(this.state.backing)}px`}}> </div>
 			</div>
 		)
 	}

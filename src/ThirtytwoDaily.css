@@ -275,7 +275,7 @@ input {
 	margin:10px 5px;
 	height: 50px;
 	overflow: hidden;
-	position: relative;
+	/*position: relative;*/
 	/*width: 100%;*/
 	/*justify-content: space-between;*/
 }
@@ -299,6 +299,7 @@ input {
 	cursor:pointer;
 	transition: background 300ms ease-out;
 	border-top: 3px solid lightgray;
+	position: relative;
 }
 
 .submittedWordContainer:hover > .submittedWord {
@@ -337,11 +338,9 @@ input {
 
 .votingBar {
 	position: absolute;
-	margin-left: 60px;
 	height: 3px;
 	background-color: var(--main-color);
-	top: 0px;
-	box-sizing: border-box;
+	top: -3px;
 	transition: all 300ms ease-in-out;
 }
 
