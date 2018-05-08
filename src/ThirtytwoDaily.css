@@ -6,6 +6,7 @@
 	--gray: #888;
 	--white: white;
 	--darkwhite: whitesmoke;
+	--border-radius: 8px;
 }
 
 html {
@@ -175,7 +176,7 @@ input {
 .publishedWordContainer {
 	display: flex;
 	margin:0 5px 5px;
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 	overflow: hidden;
 	justify-content: space-between;
 	background-color: var(--white)
@@ -185,7 +186,7 @@ input {
 
 /* ==================== Word submission ==================== */
 button.save {
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 	width: 50%;
 	margin: 0 5px;
 	/*margin:auto;*/
@@ -214,7 +215,7 @@ button.save {
 	padding: 10px;
 	width: 25%;
 	margin: 20px auto;
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 	color: var(--gray);
 }
 
@@ -231,7 +232,7 @@ button.save {
 	justify-content: space-between;
 	margin: 20px 5px 10px;
 	height: 50px;
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 	overflow: hidden;
 }
 .nextWord {
@@ -271,7 +272,7 @@ button.save {
 	display: flex;
 	align-items: center;
 	cursor: pointer;
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 	margin:10px 5px;
 	height: 50px;
 	overflow: hidden;
@@ -316,7 +317,7 @@ button.save {
 	width:60px;
 	box-sizing: border-box;
 	text-align: center;
-	border-radius: 10px 0 0 10px;
+	border-radius: var(--border-radius) 0 0 var(--border-radius);
 	transition: all 300ms ease-in-out;
 }
 
@@ -350,7 +351,7 @@ button.save {
 }
 
 .voteBarsContainer {
-	border-radius: 15px;
+	border-radius: var(--border-radius);
 	display: flex;
 	overflow: hidden;
 	height: 5px;
@@ -373,7 +374,7 @@ button.save {
 }
 
 .publishButton button {
-	border-radius: 10px;
+	border-radius: var(--border-radius);
 }
 
 /* mobile */
