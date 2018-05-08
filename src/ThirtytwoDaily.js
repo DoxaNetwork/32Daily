@@ -32,7 +32,6 @@ class ThirtytwoDaily extends Component {
 		const owner = await tokenInstance.owner();
 
         const submittedWords = await getAllLinks();
-        submittedWords.sort((a, b) => {return b.backing - a.backing})
         this.setState({submittedWords, owner: owner === currentAccount})
     }
 
@@ -48,6 +47,25 @@ class ThirtytwoDaily extends Component {
     		}
     	}
     	return matchedEvents;
+    }
+
+    async persistVotes(pendingVotes) {
+
+    	const submittedWords = this.state.submittedWords.map(word => {
+    		if(pendingVotes[word.index] != undefined) {
+    			word.backing += pendingVotes[word.index];
+    		}
+    		return word;
+    	} )
+
+    	const indexes = Object.keys(pendingVotes);
+    	const votes = Object.values(pendingVotes);
+
+    	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
+
+    	this.setState({submittedWords})
+    	return result;
+
     }
 
     async postLink(content) {
@@ -68,9 +86,11 @@ class ThirtytwoDaily extends Component {
 	render() {
 		const submissionLink = this.state.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
 
+		this.state.submittedWords.sort((a, b) => {return b.backing - a.backing})
+
 		const submittedWordsBlock = this.state.showSubmissions ? (
 			<div className="rightSide">
-				<SubmittedWords submittedWords={this.state.submittedWords}/>
+				<SubmittedWords persistVotes={this.persistVotes.bind(this)} submittedWords={this.state.submittedWords}/>
 			</div>
 			) : ('');
 
@@ -171,19 +191,16 @@ class SubmittedWords extends Component {
 
 	setPendingVote(index, currentVotes) {
 		if(this.state.availableVotes == 0 ) return false;
-    	let pendingVotes = {...this.state.pendingVotes}
-    	this.setState({totalVotes: this.state.totalVotes + 1})
 
+    	let pendingVotes = {...this.state.pendingVotes}
     	pendingVotes[index] ? pendingVotes[index] += 1 : pendingVotes[index] = 1;
+
     	this.setState({pendingVotes, unsavedVotes: true, totalVotes: this.state.totalVotes + 1, availableVotes: this.state.availableVotes - 1});
     	return true;
     }
 
     async persistVotes() {
-    	const indexes = Object.keys(this.state.pendingVotes);
-    	const votes = Object.values(this.state.pendingVotes);
-
-    	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
+    	await this.props.persistVotes(this.state.pendingVotes)
     	this.setState({unsavedVotes: false});
     }
 
