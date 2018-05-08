@@ -126,17 +126,29 @@ class ThirtytwoDaily extends Component {
 
 
 class Header extends Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			time: new Date()
+		}
+	}
+	componentDidMount() {
+	  this.interval = setInterval(() => this.setState({ time: new Date() }), 1000);
+	}
+
+	componentWillUnmount() {
+	  clearInterval(this.interval);
+	}
+
 	render() {
-		const currentTime = new Date();
-		const hoursRemaining = 23 - currentTime.getUTCHours();
-		const minutesRemaining = 60 - currentTime.getUTCMinutes();
-		const timeConsumedPercent = (currentTime.getUTCHours() * 60 + currentTime.getUTCMinutes()) / (24 * 60) * 100;
+		const hoursRemaining = 23 - this.state.time.getUTCHours();
+		const minutesRemaining = 59 - this.state.time.getUTCMinutes();
+		const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;
 
 		const timerText = this.props.showTimerText ? (
-			
 				<div className="timerText">{hoursRemaining} hours and {minutesRemaining} minutes remaining</div> 
-			
 			) : '';
+
 		return (
 
 			<div>
