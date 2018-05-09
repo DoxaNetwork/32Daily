@@ -19,6 +19,7 @@ contract('MemberRegistry', function(accounts) {
 
 	before("it should store a member", async function() {
 		registry = await MemberRegistry.new();
+		await registry.assignHub(accounts[0]);
 		await registry.createMember(accounts[0], 'enodios');
 	})
 

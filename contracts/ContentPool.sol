@@ -1,9 +1,5 @@
 pragma solidity ^0.4.18;
-
-// import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
-// NOTE - what I really want to do is be able to look up by owner - that will have to be done using log filters
 import './Spoke.sol';
-
 
 contract ContentPool is Spoke {
 
@@ -37,7 +33,6 @@ contract ContentPool is Spoke {
 
 		itemList[currentVersion].push(newItem);
 
-		// todo we don't need this anymore
 		bytes32 key = keccak256(currentVersion, _content);
 		hashIndexMap[key] = itemList[currentVersion].length-1;
 
@@ -75,7 +70,7 @@ contract ContentPool is Spoke {
 	}
 
 	function clear() 
-	public
+	public onlyHub
 	returns (bool) 
 	{
 		currentVersion++;

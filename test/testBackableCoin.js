@@ -6,9 +6,6 @@ var Votes = artifacts.require("./Votes.sol");
 var PublishedHistory = artifacts.require("./PublishedHistory.sol");
 var DoxaTokenMock = artifacts.require("./DoxaTokenMock.sol");
 
-//var Web3 = require('web3');
-//var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-
 const BigNumber = web3.BigNumber;
 
 // const toAscii = require('../src/utils/helpers')
@@ -27,7 +24,7 @@ contract('DoxaHub', function(accounts) {
 
 	let contentPool;
 	let memberRegistry;
-	let token;
+	let hub;
 	const REGISTRATION_MINT = 1000;
 	const SUBMISSION_MINT = 1;
 
@@ -36,19 +33,19 @@ contract('DoxaHub', function(accounts) {
 		memberRegistry = await MemberRegistry.new();
 		votes = await Votes.new();
 		publishedHistory = await PublishedHistory.new();
-		smallToken = await DoxaTokenMock.new(accounts[0], 1000, accounts[1], 900);
-		token = await DoxaHub.new(
+		token = await DoxaTokenMock.new(accounts[0], 1000, accounts[1], 900);
+		hub = await DoxaHub.new(
 			contentPool.address, 
 			memberRegistry.address, 
-			smallToken.address,
+			token.address,
 			publishedHistory.address,
 			votes.address
 		)
 
-		await smallToken.assignHub(token.address, {from : accounts[0]});
-		await votes.assignHub(token.address, {from : accounts[0]});
-		await publishedHistory.assignHub(token.address, {from : accounts[0]});
-		await contentPool.assignHub(token.address, {from : accounts[0]});
+		await token.assignHub(hub.address, {from : accounts[0]});
+		await votes.assignHub(hub.address, {from : accounts[0]});
+		await publishedHistory.assignHub(hub.address, {from : accounts[0]});
+		await contentPool.assignHub(hub.address, {from : accounts[0]});
 	})
 
 	// beforeEach(async function() {
@@ -56,36 +53,36 @@ contract('DoxaHub', function(accounts) {
 	// })
 
 	// it("should return the correct totalSupply after construction", async function() {
-	// 	let totalSupply = await token.totalSupply();
+	// 	let totalSupply = await hub.totalSupply();
 
 	// 	assert.equal(totalSupply, 1900)
 	// })
 
 	// it("should not allow backing yourself", async function() {
-	// 	await token.back(accounts[0], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
+	// 	await hub.back(accounts[0], 700, {from: accounts[0]}).should.be.rejectedWith('revert');
 	// })
 
 	it("user can back a post", async function() {
-		// await token.register('enodios', {from: accounts[1]});
+		// await hub.register('enodios', {from: accounts[1]});
 		// user 1 posts a link
-		await token.postLink("reddit.com", {from : accounts[1]});
+		await hub.postLink("reddit.com", {from : accounts[1]});
 
 		// link should have 0 backing
 		// TODO should automatically have the poster's backing too
 
 		// user 0 backs the link with 1000
-		await token.backPost(0, 1000, {from: accounts[0]});
+		await hub.backPost(0, 1000, {from: accounts[0]});
 
 		// // link should now have 1000 backing
-		const backing = await token.totalPostBacking(0);
+		const backing = await hub.totalPostBacking(0);
 		backing.toNumber().should.be.equal(1000);
 
 		// // user 0 should have 0 available backing
-		const tokensRemaining0 = await token.availableToTransfer(accounts[0]);
+		const tokensRemaining0 = await hub.availableToTransfer(accounts[0]);
 		tokensRemaining0.toNumber().should.be.equal(0);
 
 		// // user 1 should have 1900 + 1 available backing
-		const tokensRemaining1 = await token.availableToTransfer(accounts[1]);
+		const tokensRemaining1 = await hub.availableToTransfer(accounts[1]);
 		tokensRemaining1.toNumber().should.be.equal(901);
     })
     
@@ -93,13 +90,13 @@ contract('DoxaHub', function(accounts) {
         // await token.register('enodios', {from: accounts[1]});
                 
 		// user 1 posts a link
-		await token.postLink("reddit.com", {from : accounts[1]});
+		await hub.postLink("reddit.com", {from : accounts[1]});
 
 		// user 0 backs the link with 1000
-        await token.backPost(0, 1000, {from: accounts[0]});
+        await hub.backPost(0, 1000, {from: accounts[0]});
         
 		// user 0 backs the link with 1 more, which is too many
-		await token.backPost(0, 1, {from: accounts[0]}).should.be.rejectedWith('revert');
+		await hub.backPost(0, 1, {from: accounts[0]}).should.be.rejectedWith('revert');
 	})
 
 	// it("should not allow double backing", async function() {
@@ -139,13 +136,13 @@ contract('DoxaHub', function(accounts) {
 	// });
 
 	it("should allow user to post Link and receive token", async function() {
-		let balanceBefore = await smallToken.balanceOf(accounts[1]);
-		await token.postLink("reddit.com", {from : accounts[1]});
+		let balanceBefore = await token.balanceOf(accounts[1]);
+		await hub.postLink("reddit.com", {from : accounts[1]});
 
-		let balanceAfter = await smallToken.balanceOf(accounts[1]);
+		let balanceAfter = await token.balanceOf(accounts[1]);
 		const balanceDifference = balanceAfter.toNumber() - balanceBefore.toNumber();
 
-		let [index, owner, link, backing] = await token.getLinkByIndex(0);
+		let [index, owner, link, backing] = await hub.getLinkByIndex(0);
 
 		assert.equal("reddit.com", toAscii(link));
 		assert.equal(accounts[1], owner);
@@ -157,9 +154,9 @@ contract('DoxaHub', function(accounts) {
 	it("should get link count", async function() {
 		// await token.register.sendTransaction('enodios', {from: accounts[1]});
 
-		await token.postLink("reddit.com", {from : accounts[1]});
+		await hub.postLink("reddit.com", {from : accounts[1]});
 
-		let count = await token.getLinkCount();
+		let count = await hub.getLinkCount();
 		assert.equal(1, count);
 
 	})
@@ -167,9 +164,9 @@ contract('DoxaHub', function(accounts) {
 	it("should fail to get link and owner of out of bound index at border", async function() {
 		// await token.register.sendTransaction('enodios', {from: accounts[1]});
 
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.postLink("google.com", {from : accounts[1]});
-		await token.getLinkByIndex(2).should.be.rejectedWith('revert');
+		await hub.postLink("reddit.com", {from : accounts[0]});
+		await hub.postLink("google.com", {from : accounts[1]});
+		await hub.getLinkByIndex(2).should.be.rejectedWith('revert');
 	})
 
 	// it("publish single post above threshold", async function() {
@@ -190,18 +187,18 @@ contract('DoxaHub', function(accounts) {
 	// 	// assert.equal( result.toNumber(), 1 );
 	// })
 
-	it("should clear incoming post votes", async function() {
-		await token.postLink("reddit.com", {from : accounts[0]});
-		await token.backPost(0, 10, {from : accounts[1]});
+	// it("should clear incoming post votes", async function() {
+	// 	await hub.postLink("reddit.com", {from : accounts[0]});
+	// 	await hub.backPost(0, 10, {from : accounts[1]});
 		
-		const votesBefore = await token.totalPostBacking(0);
-		assert.equal(votesBefore.toNumber(), 10);
+	// 	const votesBefore = await hub.totalPostBacking(0);
+	// 	assert.equal(votesBefore.toNumber(), 10);
 
-		await token.clear();
+	// 	await hub.clear();
 
-		const votesAfter = await token.totalPostBacking(0);
-		assert.equal(votesAfter.toNumber(), 0);
-	})
+	// 	const votesAfter = await hub.totalPostBacking(0);
+	// 	assert.equal(votesAfter.toNumber(), 0);
+	// })
 
 	// it("should clear outgoing post votes", async function() {
 	// 	token = await BackableTokenMock.new(contentPool.address, memberRegistry.address, accounts[0], 1000, accounts[1], 900);
@@ -243,7 +240,7 @@ contract('DoxaHub', function(accounts) {
 	// })
 
 	it("should set nextPublishTime as next UTC midnight", async function() {
-		const nextPublishTime = await token.nextPublishTime();
+		const nextPublishTime = await hub.nextPublishTime();
 
 		const jsTimestamp = Math.round((new Date()).getTime() / 1000);
 		const nextUTCMidnight = Math.floor(jsTimestamp / 86400) * 86400 + 86400;

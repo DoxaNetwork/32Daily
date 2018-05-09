@@ -1,6 +1,8 @@
 pragma solidity ^0.4.18;
 
-contract MemberRegistry {
+import './Spoke.sol';
+
+contract MemberRegistry is Spoke {
 
 	struct Member {
 		bytes32 name;
@@ -28,8 +30,7 @@ contract MemberRegistry {
 	}
 
 	function createMember(address _owner, bytes32 _name) 
-	public
-	returns (bool)
+	public onlyHub
 	{
 		Member memory newMember = Member(
 		{
@@ -40,8 +41,6 @@ contract MemberRegistry {
 		memberList.push(newMember);
 
 		addressMap[_owner] = memberList.length-1;
-
-		return true;
 	}
 
 	function getMember(uint _index) 
