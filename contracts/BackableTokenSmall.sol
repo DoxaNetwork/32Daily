@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
-import './BackableToken.sol';
+import './DoxaHub.sol';
 
 
 contract BackableTokenSmall is BasicToken, Ownable {
@@ -53,8 +53,8 @@ contract BackableTokenSmall is BasicToken, Ownable {
 	returns (bool) 
 	{
 		require(_to != address(0));
-		BackableToken backableToken = BackableToken(hubContract);
-    	require(_value <= backableToken.availableToTransfer(msg.sender));
+		DoxaHub doxaHub = DoxaHub(hubContract);
+    	require(_value <= doxaHub.availableToTransfer(msg.sender));
 
     	balances[msg.sender] = balances[msg.sender].sub(_value);
     	balances[_to] = balances[_to].add(_value);

@@ -1,5 +1,5 @@
 // var BackableTokenMock = artifacts.require("./BackableTokenMock.sol");
-var BackableToken = artifacts.require("./BackableToken.sol");
+var DoxaHub = artifacts.require("./DoxaHub.sol");
 var ContentPool = artifacts.require("./ContentPool.sol");
 var MemberRegistry = artifacts.require("./MemberRegistry.sol");
 var VotingStuff = artifacts.require("./VotingStuff.sol");
@@ -23,7 +23,7 @@ require('chai')
   .use(require('chai-bignumber')(BigNumber))
   .should();
 
-contract('BackableToken', function(accounts) {
+contract('DoxaHub', function(accounts) {
 
 	let contentPool;
 	let memberRegistry;
@@ -37,7 +37,7 @@ contract('BackableToken', function(accounts) {
 		votingStuff = await VotingStuff.new();
 		published = await something.new();
 		smallToken = await BackableTokenSmallMock.new(accounts[0], 1000, accounts[1], 900);
-		token = await BackableToken.new(
+		token = await DoxaHub.new(
 			contentPool.address, 
 			memberRegistry.address, 
 			smallToken.address,

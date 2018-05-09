@@ -1,4 +1,4 @@
-var BackableToken = artifacts.require("./BackableToken.sol");
+var DoxaHub = artifacts.require("./DoxaHub.sol");
 
 var ContentPool = artifacts.require("./ContentPool.sol");
 var MemberRegistry = artifacts.require("./MemberRegistry.sol");
@@ -24,7 +24,7 @@ module.exports = function(deployer) {
   })
   .then(function() {
     return deployer.deploy(
-    	BackableToken,
+    	DoxaHub,
     	ContentPool.address,
     	MemberRegistry.address,
     	BackableTokenSmall.address,
@@ -45,11 +45,11 @@ module.exports = function(deployer) {
   	return BackableTokenSmall.deployed();
   }).then(function(instance) {
   	liltoken = instance;
-  	return BackableToken.deployed();
+  	return DoxaHub.deployed();
   }).then(function(instance) {
-  	let backableToken = instance;
-  	voting.assignHub(backableToken.address);
-  	some.assignHub(backableToken.address);
-  	liltoken.assignHub(backableToken.address);
+  	let doxaHub = instance;
+  	voting.assignHub(doxaHub.address);
+  	some.assignHub(doxaHub.address);
+  	liltoken.assignHub(doxaHub.address);
   });
 };
