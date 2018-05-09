@@ -6,32 +6,16 @@ var DoxaToken = artifacts.require("./DoxaToken.sol");
 var DoxaHub = artifacts.require("./DoxaHub.sol");
 
 module.exports = function(deployer) {
+	let votes, publishedHistory, token, contentPool;
 
-  deployer.deploy(ContentPool)
-  .then(function() {
-    return deployer.deploy(MemberRegistry);
-  })
-  .then(function() {
-    return deployer.deploy(Votes);
-  })
-  .then(function() {
-    return deployer.deploy(PublishedHistory);
-  })
-  .then(function() {
-    return deployer.deploy(DoxaToken);
-  })
-  .then(function() {
-    return deployer.deploy(
+	deployer.deploy(
     	DoxaHub,
     	ContentPool.address,
     	MemberRegistry.address,
     	DoxaToken.address,
     	PublishedHistory.address,
-    	Votes.address);
-  });
-
-
-  let votes, publishedHistory, token, contentPool;
+    	Votes.address
+  	);
 
   deployer.then(function() {
 
