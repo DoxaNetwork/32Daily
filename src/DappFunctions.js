@@ -1,10 +1,10 @@
-import BackableTokenContract from '../build/contracts/BackableToken.json'
+import DoxaHubContract from '../build/contracts/DoxaHub.json'
 import getWeb3 from './utils/getWeb3'
 import {toAscii, dayOfWeek} from './utils/helpers'
 
 
 const contract = require('truffle-contract')
-const token = contract(BackableTokenContract)
+const doxaHubContract = contract(DoxaHubContract)
 
 const simpleCache = {};  // This can be used for simple objects, like the current user's account address
 
@@ -38,9 +38,9 @@ async function getCurrentAccount(){
  * @summary Register a new user.
  */
 async function registerUser(username){
-    const tokenInstance = await getContract(token);
+    const doxaHub = await getContract(doxaHubContract);
     const account = await getCurrentAccount();
-    const result = await tokenInstance.register(username, {from: account});
+    const result = await doxaHub.register(username, {from: account});
     return result;
 }
 
@@ -48,11 +48,11 @@ async function registerUser(username){
  * @summary  Retrieve all registered users.
  */
 async function getAllUsers(){
-    const tokenInstance = await getContract(token);
+    const doxaHub = await getContract(doxaHubContract);
 
-    const memberCount = await tokenInstance.memberCount()
+    const memberCount = await doxaHub.memberCount()
     const indexesToRetrieve = [...Array(memberCount.toNumber()).keys()]
-    const functions = indexesToRetrieve.map(index => tokenInstance.findMemberByIndex(index))
+    const functions = indexesToRetrieve.map(index => doxaHub.findMemberByIndex(index))
     let results = await Promise.all(functions)
 
     let users = []
@@ -76,22 +76,22 @@ async function getCurrentUser(){
 
 // TODO memoize this so only one event listener is created
 async function setUpPostListener() {
-    const tokenInstance = await getContract(token);
-    let event = tokenInstance.LinkPosted();
+    const doxaHub = await getContract(doxaHubContract);
+    let event = doxaHub.LinkPosted();
     return event;
 }
 
 async function setUpUserPostBackedListener() {
-    const tokenInstance = await getContract(token);
+    const doxaHub = await getContract(doxaHubContract);
     const account = await getCurrentAccount();
-    let event = tokenInstance.PostBacked({backer: account});
+    let event = doxaHub.PostBacked({backer: account});
     return event;
 }
 
 async function setUpPostBackedListener() {
-    const tokenInstance = await getContract(token);
+    const doxaHub = await getContract(doxaHubContract);
     const account = await getCurrentAccount();
-    let event = tokenInstance.PostBacked();
+    let event = doxaHub.PostBacked();
     return event;
 }
 
@@ -99,11 +99,11 @@ async function setUpPostBackedListener() {
  * @summary  Retrieve all links that have been submitted to the site
  */
 async function getAllLinks(){
-    const tokenInstance = await getContract(token);
+    const doxaHub = await getContract(doxaHubContract);
 
-    const count = await tokenInstance.getLinkCount()
+    const count = await doxaHub.getLinkCount()
     const indexesToRetrieve = [...Array(count.toNumber()).keys()]
-    const functions = indexesToRetrieve.map(index => tokenInstance.getLinkByIndex(index))
+    const functions = indexesToRetrieve.map(index => doxaHub.getLinkByIndex(index))
     let results = await Promise.all(functions)
 
     let links = []
@@ -116,8 +116,8 @@ async function getAllLinks(){
 const numToPreLoad = 5;
 
 async function getPreHistory() {
-    const tokenInstance = await getContract(token);
-    const version = await tokenInstance.currentVersion();
+    const doxaHub = await getContract(doxaHubContract);
+    const version = await doxaHub.currentVersion();
     const end = version.toNumber() - numToPreLoad;
     const start = 0;
 
@@ -126,8 +126,8 @@ async function getPreHistory() {
 }
 
 async function preLoadHistory() {
-    const tokenInstance = await getContract(token);
-    const version = await tokenInstance.currentVersion();
+    const doxaHub = await getContract(doxaHubContract);
+    const version = await doxaHub.currentVersion();
     const end = version.toNumber();
     const start = Math.max(end - numToPreLoad, 0);
 
@@ -139,17 +139,17 @@ async function preLoadHistory() {
 async function getHistory(start, end, dateType) {
     const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dateOptions = {month: 'long', day: 'numeric' };
-    const tokenInstance = await getContract(token);
-    const version = await tokenInstance.currentVersion();
+    const doxaHub = await getContract(doxaHubContract);
+    const version = await doxaHub.currentVersion();
     
     let words = []
     let date = new Date();
     date.setDate(date.getDate() - version.toNumber() + start);
 
     for (let v = start; v < end; v++) {
-        const blockLength = await tokenInstance.getVersionLength(v);
+        const blockLength = await doxaHub.getVersionLength(v);
         const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
-        const functions = indexesToRetrieve.map(i => tokenInstance.getPublishedItem(v, i))
+        const functions = indexesToRetrieve.map(i => doxaHub.getPublishedItem(v, i))
 
         let results = await Promise.all(functions)
 

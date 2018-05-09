@@ -105,6 +105,12 @@ contract DoxaHub is Ownable {
 		return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
 	}
 
+	function balanceOf(address _owner)
+	view public
+	returns (uint256) {
+		return token.balanceOf(_owner);
+	}
+
 	function publish() 
 	public 
 	{
@@ -138,7 +144,8 @@ contract DoxaHub is Ownable {
 	
 	function getVersionLength(uint32 version) 
 	public view
-	returns (uint) {
+	returns (uint) 
+	{
 		return publishedHistory.blockLength(version);
 	}
 

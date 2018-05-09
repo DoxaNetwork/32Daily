@@ -3,12 +3,12 @@ import { CSSTransitionGroup } from 'react-transition-group'
 import contract from 'truffle-contract'
 
 import { getContract, getCurrentAccount, getAllLinks, preLoadHistory, getPreHistory } from './DappFunctions'
-import BackableTokenContract from '../build/contracts/BackableToken.json'
+import DoxaHubContract from '../build/contracts/DoxaHub.json'
 import { toAscii, dayOfWeek, month } from './utils/helpers'
 import './ThirtytwoDaily.css'
 
-const token = contract(BackableTokenContract)
-let tokenInstance;
+const doxaHubContract = contract(DoxaHubContract)
+let doxaHub;
 let currentAccount;
 
 	
@@ -29,13 +29,13 @@ class ThirtytwoDaily extends Component {
 
 	async componentWillMount() {
 		// initialize global state
-		tokenInstance = await getContract(token);
+		doxaHub = await getContract(doxaHubContract);
 		currentAccount = await getCurrentAccount();
-		const owner = await tokenInstance.owner();
+		const owner = await doxaHub.owner();
 
 
-		const version = await tokenInstance.currentVersion();
-		let filter = tokenInstance.PostBacked({backer: currentAccount, version:version})
+		const version = await doxaHub.currentVersion();
+		let filter = doxaHub.PostBacked({backer: currentAccount, version:version})
 		filter.get(function(e,r) {
 			console.log(r);
 		})
@@ -44,11 +44,11 @@ class ThirtytwoDaily extends Component {
         const submittedWords = await getAllLinks();
         submittedWords.sort((a, b) => {return b.backing - a.backing})
 
-        // const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
-    	const tokenBalance = 0;
+        const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
+    	const tokenBalance = tokenBalanceBN.toNumber();
 
-    	// const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
-		const availableVotes = 0;
+    	const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
+		const availableVotes = availableVotesBN.toNumber();
 
         this.setState({
         	tokenBalance, 
@@ -84,11 +84,11 @@ class ThirtytwoDaily extends Component {
     	const indexes = Object.keys(pendingVotes);
     	const votes = Object.values(pendingVotes);
 
-    	const result = await tokenInstance.backPosts(indexes, votes, { from: currentAccount })
+    	const result = await doxaHub.backPosts(indexes, votes, { from: currentAccount })
 
     	submittedWords.sort((a, b) => {return b.backing - a.backing})
 
-    	const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+    	const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
 		const availableVotes = availableVotesBN.toNumber()
 
     	this.setState({submittedWords, availableVotes})
@@ -97,12 +97,12 @@ class ThirtytwoDaily extends Component {
     }
 
     async postLink(content) {
-    	const result = await tokenInstance.postLink(content, { from: currentAccount})
+    	const result = await doxaHub.postLink(content, { from: currentAccount})
 
-    	const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
+    	const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
     	const tokenBalance = tokenBalanceBN.toNumber();
 
-    	const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+    	const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
 		const availableVotes = availableVotesBN.toNumber()
 
     	const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
@@ -117,7 +117,7 @@ class ThirtytwoDaily extends Component {
     }
 
     async publish() {
-    	const result = await tokenInstance.publish({from: currentAccount});
+    	const result = await doxaHub.publish({from: currentAccount});
     }
 
     toggleSubmissionView() {
