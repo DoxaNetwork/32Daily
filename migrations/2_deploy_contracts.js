@@ -2,7 +2,7 @@ var DoxaHub = artifacts.require("./DoxaHub.sol");
 
 var ContentPool = artifacts.require("./ContentPool.sol");
 var MemberRegistry = artifacts.require("./MemberRegistry.sol");
-var VotingStuff = artifacts.require("./VotingStuff.sol");
+var Votes = artifacts.require("./Votes.sol");
 var PublishedHistory = artifacts.require("./PublishedHistory.sol");
 var BackableTokenSmall = artifacts.require("./BackableTokenSmall.sol");
 
@@ -14,7 +14,7 @@ module.exports = function(deployer) {
     return deployer.deploy(MemberRegistry);
   })
   .then(function() {
-    return deployer.deploy(VotingStuff);
+    return deployer.deploy(Votes);
   })
   .then(function() {
     return deployer.deploy(PublishedHistory);
@@ -29,16 +29,16 @@ module.exports = function(deployer) {
     	MemberRegistry.address,
     	BackableTokenSmall.address,
     	PublishedHistory.address,
-    	VotingStuff.address);
+    	Votes.address);
   });
 
 
-  let voting, publishedHistory, liltoken;
+  let votes, publishedHistory, liltoken;
 
   deployer.then(function() {
-  	return VotingStuff.deployed();
+  	return Votes.deployed();
   }).then(function(instance) {
-  	voting = instance;
+  	votes = instance;
   	return PublishedHistory.deployed()
   }).then(function(instance) {
   	publishedHistory = instance;
@@ -48,7 +48,7 @@ module.exports = function(deployer) {
   	return DoxaHub.deployed();
   }).then(function(instance) {
   	let doxaHub = instance;
-  	voting.assignHub(doxaHub.address);
+  	votes.assignHub(doxaHub.address);
   	publishedHistory.assignHub(doxaHub.address);
   	liltoken.assignHub(doxaHub.address);
   });

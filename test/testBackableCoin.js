@@ -2,7 +2,7 @@
 var DoxaHub = artifacts.require("./DoxaHub.sol");
 var ContentPool = artifacts.require("./ContentPool.sol");
 var MemberRegistry = artifacts.require("./MemberRegistry.sol");
-var VotingStuff = artifacts.require("./VotingStuff.sol");
+var Votes = artifacts.require("./Votes.sol");
 var PublishedHistory = artifacts.require("./PublishedHistory.sol");
 var DoxaTokenMock = artifacts.require("./DoxaTokenMock.sol");
 
@@ -34,7 +34,7 @@ contract('DoxaHub', function(accounts) {
 	beforeEach(async function() {
 		contentPool = await ContentPool.new();
 		memberRegistry = await MemberRegistry.new();
-		votingStuff = await VotingStuff.new();
+		votes = await Votes.new();
 		publishedHistory = await PublishedHistory.new();
 		smallToken = await DoxaTokenMock.new(accounts[0], 1000, accounts[1], 900);
 		token = await DoxaHub.new(
@@ -42,11 +42,11 @@ contract('DoxaHub', function(accounts) {
 			memberRegistry.address, 
 			smallToken.address,
 			publishedHistory.address,
-			votingStuff.address
+			votes.address
 		)
 
 		await smallToken.assignHub(token.address, {from : accounts[0]});
-		await votingStuff.assignHub(token.address, {from : accounts[0]});
+		await votes.assignHub(token.address, {from : accounts[0]});
 		await publishedHistory.assignHub(token.address, {from : accounts[0]});
 	})
 
