@@ -4,7 +4,7 @@ var ContentPool = artifacts.require("./ContentPool.sol");
 var MemberRegistry = artifacts.require("./MemberRegistry.sol");
 var VotingStuff = artifacts.require("./VotingStuff.sol");
 var something = artifacts.require("./something.sol");
-var BackableTokenSmallMock = artifacts.require("./BackableTokenSmallMock.sol");
+var DoxaTokenMock = artifacts.require("./DoxaTokenMock.sol");
 
 //var Web3 = require('web3');
 //var web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
@@ -36,7 +36,7 @@ contract('DoxaHub', function(accounts) {
 		memberRegistry = await MemberRegistry.new();
 		votingStuff = await VotingStuff.new();
 		published = await something.new();
-		smallToken = await BackableTokenSmallMock.new(accounts[0], 1000, accounts[1], 900);
+		smallToken = await DoxaTokenMock.new(accounts[0], 1000, accounts[1], 900);
 		token = await DoxaHub.new(
 			contentPool.address, 
 			memberRegistry.address, 
