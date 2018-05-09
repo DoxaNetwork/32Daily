@@ -19,6 +19,8 @@ contract('ContentPool', function(accounts) {
 
 	before("should store an item", async function() {
 		pool = await ContentPool.new();
+		await pool.assignHub(accounts[0], {from : accounts[0]});
+
 		await pool.newContent(accounts[0], string);
 	})
 

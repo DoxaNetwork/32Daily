@@ -48,6 +48,7 @@ contract('DoxaHub', function(accounts) {
 		await smallToken.assignHub(token.address, {from : accounts[0]});
 		await votes.assignHub(token.address, {from : accounts[0]});
 		await publishedHistory.assignHub(token.address, {from : accounts[0]});
+		await contentPool.assignHub(token.address, {from : accounts[0]});
 	})
 
 	// beforeEach(async function() {

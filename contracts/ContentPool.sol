@@ -1,10 +1,11 @@
 pragma solidity ^0.4.18;
 
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+// import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 // NOTE - what I really want to do is be able to look up by owner - that will have to be done using log filters
+import './Spoke.sol';
 
 
-contract ContentPool is Ownable {
+contract ContentPool is Spoke {
 
 	struct Item 
 	{
@@ -25,7 +26,7 @@ contract ContentPool is Ownable {
 	}
 
 	function newContent(address _poster, bytes32 _content) 
-	public 
+	public onlyHub
 	returns (bool) 
 	{
 		Item memory newItem = Item(

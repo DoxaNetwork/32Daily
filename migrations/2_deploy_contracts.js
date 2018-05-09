@@ -33,23 +33,39 @@ module.exports = function(deployer) {
   });
 
 
-  let votes, publishedHistory, liltoken;
+  let votes, publishedHistory, liltoken, contentPool;
 
   deployer.then(function() {
+
   	return Votes.deployed();
+    
   }).then(function(instance) {
+
   	votes = instance;
   	return PublishedHistory.deployed()
+
   }).then(function(instance) {
+
   	publishedHistory = instance;
   	return BackableTokenSmall.deployed();
+
   }).then(function(instance) {
+
   	liltoken = instance;
-  	return DoxaHub.deployed();
+  	return ContentPool.deployed();
+
   }).then(function(instance) {
+
+    contentPool = instance;
+    return DoxaHub.deployed();
+
+  }).then(function(instance) {
+
   	let doxaHub = instance;
   	votes.assignHub(doxaHub.address);
   	publishedHistory.assignHub(doxaHub.address);
-  	liltoken.assignHub(doxaHub.address);
+    liltoken.assignHub(doxaHub.address);
+  	contentPool.assignHub(doxaHub.address);
+
   });
 };
