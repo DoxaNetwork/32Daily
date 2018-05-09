@@ -33,14 +33,22 @@ class ThirtytwoDaily extends Component {
 		currentAccount = await getCurrentAccount();
 		const owner = await tokenInstance.owner();
 
+
+		const version = await tokenInstance.currentVersion();
+		let filter = tokenInstance.PostBacked({backer: currentAccount, version:version})
+		filter.get(function(e,r) {
+			console.log(r);
+		})
+
+
         const submittedWords = await getAllLinks();
         submittedWords.sort((a, b) => {return b.backing - a.backing})
 
-        const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
-    	const tokenBalance = tokenBalanceBN.toNumber();
+        // const tokenBalanceBN = await tokenInstance.balanceOf(currentAccount);
+    	const tokenBalance = 0;
 
-    	const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
-		const availableVotes = availableVotesBN.toNumber()
+    	// const availableVotesBN = await tokenInstance.availableToBackPosts(currentAccount);
+		const availableVotes = 0;
 
         this.setState({
         	tokenBalance, 

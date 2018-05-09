@@ -1,4 +1,8 @@
-const toAscii = require('../src/utils/helpers')
+// const toAscii = require('../src/utils/helpers')
+function toAscii(hex) {
+    let zeroPaddedString = web3.toAscii(hex);
+    return zeroPaddedString.split("\u0000")[0];
+}
 
 const MemberRegistry = artifacts.require("./MemberRegistry.sol");
 
