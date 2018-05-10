@@ -137,31 +137,26 @@ async function preLoadHistory() {
 }
 
 async function getHistory(start, end, dateType) {
-    const dayOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const dateOptions = {month: 'long', day: 'numeric' };
     const doxaHub = await getContract(doxaHubContract);
-    const version = await doxaHub.currentVersion();
     
     let words = []
-    let date = new Date();
-    date.setDate(date.getDate() - version.toNumber() + start);
 
     for (let v = start; v < end; v++) {
-        const blockLength = await doxaHub.getVersionLength(v);
+        const [blockLength, timeStamp] = await doxaHub.getVersion(v);
+        const date = new Date(timeStamp * 1000)
         const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
         const functions = indexesToRetrieve.map(i => doxaHub.getPublishedItem(v, i))
 
         let results = await Promise.all(functions)
 
         for (const [owner, content] of results) {
-
             if(dateType == 'dayOfWeek') {
-                words.push({content:toAscii(content), date:dayOfWeek[date.getDay()]})
+                words.push({content:toAscii(content), date:dayOfWeek(date)})
             } else {
                 words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', dateOptions)})
             }
         }
-        date.setDate(date.getDate() + 1)
     }
     return words;
 }

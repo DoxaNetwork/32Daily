@@ -3,6 +3,7 @@ var MemberRegistry = artifacts.require("./MemberRegistry.sol");
 var Votes = artifacts.require("./Votes.sol");
 var PublishedHistory = artifacts.require("./PublishedHistory.sol");
 var DoxaToken = artifacts.require("./DoxaToken.sol");
+var TimeStamps = artifacts.require("./TimeStamps.sol");
 var DoxaHub = artifacts.require("./DoxaHub.sol");
 
 module.exports = function(deployer) {
@@ -13,6 +14,6 @@ module.exports = function(deployer) {
     	DoxaToken.address,
     	PublishedHistory.address,
     	Votes.address,
-    	'0x0'
+    	TimeStamps.address
   	);
 };

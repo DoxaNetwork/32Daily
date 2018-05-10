@@ -5,6 +5,7 @@ var MemberRegistry = artifacts.require("./MemberRegistry.sol");
 var Votes = artifacts.require("./Votes.sol");
 var PublishedHistory = artifacts.require("./PublishedHistory.sol");
 var DoxaTokenMock = artifacts.require("./DoxaTokenMock.sol");
+var TimeStamps = artifacts.require("./TimeStamps.sol");
 
 const BigNumber = web3.BigNumber;
 
@@ -33,19 +34,22 @@ contract('DoxaHub', function(accounts) {
 		memberRegistry = await MemberRegistry.new();
 		votes = await Votes.new();
 		publishedHistory = await PublishedHistory.new();
+		timeStamps = await TimeStamps.new();
 		token = await DoxaTokenMock.new(accounts[0], 1000, accounts[1], 900);
 		hub = await DoxaHub.new(
 			contentPool.address, 
 			memberRegistry.address, 
 			token.address,
 			publishedHistory.address,
-			votes.address
+			votes.address,
+			timeStamps.address
 		)
 
 		await token.assignHub(hub.address, {from : accounts[0]});
 		await votes.assignHub(hub.address, {from : accounts[0]});
 		await publishedHistory.assignHub(hub.address, {from : accounts[0]});
 		await contentPool.assignHub(hub.address, {from : accounts[0]});
+		await timeStamps.assignHub(hub.address, {from : accounts[0]});
 	})
 
 	// beforeEach(async function() {

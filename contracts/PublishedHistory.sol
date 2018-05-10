@@ -4,6 +4,7 @@ import './Spoke.sol';
 
 
 contract PublishedHistory is Spoke {
+
 	mapping (uint32 => uint[]) private publishedContent;
 
 	function blockLength(uint32 _version) 

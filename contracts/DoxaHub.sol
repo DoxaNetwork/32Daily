@@ -7,6 +7,7 @@ import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 import './ContentPool.sol';
 import './MemberRegistry.sol';
 import './PublishedHistory.sol';
+import './TimeStamps.sol';
 import './Votes.sol';
 import './DoxaToken.sol';
 
@@ -17,6 +18,7 @@ contract DoxaHub is Ownable {
 
 	ContentPool contentPool;
 	PublishedHistory publishedHistory;
+	TimeStamps timeStamps;
 	MemberRegistry memberRegistry;
 	Votes votes;
 	DoxaToken token;
@@ -33,7 +35,8 @@ contract DoxaHub is Ownable {
 		address _memberRegistry, 
 		address _token, 
 		address _publishedHistory, 
-		address _votes) 
+		address _votes,
+		address _timeStamps) 
 	public 
 	{
 		contentPool = ContentPool(_contentPool);
@@ -41,6 +44,7 @@ contract DoxaHub is Ownable {
 		token = DoxaToken(_token);
 		publishedHistory = PublishedHistory(_publishedHistory);
 		votes = Votes(_votes);
+		timeStamps = TimeStamps(_timeStamps);
 
 		owner = msg.sender;
 		nextPublishTime = nextUTCMidnight(now);
@@ -129,6 +133,7 @@ contract DoxaHub is Ownable {
 		}
 		if(somethingSelected) {
 			publishedHistory.publish(contentPool.currentVersion(), indexToPublish);
+			timeStamps.stamp(contentPool.currentVersion());
 			Published(contentPool.currentVersion(), 0);
 		}
 		contentPool.clear();
@@ -141,12 +146,12 @@ contract DoxaHub is Ownable {
 	{
 		return contentPool.currentVersion();
 	}
-	
-	function getVersionLength(uint32 version) 
+
+	function getVersion(uint32 version)
 	public view
-	returns (uint) 
+	returns (uint, uint)
 	{
-		return publishedHistory.blockLength(version);
+		return (publishedHistory.blockLength(version), timeStamps.getTime(version));
 	}
 
 	function getPublishedItem(uint32 version, uint index) 
