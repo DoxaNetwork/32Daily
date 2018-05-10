@@ -272,7 +272,15 @@ class SubmittedWords extends Component {
 		const availableVotes = this.props.availableVotes - this.state.totalPendingVotes;
 
 		const submittedWords = this.props.submittedWords.map(obj =>
-			<SubmittedWord votedAlready={this.state.pastVotes[obj.index] != undefined} totalVotesCast={this.state.totalVotesCast} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
+			<SubmittedWord 
+				key={obj.index} 
+				index={obj.index} 
+				word={obj.word} 
+				backing={obj.backing} 
+				votedAlready={this.state.pastVotes[obj.index] != undefined} 
+				pendingVotes={this.state.pendingVotes[obj.index] != undefined ? this.state.pendingVotes[obj.index] : 0}
+				totalVotesCast={this.state.totalVotesCast} 
+				onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		const saveButton = this.state.unsavedVotes ? (
@@ -319,35 +327,22 @@ class SubmittedWords extends Component {
 
 class SubmittedWord extends Component {
 
-	constructor(props) {
-		super(props);
-
-		this.state = { 
-			backing: this.props.backing,
-		}
-	}
-
 	mapVotesToPercent() {
-		return this.props.totalVotesCast == 0 ? 0 : this.state.backing / this.props.totalVotesCast * 100;
+		return this.props.totalVotesCast == 0 ? 0 : (this.props.backing + this.props.pendingVotes) / this.props.totalVotesCast * 100;
 	}
 
 	handleClick() {
-		const availableVotes = this.props.onClick(this.props.index, this.state.backing);
-
-		if (availableVotes) {
-			const backing = this.state.backing + 1;
-			this.setState({backing, pending: true})
-		}
+		this.props.onClick(this.props.index);
 	}
 
 	render() {
-		const pendingClass = this.state.pending || this.props.votedAlready ? 'pending' : ''
+		const pendingClass = this.props.pendingVotes != 0 || this.props.votedAlready ? 'pending' : ''
 		const votesPercent = this.mapVotesToPercent()
 
 		return (
 			<div className={`submittedWordContainer ${pendingClass}`} onClick={this.handleClick.bind(this)}>
 				<div className="voteCount">
-					{this.state.backing}
+					{this.props.backing + this.props.pendingVotes}
 				</div>
 				<div className="submittedWord">
 					{this.props.word}
