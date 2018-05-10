@@ -241,8 +241,6 @@ class SubmittedWords extends Component {
 			}
 			this.setState({pastVotes})
 		})
-
-
     }
 
 	setPendingVote(index) {
@@ -261,11 +259,11 @@ class SubmittedWords extends Component {
     }
 
     clearVotes() {
-    	this.setState({pendingVotes: {}, unsavedVotes: false, totalPendingVotes: 0})
+    	const pastVotes = Object.assign(this.state.pastVotes, this.state.pendingVotes)
+    	this.setState({pastVotes, pendingVotes: {}, unsavedVotes: false, totalPendingVotes: 0})
     }
 
 	render() {
-
 		const tomorrow = new Date();
 		tomorrow.setDate(tomorrow.getDate() + 1)
 
