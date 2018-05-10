@@ -23,7 +23,7 @@ class ThirtytwoDaily extends Component {
 			'showSubmissions': false,
 			owner: false,
 			tokenBalance: 0,
-			availableVotes: 0
+			availableVotes: 0,
 		}
 	}
 
@@ -33,28 +33,27 @@ class ThirtytwoDaily extends Component {
 		currentAccount = await getCurrentAccount();
 		const owner = await doxaHub.owner();
 
-
-		const version = await doxaHub.currentVersion();
-		let filter = doxaHub.PostBacked({backer: currentAccount, version:version})
-		filter.get(function(e,r) {
-			console.log(r);
-		})
-
-
         const submittedWords = await getAllLinks();
         submittedWords.sort((a, b) => {return b.backing - a.backing})
 
-        const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
-    	const tokenBalance = tokenBalanceBN.toNumber();
+        let tokenBalance;
+        let availableVotes;
+        if (currentAccount != undefined) {
+	        const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
+	    	tokenBalance = tokenBalanceBN.toNumber();
 
-    	const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
-		const availableVotes = availableVotesBN.toNumber();
+	    	const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
+			availableVotes = availableVotesBN.toNumber();
+        } else {
+        	tokenBalance = 0;
+        	availableVotes = 0;
+        }
 
         this.setState({
-        	tokenBalance, 
+        	tokenBalance,
         	availableVotes,
         	submittedWords, 
-        	owner: owner === currentAccount
+        	owner: owner === currentAccount,
         })
     }
 
@@ -220,7 +219,8 @@ class SubmittedWords extends Component {
 			'pendingVotes': {},
 			'unsavedVotes': false,
 			'totalVotesCast': 0,
-			'totalPendingVotes': 0
+			'totalPendingVotes': 0,
+			pastVotes: {}
 		}
 	}
 
@@ -229,8 +229,20 @@ class SubmittedWords extends Component {
         for (let i = 0; i < this.props.submittedWords.length; i++) {
     		totalVotesCast += this.props.submittedWords[i].backing;
         }
-
         this.setState({totalVotesCast})
+
+		let pastVotes = {}
+        const version = await doxaHub.currentVersion();
+		const filter = doxaHub.PostBacked({backer: currentAccount, version:version}, {fromBlock:0})
+		filter.get((e,r) => {
+			for(let i = 0; i < r.length; i++) {
+				let index = r[i].args.postIndex.toNumber();
+				pastVotes[index] = 1;
+			}
+			this.setState({pastVotes})
+		})
+
+
     }
 
 	setPendingVote(index) {
@@ -260,7 +272,7 @@ class SubmittedWords extends Component {
 		const availableVotes = this.props.availableVotes - this.state.totalPendingVotes;
 
 		const submittedWords = this.props.submittedWords.map(obj =>
-			<SubmittedWord totalVotesCast={this.state.totalVotesCast} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
+			<SubmittedWord votedAlready={this.state.pastVotes[obj.index] != undefined} totalVotesCast={this.state.totalVotesCast} key={obj.index} word={obj.word} backing={obj.backing} index={obj.index} onClick={this.setPendingVote.bind(this)}/>
 		);
 
 		const saveButton = this.state.unsavedVotes ? (
@@ -312,7 +324,6 @@ class SubmittedWord extends Component {
 
 		this.state = { 
 			backing: this.props.backing,
-			pending: false,
 		}
 	}
 
@@ -330,7 +341,7 @@ class SubmittedWord extends Component {
 	}
 
 	render() {
-		const pendingClass = this.state.pending ? 'pending' : ''
+		const pendingClass = this.state.pending || this.props.votedAlready ? 'pending' : ''
 		const votesPercent = this.mapVotesToPercent()
 
 		return (
