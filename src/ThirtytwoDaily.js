@@ -38,7 +38,7 @@ class ThirtytwoDaily extends Component {
 
         let tokenBalance;
         let availableVotes;
-        if (currentAccount != undefined) {
+        if (currentAccount !== undefined) {
 	        const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
 	    	tokenBalance = tokenBalanceBN.toNumber();
 
@@ -74,7 +74,7 @@ class ThirtytwoDaily extends Component {
     async persistVotes(pendingVotes) {
 
     	const submittedWords = this.state.submittedWords.map(word => {
-    		if(pendingVotes[word.index] != undefined) {
+    		if(pendingVotes[word.index] !== undefined) {
     			word.backing += pendingVotes[word.index];
     		}
     		return word;
@@ -116,7 +116,7 @@ class ThirtytwoDaily extends Component {
     }
 
     async publish() {
-    	const result = await doxaHub.publish({from: currentAccount});
+    	await doxaHub.publish({from: currentAccount});
     }
 
     toggleSubmissionView() {
@@ -244,7 +244,7 @@ class SubmittedWords extends Component {
     }
 
 	setPendingVote(index) {
-		if(this.props.availableVotes - this.state.totalPendingVotes == 0 ) return false;
+		if(this.props.availableVotes - this.state.totalPendingVotes === 0 ) return false;
 
     	let pendingVotes = {...this.state.pendingVotes}
     	pendingVotes[index] ? pendingVotes[index] += 1 : pendingVotes[index] = 1;
@@ -275,8 +275,8 @@ class SubmittedWords extends Component {
 				index={obj.index} 
 				word={obj.word} 
 				backing={obj.backing} 
-				votedAlready={this.state.pastVotes[obj.index] != undefined} 
-				pendingVotes={this.state.pendingVotes[obj.index] != undefined ? this.state.pendingVotes[obj.index] : 0}
+				votedAlready={this.state.pastVotes[obj.index] !== undefined} 
+				pendingVotes={this.state.pendingVotes[obj.index] !== undefined ? this.state.pendingVotes[obj.index] : 0}
 				totalVotesCast={this.state.totalVotesCast} 
 				onClick={this.setPendingVote.bind(this)}/>
 		);
@@ -326,7 +326,7 @@ class SubmittedWords extends Component {
 class SubmittedWord extends Component {
 
 	mapVotesToPercent() {
-		return this.props.totalVotesCast == 0 ? 0 : (this.props.backing + this.props.pendingVotes) / this.props.totalVotesCast * 100;
+		return this.props.totalVotesCast === 0 ? 0 : (this.props.backing + this.props.pendingVotes) / this.props.totalVotesCast * 100;
 	}
 
 	handleClick() {
@@ -334,7 +334,7 @@ class SubmittedWord extends Component {
 	}
 
 	render() {
-		const pendingClass = this.props.pendingVotes != 0 || this.props.votedAlready ? 'pending' : ''
+		const pendingClass = this.props.pendingVotes !== 0 || this.props.votedAlready ? 'pending' : ''
 		const votesPercent = this.mapVotesToPercent()
 
 		return (

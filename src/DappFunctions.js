@@ -34,46 +34,6 @@ async function getCurrentAccount(){
     return account;
 }
 
-/**
- * @summary Register a new user.
- */
-async function registerUser(username){
-    const doxaHub = await getContract(doxaHubContract);
-    const account = await getCurrentAccount();
-    const result = await doxaHub.register(username, {from: account});
-    return result;
-}
-
-/**
- * @summary  Retrieve all registered users.
- */
-async function getAllUsers(){
-    const doxaHub = await getContract(doxaHubContract);
-
-    const memberCount = await doxaHub.memberCount()
-    const indexesToRetrieve = [...Array(memberCount.toNumber()).keys()]
-    const functions = indexesToRetrieve.map(index => doxaHub.findMemberByIndex(index))
-    let results = await Promise.all(functions)
-
-    let users = []
-    for (const [address, username, active, elected, balance, backing, availableToBackPosts] of results) {
-        users.push({address, username, elected, balance, backing, availableToBackPosts})
-    }
-    return users
-}
-
-/**
- * @summary Retreive the user that is being used in MetaMask
- * 
- * The return is dictionary like {address, username, elected, balance, backing}
- */
-async function getCurrentUser(){
-    const users = await getAllUsers();  // Overall this can be done faster. TODO grab user by address directly
-    const account = await getCurrentAccount();
-    const currentUser =  users.find(user => user.address === account);
-    return currentUser;
-}
-
 // TODO memoize this so only one event listener is created
 async function setUpPostListener() {
     const doxaHub = await getContract(doxaHubContract);
@@ -90,7 +50,6 @@ async function setUpUserPostBackedListener() {
 
 async function setUpPostBackedListener() {
     const doxaHub = await getContract(doxaHubContract);
-    const account = await getCurrentAccount();
     let event = doxaHub.PostBacked();
     return event;
 }
@@ -107,7 +66,7 @@ async function getAllLinks(){
     let results = await Promise.all(functions)
 
     let links = []
-    for (const [index, owner, link, backing] of results) {
+    for (const [index, _, link, backing] of results) {
         links.push({'word': toAscii(link), 'backing': backing.toNumber(), 'index': index.toNumber()})
     }
     return links
@@ -150,8 +109,8 @@ async function getHistory(start, end, dateType) {
 
         let results = await Promise.all(functions)
 
-        for (const [owner, content] of results) {
-            if(dateType == 'dayOfWeek') {
+        for (const [_, content] of results) {
+            if(dateType === 'dayOfWeek') {
                 words.push({content:toAscii(content), date:dayOfWeek(date)})
             } else {
                 words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', dateOptions)})
@@ -161,11 +120,8 @@ async function getHistory(start, end, dateType) {
     return words;
 }
 
-export {getCurrentUser,
-        getContract,
+export {getContract,
         getCurrentAccount,
-        getAllUsers,
-        registerUser,
         getAllLinks,
         setUpPostListener,
         setUpUserPostBackedListener,
