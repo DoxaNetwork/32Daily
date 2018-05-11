@@ -18,7 +18,11 @@ body {
 }
 
 * {
-	font-family: monospace;
+	font-family: 'Quicksand', sans-serif;
+}
+
+.title {
+	font-family: 'Fredericka the Great', serif;
 }
 
 button {
@@ -100,9 +104,7 @@ input {
 	font-size: 0.3em;
 }
 
-.header div {
-	font-family: 'Cutive Mono', monospace;
-}
+
 .timeBar {
 	margin-top: -5px;
 	height: 2px;
@@ -119,7 +121,7 @@ input {
 	position: absolute;
 	box-sizing: border-box;
 	width: 100%;
-	margin-top: -28px;
+	margin-top: -30px;
 }
 
 /* ==================== Animations ==================== */

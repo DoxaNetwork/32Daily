@@ -191,7 +191,7 @@ class Header extends Component {
 
 			<div>
 				<div className="header">
-					<div>Thirtytwo Daily</div>
+					<div className="title">Thirtytwo Daily</div>
 					<div className="subtitle">A communal story created one line per day</div>
 				</div>
 				<CSSTransitionGroup
@@ -298,7 +298,7 @@ class SubmittedWords extends Component {
 			<div>
 				<div className="wordFactory">
 			    <div className="sectionTitle">
-			    	<div>Choose the next line</div>
+			    	Choose the next line
 			    	<div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
 			    </div>
 					<div className="submittedWords">
