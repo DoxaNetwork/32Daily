@@ -229,6 +229,7 @@ class SubmittedWords extends Component {
         for (let i = 0; i < this.props.submittedWords.length; i++) {
     		totalVotesCast += this.props.submittedWords[i].backing;
         }
+        this.originalTotalVotes = totalVotesCast;
         this.setState({totalVotesCast})
 
 		let pastVotes = {}
@@ -255,12 +256,14 @@ class SubmittedWords extends Component {
 
     async persistVotes() {
     	await this.props.persistVotes(this.state.pendingVotes)
+    	const pastVotes = Object.assign(this.state.pastVotes, this.state.pendingVotes)
+    	this.setState({pastVotes})
     	this.clearVotes()
     }
 
     clearVotes() {
-    	const pastVotes = Object.assign(this.state.pastVotes, this.state.pendingVotes)
-    	this.setState({pastVotes, pendingVotes: {}, unsavedVotes: false, totalPendingVotes: 0})
+    	const totalVotesCast = this.state.totalVotesCast - this.state.totalPendingVotes;
+    	this.setState({totalVotesCast, pendingVotes: {}, unsavedVotes: false, totalPendingVotes: 0 })
     }
 
 	render() {
