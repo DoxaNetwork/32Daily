@@ -75,6 +75,8 @@ input {
 	display: flex;
 	justify-content: center;
 	padding-top: 55px;
+	max-width: 1000px;
+	margin: auto;
 }
 
 .sectionTitle {
@@ -175,6 +177,9 @@ input {
 	height: 30px;
 	background-color:var(--white);
 	color: black;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
 
 .publishedWordContainer {
@@ -303,6 +308,12 @@ button.save {
 	position: relative;
 }
 
+.submittedWordWord {
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
 .submittedWordContainer:hover > .submittedWord {
 	background-color: var(--main-color);
 	color: white;
@@ -406,6 +417,24 @@ button.save {
 
 	.showSubmissions {
 		width: 200px;
+	}
+}
+
+/* tiny mobile */
+@media only screen and (max-width: 350px) {
+	.publishedWordContainer {
+		font-size: 0.9em;
+	}
+	.word {
+		padding: 10px 10px;
+	}
+
+	.date {
+		padding: 0 15px 0 0;
+	}
+
+	.nextWord {
+		padding: 0 5px;
 	}
 }
 

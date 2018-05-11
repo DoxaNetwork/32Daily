@@ -346,7 +346,7 @@ class SubmittedWord extends Component {
 					{this.props.backing + this.props.pendingVotes}
 				</div>
 				<div className="submittedWord">
-					{this.props.word}
+					<div className="submittedWordWord">{this.props.word}</div>
 					<div className="votingBar" style={{width: `${votesPercent}%`}}> </div>
 				</div>
 			</div>
