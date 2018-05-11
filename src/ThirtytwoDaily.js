@@ -257,7 +257,7 @@ class SubmittedWords extends Component {
     async persistVotes() {
     	await this.props.persistVotes(this.state.pendingVotes)
     	const pastVotes = Object.assign(this.state.pastVotes, this.state.pendingVotes)
-    	this.setState({pastVotes})
+    	this.setState({pastVotes, totalPendingVotes: 0})
     	this.clearVotes()
     }
 
