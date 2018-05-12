@@ -191,8 +191,8 @@ class Header extends Component {
 
 			<div>
 				<div className="header">
-					<div className="title">Thirtytwo Daily</div>
-					<div className="subtitle">A communal story, created one line per day</div>
+					<div className="title">32Daily</div>
+					<div className="subtitle">A communal story created one line per day</div>
 				</div>
 				<CSSTransitionGroup
 					transitionName="timeBar"
