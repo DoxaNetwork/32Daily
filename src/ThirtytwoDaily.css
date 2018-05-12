@@ -57,6 +57,10 @@ input {
 	font-size: 1em;
 }
 
+input:invalid {
+    box-shadow: none;
+}
+
 .red {
 	color: red !important;
 }
