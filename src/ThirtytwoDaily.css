@@ -90,6 +90,19 @@ input:invalid {
 	margin-bottom: 20px;
 }
 
+.yesterday {
+	margin-bottom: 40px;
+}
+
+.yesterday .date {
+	display: none;
+}
+
+.yesterday .word {
+	margin: auto;
+	font-size: 1.3em;
+}
+
 .sectionSubTitle {
 	font-size: 0.7em;
 	color: var(--gray);
@@ -168,17 +181,15 @@ input:invalid {
 
 /* ==================== History ====================*/
 .showHistory {
-	margin-bottom: 20px;
+	margin-top: 20px;
 }
 
 .wordStreamInner {
 }
 
 .word {
-	line-height: 30px;
 	text-align: left;
 	padding: 10px 15px;
-	height: 30px;
 	background-color:var(--white);
 	color: black;
 	text-overflow: ellipsis;
@@ -188,11 +199,13 @@ input:invalid {
 
 .publishedWordContainer {
 	display: flex;
+	align-items: center;
 	margin:0 5px 5px;
 	border-radius: var(--border-radius);
 	overflow: hidden;
 	justify-content: space-between;
-	background-color: var(--white)
+	background-color: var(--white);
+	height: 50px;
 }
 
 
@@ -344,8 +357,6 @@ button.save {
 	padding: 0 15px;
 	background-color: white;
 	color: var(--gray);
-	height: 50px;
-	line-height: 50px;
 	width:65px;
 	text-align: center;
 	border-radius: 0 10px 10px 0;

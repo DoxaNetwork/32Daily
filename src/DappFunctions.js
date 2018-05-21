@@ -72,7 +72,7 @@ async function getAllLinks(){
     return links
 }
 
-const numToPreLoad = 5;
+const numToPreLoad = 6;
 
 async function getPreHistory() {
     const doxaHub = await getContract(doxaHubContract);
@@ -109,11 +109,11 @@ async function getHistory(start, end, dateType) {
 
         let results = await Promise.all(functions)
 
-        for (const [_, content] of results) {
+        for (const [poster, content] of results) {
             if(dateType === 'dayOfWeek') {
-                words.push({content:toAscii(content), date:dayOfWeek(date)})
+                words.push({content:toAscii(content), poster, date:dayOfWeek(date)})
             } else {
-                words.push({content:toAscii(content), date:date.toLocaleDateString('en-US', dateOptions)})
+                words.push({content:toAscii(content), poster, date:date.toLocaleDateString('en-US', dateOptions)})
             }
         }
     }

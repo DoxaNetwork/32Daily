@@ -147,9 +147,7 @@ class ThirtytwoDaily extends Component {
 				<div className="appContainer">
 					{submittedWordsBlock}
 					<div className={`rightSide ${hidden}`}>
-						<div className="sectionTitle">The story so far</div>
 						<PublishedWords/>
-
 						<NextWord onSubmit={this.postLink.bind(this)}/>
 					</div>
 				</div>
@@ -181,18 +179,17 @@ class Header extends Component {
 	render() {
 		const hoursRemaining = 23 - this.state.time.getUTCHours();
 		const minutesRemaining = 59 - this.state.time.getUTCMinutes();
-		const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;
+		const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;		
 
 		const timerText = this.props.showTimerText ? (
 				<div className="timerText">{hoursRemaining} hours and {minutesRemaining} minutes remaining</div> 
 			) : '';
 
 		return (
-
 			<div>
 				<div className="header">
 					<div className="title">32Daily</div>
-					<div className="subtitle">A communal story created one line per day</div>
+					<div className="subtitle">Tiny curated headline posted at midnight UTC</div>
 				</div>
 				<CSSTransitionGroup
 					transitionName="timeBar"
@@ -202,8 +199,7 @@ class Header extends Component {
 				    transitionLeave={false}>
 					<div className="timeBar" style={{width: `${timeConsumedPercent}%`}}></div>
 				</CSSTransitionGroup>
-					{timerText}
-				
+				{timerText}
 			</div>
 		)
 	}
@@ -298,7 +294,7 @@ class SubmittedWords extends Component {
 			<div>
 				<div className="wordFactory">
 			    <div className="sectionTitle">
-			    	Choose the next line
+			    	Choose tomorrow's headline
 			    	<div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
 			    </div>
 					<div className="submittedWords">
@@ -367,33 +363,47 @@ class PublishedWords extends Component {
 
 	async componentWillMount() {
         const [publishedWords, allPreLoaded] = await preLoadHistory();
+        publishedWords.reverse();
+        const firstWord = publishedWords[0];
         this.setState({publishedWords, allPreLoaded})
     }
 
 	async loadFullHistory() {
     	const publishedWords = await getPreHistory();
-    	this.setState({ publishedWords: [...publishedWords, ...this.state.publishedWords ], allPreLoaded: true})
+    	publishedWords.reverse();
+    	this.setState({ publishedWords: [...this.state.publishedWords, ...publishedWords], allPreLoaded: true})
     }
 
 	render() {
-		const publishedWords = this.state.publishedWords.map(word => 
-			<PublishedWord  key={word.content} word={word} />
-		);
+		const publishedWords = this.state.publishedWords.map((word, index) => {
+			return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
+		});
 
-		const showAllHistoryLink = this.state.allPreLoaded ? '' : <div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>Show full history</div>;
+		const firstWord = this.state.publishedWords.map((word, index) => {
+			return index == 0 ? <PublishedWord  key={word.content} word={word} /> : '';
+		});
+
+		const showAllHistoryLink = this.state.allPreLoaded ? '' : <div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>See full history</div>;
 
 		return (
 			<div>
-				{showAllHistoryLink}
+				<div className="sectionTitle">What happened yesterday</div>
+				<div className="yesterday">
+					{firstWord}
+				</div>
+				<div className="sectionTitle">What happened before that</div>
 				<div className="wordStreamInner">
 					<CSSTransitionGroup
-          				transitionName="opacity"
-          				transitionEnterTimeout={5000}
-          				transitionLeaveTimeout={300}>
+	      				transitionName="opacity"
+	      				transitionEnterTimeout={5000}
+	      				transitionLeaveTimeout={300}>
 						{publishedWords}
 					</CSSTransitionGroup>
 				</div>
+				{showAllHistoryLink}
 			</div>
+
+			
 		)
 	}
 }
@@ -445,10 +455,10 @@ class NextWord extends Component {
 
 		return (
 			<div className="nextWordBlock">
-				<div className="sectionTitle">Continue the story</div>
+				<div className="sectionTitle">What's happening today?</div>
 				<form onSubmit={this.submit.bind(this)} className="nextWordContainer">
 					<div  className="nextWord">
-						<input autoComplete="off" required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="Suggest the next line" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+						<input autoComplete="off" required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="Write today's headline" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
 						<span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
 					</div>
 					<button className={`${unsavedState}`}type="submit">Submit</button>
