@@ -36,6 +36,15 @@ class ThirtytwoDaily extends Component {
         const submittedWords = await getAllLinks();
         submittedWords.sort((a, b) => {return b.backing - a.backing})
 
+        const linkPosted = doxaHub.LinkPosted()
+        linkPosted.watch((e, r) => {
+            console.log(r.args);
+            const newPost = this.mapPost(r.args);
+            this.setState({
+                submittedWords: [...this.state.submittedWords, newPost ]
+            })
+        })
+
         let tokenBalance;
         let availableVotes;
         if (currentAccount !== undefined) {
