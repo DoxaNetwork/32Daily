@@ -48,7 +48,6 @@ class ThirtytwoDaily extends Component {
             tokenBalance = 0;
             availableVotes = 0;
         }
-
         this.setState({
             tokenBalance,
             availableVotes,
@@ -348,8 +347,7 @@ class SubmittedWord extends Component {
             </div>
         )
     }
-}   
-
+}
 
 class PublishedWords extends Component {
 
