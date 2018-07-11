@@ -359,7 +359,6 @@ class SubmittedWord extends Component {
 }
 
 class PublishedWords extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -408,16 +407,12 @@ class PublishedWords extends Component {
                     </CSSTransitionGroup>
                 </div>
                 {showAllHistoryLink}
-            </div>
-
-            
+            </div>            
         )
     }
 }
-
  
 class PublishedWord extends Component {
-
     render() {
         return (
             <div key={this.props.word.content}>
@@ -433,10 +428,7 @@ class PublishedWord extends Component {
         )
     }
 }
-
-
 class NextWord extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
