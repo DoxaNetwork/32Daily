@@ -11,7 +11,6 @@ const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
 let currentAccount;
 
-    
 class ThirtytwoDaily extends Component {
 
     constructor(props){
@@ -28,7 +27,6 @@ class ThirtytwoDaily extends Component {
     }
 
     async componentWillMount() {
-        // initialize global state
         doxaHub = await getContract(doxaHubContract);
         currentAccount = await getCurrentAccount();
         const owner = await doxaHub.owner();
@@ -38,7 +36,6 @@ class ThirtytwoDaily extends Component {
 
         const linkPosted = doxaHub.LinkPosted()
         linkPosted.watch((e, r) => {
-            console.log(r.args);
             const newPost = this.mapPost(r.args);
             this.setState({
                 submittedWords: [...this.state.submittedWords, newPost ]
@@ -118,7 +115,7 @@ class ThirtytwoDaily extends Component {
         this.setState({
             tokenBalance,
             availableVotes, 
-            showSubmissions: true, 
+            showSubmissions: true,
             submittedWords: [...this.state.submittedWords, newPost ]
         })
     }
@@ -128,7 +125,7 @@ class ThirtytwoDaily extends Component {
     }
 
     toggleSubmissionView() {
-        this.setState({showSubmissions: !this.state.showSubmissions})   
+        this.setState({showSubmissions: !this.state.showSubmissions})
     }
 
     render() {
@@ -187,7 +184,7 @@ class Header extends Component {
     render() {
         const hoursRemaining = 23 - this.state.time.getUTCHours();
         const minutesRemaining = 59 - this.state.time.getUTCMinutes();
-        const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;       
+        const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;
 
         const timerText = this.props.showTimerText ? (
                 <div className="timerText">{hoursRemaining} hours and {minutesRemaining} minutes remaining</div> 
