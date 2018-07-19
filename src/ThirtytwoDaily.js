@@ -299,7 +299,7 @@ class SubmittedWords extends Component {
             <div>
                 <div className="wordFactory">
                 <div className="sectionTitle">
-                    Choose tomorrow's headline
+                    <span>Choose tomorrow's headline</span>
                     <div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
                 </div>
                     <div className="submittedWords">
