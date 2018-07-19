@@ -11,7 +11,6 @@ const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
 let currentAccount;
 
-    
 class ThirtytwoDaily extends Component {
 
     constructor(props){
@@ -28,13 +27,20 @@ class ThirtytwoDaily extends Component {
     }
 
     async componentWillMount() {
-        // initialize global state
         doxaHub = await getContract(doxaHubContract);
         currentAccount = await getCurrentAccount();
         const owner = await doxaHub.owner();
 
         const submittedWords = await getAllLinks();
         submittedWords.sort((a, b) => {return b.backing - a.backing})
+
+        const linkPosted = doxaHub.LinkPosted()
+        linkPosted.watch((e, r) => {
+            const newPost = this.mapPost(r.args);
+            this.setState({
+                submittedWords: [...this.state.submittedWords, newPost ]
+            })
+        })
 
         let tokenBalance;
         let availableVotes;
@@ -48,7 +54,6 @@ class ThirtytwoDaily extends Component {
             tokenBalance = 0;
             availableVotes = 0;
         }
-
         this.setState({
             tokenBalance,
             availableVotes,
@@ -110,7 +115,7 @@ class ThirtytwoDaily extends Component {
         this.setState({
             tokenBalance,
             availableVotes, 
-            showSubmissions: true, 
+            showSubmissions: true,
             submittedWords: [...this.state.submittedWords, newPost ]
         })
     }
@@ -120,7 +125,7 @@ class ThirtytwoDaily extends Component {
     }
 
     toggleSubmissionView() {
-        this.setState({showSubmissions: !this.state.showSubmissions})   
+        this.setState({showSubmissions: !this.state.showSubmissions})
     }
 
     render() {
@@ -179,7 +184,7 @@ class Header extends Component {
     render() {
         const hoursRemaining = 23 - this.state.time.getUTCHours();
         const minutesRemaining = 59 - this.state.time.getUTCMinutes();
-        const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;       
+        const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;
 
         const timerText = this.props.showTimerText ? (
                 <div className="timerText">{hoursRemaining} hours and {minutesRemaining} minutes remaining</div> 
@@ -294,7 +299,7 @@ class SubmittedWords extends Component {
             <div>
                 <div className="wordFactory">
                 <div className="sectionTitle">
-                    Choose tomorrow's headline
+                    {"Choose tomorrow's headline"}
                     <div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
                 </div>
                     <div className="submittedWords">
@@ -348,11 +353,9 @@ class SubmittedWord extends Component {
             </div>
         )
     }
-}   
-
+}
 
 class PublishedWords extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -401,16 +404,12 @@ class PublishedWords extends Component {
                     </CSSTransitionGroup>
                 </div>
                 {showAllHistoryLink}
-            </div>
-
-            
+            </div>            
         )
     }
 }
-
  
 class PublishedWord extends Component {
-
     render() {
         return (
             <div key={this.props.word.content}>
@@ -426,10 +425,7 @@ class PublishedWord extends Component {
         )
     }
 }
-
-
 class NextWord extends Component {
-
     constructor(props) {
         super(props);
         this.state = {
