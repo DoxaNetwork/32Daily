@@ -66,8 +66,8 @@ async function getAllLinks(){
     let results = await Promise.all(functions)
 
     let links = []
-    for (const [index, _, link, backing] of results) {
-        links.push({'word': toAscii(link), 'backing': backing.toNumber(), 'index': index.toNumber()})
+    for (const [index, poster, link, backing] of results) {
+        links.push({'poster': poster, 'word': toAscii(link), 'backing': backing.toNumber(), 'index': index.toNumber()})
     }
     return links
 }

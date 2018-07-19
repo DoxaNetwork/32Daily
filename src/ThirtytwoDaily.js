@@ -278,6 +278,7 @@ class SubmittedWords extends Component {
                 key={obj.index} 
                 index={obj.index} 
                 word={obj.word} 
+                poster={obj.poster}
                 backing={obj.backing} 
                 votedAlready={this.state.pastVotes[obj.index] !== undefined} 
                 pendingVotes={this.state.pendingVotes[obj.index] !== undefined ? this.state.pendingVotes[obj.index] : 0}
@@ -340,6 +341,7 @@ class SubmittedWord extends Component {
     render() {
         const pendingClass = this.props.pendingVotes !== 0 || this.props.votedAlready ? 'pending' : ''
         const votesPercent = this.mapVotesToPercent()
+        console.log(this.props)
 
         return (
             <div className={`submittedWordContainer ${pendingClass}`} onClick={this.handleClick.bind(this)}>
@@ -349,6 +351,7 @@ class SubmittedWord extends Component {
                 <div className="submittedWord">
                     <div className="submittedWordWord">{this.props.word}</div>
                     <div className="votingBar" style={{width: `${votesPercent}%`}}> </div>
+                    <div className="identity2">{this.props.poster.substring(0,6)}</div>
                 </div>
             </div>
         )
@@ -379,6 +382,7 @@ class PublishedWords extends Component {
 
     render() {
         const publishedWords = this.state.publishedWords.map((word, index) => {
+            console.log(word, word.poster)
             return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
         });
 
@@ -419,6 +423,9 @@ class PublishedWord extends Component {
                     </div>
                     <div className="date">
                         {this.props.word.date}
+                    </div>
+                    <div className="identity">
+                        {this.props.word.poster.substring(0,6)}
                     </div>
                 </div>
             </div>

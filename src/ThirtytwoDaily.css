@@ -188,24 +188,23 @@ input:invalid {
 }
 
 .word {
-    text-align: left;
     padding: 10px 15px;
     background-color:var(--white);
     color: black;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    width: 100%;
 }
 
 .publishedWordContainer {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     margin:0 5px 5px;
     border-radius: var(--border-radius);
     overflow: hidden;
     justify-content: space-between;
     background-color: var(--white);
-    height: 50px;
+    height: 125px;
+    padding-bottom: 5px;
 }
 
 
@@ -215,7 +214,6 @@ button.save {
     border-radius: var(--border-radius);
     width: 50%;
     margin: 0 5px;
-    /*margin:auto;*/
     height:40px;
 }
 
@@ -296,12 +294,10 @@ button.save {
 .submittedWordContainer {
     background-color: var(--white);
     display: flex;
-    align-items: center;
     cursor: pointer;
     border-radius: var(--border-radius);
     margin:10px 5px;
-    height: 50px;
-    overflow: hidden;
+    height: 125px;
 }
 .submittedWordContainer.pending .voteCount {
     background-color: var(--secondary-color);
@@ -317,18 +313,17 @@ button.save {
     flex-grow: 1;
     height: 100%;
     box-sizing: border-box;
-    line-height: 43px;  
-    text-align: center;
     cursor:pointer;
     transition: background 300ms ease-out;
-    border-top: 3px solid lightgray;
+    border-top: 4px solid lightgray;
     position: relative;
 }
 
 .submittedWordWord {
     text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    padding-left: 15px;
+    padding-top: 7px;
+    height: 82px;
 }
 
 .submittedWordContainer:hover > .submittedWord {
@@ -344,9 +339,9 @@ button.save {
 .voteCount {
     background-color: var(--main-color);
     color: white;
-    height: 50px;
-    line-height: 50px;
-    width:60px;
+    height: 125px;
+    line-height: 125px;
+    min-width:40px;
     box-sizing: border-box;
     text-align: center;
     border-radius: var(--border-radius) 0 0 var(--border-radius);
@@ -358,15 +353,25 @@ button.save {
     background-color: white;
     color: var(--gray);
     width:65px;
-    text-align: center;
     border-radius: 0 10px 10px 0;
+}
+
+.identity {
+    margin-right: 20px;
+    color: var(--gray);
+}
+
+.identity2 {
+    color: var(--gray);
+    float: right;
+    padding-right: 15px;
 }
 
 .votingBar {
     position: absolute;
-    height: 3px;
+    height: 4px;
     background-color: var(--main-color);
-    top: -3px;
+    top: -4px;
     transition: all 300ms ease-in-out;
 }
 
