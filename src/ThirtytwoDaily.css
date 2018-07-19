@@ -94,10 +94,6 @@ input:invalid {
     margin-bottom: 40px;
 }
 
-.yesterday .date {
-    display: none;
-}
-
 .yesterday .word {
     margin: auto;
     font-size: 1.3em;
@@ -205,6 +201,7 @@ input:invalid {
     background-color: var(--white);
     height: 125px;
     padding-bottom: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
 }
 
 
@@ -241,6 +238,7 @@ button.save {
     margin: 20px auto;
     border-radius: var(--border-radius);
     color: var(--gray);
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
 }
 
 .showSubmissions:hover {
@@ -258,6 +256,7 @@ button.save {
     height: 50px;
     border-radius: var(--border-radius);
     overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
 }
 .nextWord {
     color: black;

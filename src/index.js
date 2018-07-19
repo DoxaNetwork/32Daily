@@ -1,8 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ThirtytwoDaily from './ThirtytwoDaily'
+import DoxaOne from './DoxaOne'
 
 ReactDOM.render(
-  <ThirtytwoDaily></ThirtytwoDaily>,
+  <DoxaOne></DoxaOne>,
   document.getElementById('root')
 );

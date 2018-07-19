@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { BrowserRouter, Link, Route } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
 import contract from 'truffle-contract'
 
@@ -10,6 +11,41 @@ import './ThirtytwoDaily.css'
 const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
 let currentAccount;
+
+class DoxaOne extends Component {
+    render() {
+        return (
+            <BrowserRouter>
+                <div>
+                    <nav>
+                        <Link to="/10">10</Link>
+                        <Link to="/100">100</Link>
+                    </nav>
+                    <Route path="/10" component={Doxa10}/>
+                    <Route path="/100" component={Doxa100}/>
+                </div>
+            </BrowserRouter>
+        )
+    }
+}
+
+class Doxa100 extends Component {
+
+    render() {
+        return (
+            <ThirtytwoDaily title="Doxa100"></ThirtytwoDaily>
+        )
+    }
+}
+
+class Doxa10 extends Component {
+
+    render() {
+        return (
+            <ThirtytwoDaily title="Doxa10"></ThirtytwoDaily>
+        )
+    }
+}
 
 class ThirtytwoDaily extends Component {
 
@@ -137,18 +173,19 @@ class ThirtytwoDaily extends Component {
             </div>
             ) : ('');
 
-        const publishButton = this.state.owner ? (
-            <div className="publishButton">
-                <button onClick={this.publish.bind(this)}>Publish</button>
-            </div>
-            ) : '';
+        // const publishButton = this.state.owner ? (
+        //     <div className="publishButton">
+        //         <button onClick={this.publish.bind(this)}>Publish</button>
+        //     </div>
+        //     ) : '';
+        const publishButton = '';
 
         const hidden = this.state.showSubmissions ? 'hidden' : '';
 
         return (
             <div>
                 {publishButton}
-                <Header showTimerText={this.state.showSubmissions}/>
+                <Header title={this.props.title} showTimerText={this.state.showSubmissions}/>
                 <div className="appContainer">
                     {submittedWordsBlock}
                     <div className={`rightSide ${hidden}`}>
@@ -193,8 +230,8 @@ class Header extends Component {
         return (
             <div>
                 <div className="header">
-                    <div className="title">32Daily</div>
-                    <div className="subtitle">Tiny curated headline posted at midnight UTC</div>
+                    <div className="title">{this.props.title}</div>
+                    <div className="subtitle">Tiny curated message posted every 10 hours</div>
                 </div>
                 <CSSTransitionGroup
                     transitionName="timeBar"
@@ -341,7 +378,6 @@ class SubmittedWord extends Component {
     render() {
         const pendingClass = this.props.pendingVotes !== 0 || this.props.votedAlready ? 'pending' : ''
         const votesPercent = this.mapVotesToPercent()
-        console.log(this.props)
 
         return (
             <div className={`submittedWordContainer ${pendingClass}`} onClick={this.handleClick.bind(this)}>
@@ -382,7 +418,6 @@ class PublishedWords extends Component {
 
     render() {
         const publishedWords = this.state.publishedWords.map((word, index) => {
-            console.log(word, word.poster)
             return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
         });
 
@@ -394,11 +429,11 @@ class PublishedWords extends Component {
 
         return (
             <div>
-                <div className="sectionTitle">What happened yesterday</div>
+                <div className="sectionTitle">Current mood</div>
                 <div className="yesterday">
                     {firstWord}
                 </div>
-                <div className="sectionTitle">What happened before that</div>
+                <div className="sectionTitle">Past moods</div>
                 <div className="wordStreamInner">
                     <CSSTransitionGroup
                         transitionName="opacity"
@@ -482,4 +517,4 @@ class Button extends Component {
     }
 }
 
-export default ThirtytwoDaily
+export default DoxaOne
