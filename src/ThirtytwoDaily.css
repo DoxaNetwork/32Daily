@@ -1,60 +1,60 @@
 /* ==================== Global ==================== */
 :root {
-	--main-color: #16d;
-	--secondary-color: #09f;
-	--lightgray: lightgray;
-	--gray: #888;
-	--white: white;
-	--darkwhite: whitesmoke;
-	--border-radius: 8px;
+    --main-color: #16d;
+    --secondary-color: #09f;
+    --lightgray: lightgray;
+    --gray: #888;
+    --white: white;
+    --darkwhite: whitesmoke;
+    --border-radius: 8px;
 }
 
 html {
-	background-color: var(--darkwhite);
+    background-color: var(--darkwhite);
 }
 
 body {
-	margin: 0;
+    margin: 0;
 }
 
 * {
-	font-family: 'Quicksand', sans-serif;
+    font-family: 'Quicksand', sans-serif;
 }
 
 .title {
-	font-family: 'Fredericka the Great', serif;
+    font-family: 'Fredericka the Great', serif;
 }
 
 button {
-	border: 1px solid var(--main-color);
-	background-color: var(--main-color);
-	width: 127px;
-	height:50px;
-	padding: 0px;
-	color: var(--white);
-	transition: all 200ms ease-in-out;
-	cursor: pointer;
-	font-size: 1em;
+    border: 1px solid var(--main-color);
+    background-color: var(--main-color);
+    width: 127px;
+    height:50px;
+    padding: 0px;
+    color: var(--white);
+    transition: all 200ms ease-in-out;
+    cursor: pointer;
+    font-size: 1em;
 }
 
 button.unsaved {
-	border: 1px solid var(--secondary-color);
-	background-color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    background-color: var(--secondary-color);
 }
 
 button:hover {
-	background-color: var(--main-color);
-	border: 1px solid var(--main-color);
+    background-color: var(--main-color);
+    border: 1px solid var(--main-color);
 }
 
 input {
-	border: none;
-	outline: none;
-	text-align: center;
-	color: black;
-	flex-grow: 1;
-	background-color: var(--white);
-	font-size: 1em;
+    border: none;
+    outline: none;
+    text-align: center;
+    color: black;
+    flex-grow: 1;
+    background-color: var(--white);
+    font-size: 1em;
 }
 
 input:invalid {
@@ -62,87 +62,87 @@ input:invalid {
 }
 
 .red {
-	color: red !important;
+    color: red !important;
 }
 
 .link {
-	color: var(--gray);
-	cursor: pointer;
-	text-align: center;
+    color: var(--gray);
+    cursor: pointer;
+    text-align: center;
 }
 
 .link:hover {
-	color: var(--main-color);
+    color: var(--main-color);
 }
 
 .appContainer {
-	display: flex;
-	justify-content: center;
-	padding-top: 55px;
-	max-width: 1000px;
-	margin: auto;
+    display: flex;
+    justify-content: center;
+    padding-top: 55px;
+    max-width: 1000px;
+    margin: auto;
 }
 
 .sectionTitle {
-	font-size: 16pt;
-	color: var(--main-color);
-	text-align: center;
-	margin-bottom: 20px;
+    font-size: 16pt;
+    color: var(--main-color);
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .yesterday {
-	margin-bottom: 40px;
+    margin-bottom: 40px;
 }
 
 .yesterday .date {
-	display: none;
+    display: none;
 }
 
 .yesterday .word {
-	margin: auto;
-	font-size: 1.3em;
+    margin: auto;
+    font-size: 1.3em;
 }
 
 .sectionSubTitle {
-	font-size: 0.7em;
-	color: var(--gray);
+    font-size: 0.7em;
+    color: var(--gray);
 }
 
 /* ==================== Header ==================== */
 .header {
-	color: var(--main-color);
-	font-size:56pt;
-	padding-bottom: 30px;
-	padding-top:30px;
-	background-color: var(--white);
-	border-bottom: 4px solid var(--main-color);
-	margin:auto;
-	text-align: center;
+    color: var(--main-color);
+    font-size:56pt;
+    padding-bottom: 30px;
+    padding-top:30px;
+    background-color: var(--white);
+    border-bottom: 4px solid var(--main-color);
+    margin:auto;
+    text-align: center;
 }
 
 .subtitle {
-	margin-top: 20px;
-	font-size: 0.3em;
+    margin-top: 20px;
+    font-size: 0.3em;
 }
 
 
 .timeBar {
-	margin-top: -5px;
-	height: 2px;
-	border-bottom: 3px solid var(--darkwhite);
-	background-color: lightgray;
-	border-top: 2px solid white;
-	transition: width 1200ms ease-out;
+    margin-top: -5px;
+    height: 2px;
+    border-bottom: 3px solid var(--darkwhite);
+    background-color: lightgray;
+    border-top: 2px solid white;
+    transition: width 1200ms ease-out;
 }
 
 .timerText {
-	color: var(--main-color);
-	text-align: right;
-	padding: 3px 15px;
-	position: absolute;
-	box-sizing: border-box;
-	width: 100%;
-	margin-top: -30px;
+    color: var(--main-color);
+    text-align: right;
+    padding: 3px 15px;
+    position: absolute;
+    box-sizing: border-box;
+    width: 100%;
+    margin-top: -30px;
 }
 
 /* ==================== Animations ==================== */
@@ -158,7 +158,7 @@ input:invalid {
 }
 
 .timeBar-appear {
-	width:0 !important;
+    width:0 !important;
 }
 
 .opacity-enter {
@@ -181,288 +181,288 @@ input:invalid {
 
 /* ==================== History ====================*/
 .showHistory {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 
 .wordStreamInner {
 }
 
 .word {
-	text-align: left;
-	padding: 10px 15px;
-	background-color:var(--white);
-	color: black;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
+    text-align: left;
+    padding: 10px 15px;
+    background-color:var(--white);
+    color: black;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .publishedWordContainer {
-	display: flex;
-	align-items: center;
-	margin:0 5px 5px;
-	border-radius: var(--border-radius);
-	overflow: hidden;
-	justify-content: space-between;
-	background-color: var(--white);
-	height: 50px;
+    display: flex;
+    align-items: center;
+    margin:0 5px 5px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    justify-content: space-between;
+    background-color: var(--white);
+    height: 50px;
 }
 
 
 
 /* ==================== Word submission ==================== */
 button.save {
-	border-radius: var(--border-radius);
-	width: 50%;
-	margin: 0 5px;
-	/*margin:auto;*/
-	height:40px;
+    border-radius: var(--border-radius);
+    width: 50%;
+    margin: 0 5px;
+    /*margin:auto;*/
+    height:40px;
 }
 
 .saveSpaceHolder {
-	height: 50px;
-	margin: 15px 0 25px;
+    height: 50px;
+    margin: 15px 0 25px;
 }
 
 .saveContainer {
-	display: flex;
-	margin: 0 12.5%;
+    display: flex;
+    margin: 0 12.5%;
 }
 
 .nextWordContainer.save {
-	padding: 0;
-	margin-left:0;
-	width: unset;
-	margin: 0;
+    padding: 0;
+    margin-left:0;
+    width: unset;
+    margin: 0;
 }
 
 .showSubmissions {
-	background-color: white;
-	padding: 10px;
-	width: 25%;
-	margin: 20px auto;
-	border-radius: var(--border-radius);
-	color: var(--gray);
+    background-color: white;
+    padding: 10px;
+    width: 25%;
+    margin: 20px auto;
+    border-radius: var(--border-radius);
+    color: var(--gray);
 }
 
 .showSubmissions:hover {
-	color: white;
-	background-color: var(--main-color);
+    color: white;
+    background-color: var(--main-color);
 }
 
 .nextWordBlock {
-	margin-top: 40px;
+    margin-top: 40px;
 }
 .nextWordContainer {
-	display: flex;
-	justify-content: space-between;
-	margin: 20px 5px 10px;
-	height: 50px;
-	border-radius: var(--border-radius);
-	overflow: hidden;
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 5px 10px;
+    height: 50px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
 }
 .nextWord {
-	color: black;
-	background-color: var(--white);
-	height: 50px;
-	line-height: 50px;
-	flex-grow: 1;
-	display: flex;
-	justify-content: space-between;
-	box-sizing: border-box;
-	transition: all 200ms ease-in-out;
-	padding: 0 5px 0 15px;
+    color: black;
+    background-color: var(--white);
+    height: 50px;
+    line-height: 50px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    transition: all 200ms ease-in-out;
+    padding: 0 5px 0 15px;
 }
 
 .characterCount {
-	color: var(--gray);
-	padding: 0 10px;
+    color: var(--gray);
+    padding: 0 10px;
 }
 
 /* ==================== Word voting ==================== */
 .wordFactory {
-	border-right: 2px solid var(--lightgray);
+    border-right: 2px solid var(--lightgray);
 }
 
 .wordFactoryTitle {
-	width: 75%;
-	margin:auto;
+    width: 75%;
+    margin:auto;
 }
 
 .submittedWords {
-	padding-top: 30px;
+    padding-top: 30px;
 }
 
 .submittedWordContainer {
-	background-color: var(--white);
-	display: flex;
-	align-items: center;
-	cursor: pointer;
-	border-radius: var(--border-radius);
-	margin:10px 5px;
-	height: 50px;
-	overflow: hidden;
+    background-color: var(--white);
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    margin:10px 5px;
+    height: 50px;
+    overflow: hidden;
 }
 .submittedWordContainer.pending .voteCount {
-	background-color: var(--secondary-color);
+    background-color: var(--secondary-color);
 }
 
 .submittedWordContainer.pending .votingBar {
-	background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
-	background-color: var(--secondary-color);
+    background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
+    background-color: var(--secondary-color);
 }
 
 .submittedWord {
-	color: black;
-	flex-grow: 1;
-	height: 100%;
-	box-sizing: border-box;
-	line-height: 43px;	
-	text-align: center;
-	cursor:pointer;
-	transition: background 300ms ease-out;
-	border-top: 3px solid lightgray;
-	position: relative;
+    color: black;
+    flex-grow: 1;
+    height: 100%;
+    box-sizing: border-box;
+    line-height: 43px;  
+    text-align: center;
+    cursor:pointer;
+    transition: background 300ms ease-out;
+    border-top: 3px solid lightgray;
+    position: relative;
 }
 
 .submittedWordWord {
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 .submittedWordContainer:hover > .submittedWord {
-	background-color: var(--main-color);
-	color: white;
-	transition: none;
+    background-color: var(--main-color);
+    color: white;
+    transition: none;
 }
 
 .submittedWordContainer.pending:hover > .submittedWord {
-	background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
+    background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
 }
 
 .voteCount {
-	background-color: var(--main-color);
-	color: white;
-	height: 50px;
-	line-height: 50px;
-	width:60px;
-	box-sizing: border-box;
-	text-align: center;
-	border-radius: var(--border-radius) 0 0 var(--border-radius);
-	transition: all 300ms ease-in-out;
+    background-color: var(--main-color);
+    color: white;
+    height: 50px;
+    line-height: 50px;
+    width:60px;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    transition: all 300ms ease-in-out;
 }
 
 .date {
-	padding: 0 15px;
-	background-color: white;
-	color: var(--gray);
-	width:65px;
-	text-align: center;
-	border-radius: 0 10px 10px 0;
+    padding: 0 15px;
+    background-color: white;
+    color: var(--gray);
+    width:65px;
+    text-align: center;
+    border-radius: 0 10px 10px 0;
 }
 
 .votingBar {
-	position: absolute;
-	height: 3px;
-	background-color: var(--main-color);
-	top: -3px;
-	transition: all 300ms ease-in-out;
+    position: absolute;
+    height: 3px;
+    background-color: var(--main-color);
+    top: -3px;
+    transition: all 300ms ease-in-out;
 }
 
 .votesSpent {
-	background-color: var(--lightgray);
-	transition: width 300ms ease-out;
+    background-color: var(--lightgray);
+    transition: width 300ms ease-out;
 }
 
 .votesRemaining {
-	background: linear-gradient(90deg,var(--main-color), var(--secondary-color));
-	transition: width 300ms ease-out;
+    background: linear-gradient(90deg,var(--main-color), var(--secondary-color));
+    transition: width 300ms ease-out;
 }
 
 .voteBarsContainer {
-	border-radius: var(--border-radius);
-	display: flex;
-	overflow: hidden;
-	height: 5px;
+    border-radius: var(--border-radius);
+    display: flex;
+    overflow: hidden;
+    height: 5px;
 }
 
 .voteText {
-	text-align: center;
-	color: gray;
-	margin-bottom: 10px;
+    text-align: center;
+    color: gray;
+    margin-bottom: 10px;
 }
 
 
 /* ==================== Admin controls ==================== */
 
 .publishButton {
-	background-color: var(--white);
-	border-bottom: 2px solid var(--lightgray);
-	padding: 10px;
-	text-align: center;
+    background-color: var(--white);
+    border-bottom: 2px solid var(--lightgray);
+    padding: 10px;
+    text-align: center;
 }
 
 .publishButton button {
-	border-radius: var(--border-radius);
+    border-radius: var(--border-radius);
 }
 
 /* mobile */
 
 @media only screen and (max-width: 649px) {
-	.header {
-		font-size: 40pt;
-	}
+    .header {
+        font-size: 40pt;
+    }
 
-	.subtitle {
-		padding: 0 70px;
-	}
+    .subtitle {
+        padding: 0 70px;
+    }
 
-	button {
-		width: 100px;
-	}
+    button {
+        width: 100px;
+    }
 
-	.rightSide {
-		width: 100%
-	}
+    .rightSide {
+        width: 100%
+    }
 
-	.hidden {
-		display: none;
-	}
+    .hidden {
+        display: none;
+    }
 
-	.showSubmissions {
-		width: 200px;
-	}
+    .showSubmissions {
+        width: 200px;
+    }
 }
 
 /* tiny mobile */
 @media only screen and (max-width: 350px) {
-	.publishedWordContainer {
-		font-size: 0.9em;
-	}
-	.word {
-		padding: 10px 10px;
-	}
+    .publishedWordContainer {
+        font-size: 0.9em;
+    }
+    .word {
+        padding: 10px 10px;
+    }
 
-	.date {
-		padding: 0 15px 0 0;
-	}
+    .date {
+        padding: 0 15px 0 0;
+    }
 
-	.nextWord {
-		padding: 0 5px;
-	}
+    .nextWord {
+        padding: 0 5px;
+    }
 }
 
 
 
 @media only screen and (min-width: 650px) {
-	.wordFactory {
-		padding-right: 20px;
-		margin-right: -20px;
-	}
+    .wordFactory {
+        padding-right: 20px;
+        margin-right: -20px;
+    }
 
-	.rightSide {
-		width: 50%;
-		padding: 0 20px;
-	}
+    .rightSide {
+        width: 50%;
+        padding: 0 20px;
+    }
 }

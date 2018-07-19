@@ -15,26 +15,26 @@ require('chai')
 
 
 contract('MemberRegistry', function(accounts) {
-	let registry;
+    let registry;
 
-	before("it should store a member", async function() {
-		registry = await MemberRegistry.new();
-		await registry.assignHub(accounts[0]);
-		await registry.createMember(accounts[0], 'enodios');
-	})
+    before("it should store a member", async function() {
+        registry = await MemberRegistry.new();
+        await registry.assignHub(accounts[0]);
+        await registry.createMember(accounts[0], 'enodios');
+    })
 
-	it("should return member count", async function() {
-		result = await registry.memberCount();
-		assert.equal(result.toNumber(), 1);
-	})
+    it("should return member count", async function() {
+        result = await registry.memberCount();
+        assert.equal(result.toNumber(), 1);
+    })
 
-	it("should return member by index", async function() {
-		const [name, owner, elected] = await registry.memberList(0);
-		assert.equal(toAscii(name), 'enodios');
-	})
+    it("should return member by index", async function() {
+        const [name, owner, elected] = await registry.memberList(0);
+        assert.equal(toAscii(name), 'enodios');
+    })
 
-	it("should return index by address", async function() {
-		index = await registry.addressMap(accounts[0]);
-		assert.equal(index, 0);
-	})
+    it("should return index by address", async function() {
+        index = await registry.addressMap(accounts[0]);
+        assert.equal(index, 0);
+    })
 })
