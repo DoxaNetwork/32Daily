@@ -18,13 +18,26 @@ class DoxaOne extends Component {
             <BrowserRouter>
                 <div>
                     <nav>
-                        <Link to="/10">10</Link>
-                        <Link to="/100">100</Link>
+                        <Link to="/1">Doxa1 </Link>
+                        <Link to="/10">Doxa10 </Link>
+                        <Link to="/100">Doxa100 </Link>
+                        <Link to="/1000">Doxa1000 </Link>
                     </nav>
+                    <Route path="/1" component={Doxa1}/>
                     <Route path="/10" component={Doxa10}/>
                     <Route path="/100" component={Doxa100}/>
+                    <Route path="/1000" component={Doxa1000}/>
                 </div>
             </BrowserRouter>
+        )
+    }
+}
+
+class Doxa1000 extends Component {
+
+    render() {
+        return (
+            <ThirtytwoDaily title="Doxa1000" period="1000 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -33,7 +46,7 @@ class Doxa100 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily title="Doxa100"></ThirtytwoDaily>
+            <ThirtytwoDaily title="Doxa100" period="100 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -42,7 +55,16 @@ class Doxa10 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily title="Doxa10"></ThirtytwoDaily>
+            <ThirtytwoDaily title="Doxa10" period="10 hours"></ThirtytwoDaily>
+        )
+    }
+}
+
+class Doxa1 extends Component {
+
+    render() {
+        return (
+            <ThirtytwoDaily title="Doxa1" period="hour"></ThirtytwoDaily>
         )
     }
 }
@@ -185,7 +207,7 @@ class ThirtytwoDaily extends Component {
         return (
             <div>
                 {publishButton}
-                <Header title={this.props.title} showTimerText={this.state.showSubmissions}/>
+                <Header title={this.props.title} period={this.props.period} showTimerText={this.state.showSubmissions}/>
                 <div className="appContainer">
                     {submittedWordsBlock}
                     <div className={`rightSide ${hidden}`}>
@@ -231,7 +253,7 @@ class Header extends Component {
             <div>
                 <div className="header">
                     <div className="title">{this.props.title}</div>
-                    <div className="subtitle">Tiny curated message posted every 10 hours</div>
+                    <div className="subtitle">Tiny curated message posted every {this.props.period}</div>
                 </div>
                 <CSSTransitionGroup
                     transitionName="timeBar"
