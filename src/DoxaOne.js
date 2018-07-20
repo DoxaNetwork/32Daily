@@ -253,7 +253,7 @@ class Header extends Component {
             <div>
                 <div className="header">
                     <div className="title">{this.props.title}</div>
-                    <div className="subtitle">Tiny curated message posted every {this.props.period}</div>
+                    <div className="subtitle">Tiny curated message selected every {this.props.period}</div>
                 </div>
                 <CSSTransitionGroup
                     transitionName="timeBar"

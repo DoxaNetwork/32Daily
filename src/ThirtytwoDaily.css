@@ -297,6 +297,7 @@ button.save {
     border-radius: var(--border-radius);
     margin:10px 5px;
     height: 125px;
+    overflow: hidden;
 }
 .submittedWordContainer.pending .voteCount {
     background-color: var(--secondary-color);
@@ -316,6 +317,7 @@ button.save {
     transition: background 300ms ease-out;
     border-top: 4px solid lightgray;
     position: relative;
+    border-bottom-right-radius: var(--border-radius);
 }
 
 .submittedWordWord {
