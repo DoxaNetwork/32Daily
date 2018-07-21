@@ -37,16 +37,20 @@ class Doxa1000 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily title="Doxa1000" period="1000 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily style={{"--main-color": "#16d"}} title="Doxa1000" period="1000 hours"></ThirtytwoDaily>
         )
     }
 }
+// 10 minutes
+// 100 minutes 1.5 hours
+// 1000 minutes 17 hours
+// 10000 minutes 6.9 days
 
 class Doxa100 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily title="Doxa100" period="100 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily style={{"--main-color": "#0b8"}} title="Doxa100" period="100 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -55,7 +59,7 @@ class Doxa10 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily title="Doxa10" period="10 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily style={{"--main-color": "#f80"}} title="Doxa10" period="10 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -64,7 +68,7 @@ class Doxa1 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily title="Doxa1" period="hour"></ThirtytwoDaily>
+            <ThirtytwoDaily style={{"--main-color": "#d04"}} title="Doxa1" period="hour"></ThirtytwoDaily>
         )
     }
 }
@@ -205,7 +209,7 @@ class ThirtytwoDaily extends Component {
         const hidden = this.state.showSubmissions ? 'hidden' : '';
 
         return (
-            <div>
+            <div style={this.props.style}>
                 {publishButton}
                 <Header title={this.props.title} period={this.props.period} showTimerText={this.state.showSubmissions}/>
                 <div className="appContainer">
