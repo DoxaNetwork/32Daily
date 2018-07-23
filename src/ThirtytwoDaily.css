@@ -25,6 +25,37 @@ body {
     font-family: 'Fredericka the Great', serif;
 }
 
+.navbar {
+    background-color: white;
+    display: flex;
+    height: 40px;
+}
+
+.navbar a {
+    text-decoration: none;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3em;
+    font-family: 'Fredericka the Great', serif;
+    border-bottom: 2px solid;
+    color: lightgray;
+}
+
+.doxa1link:hover, .doxa1link.active {
+    color:red;
+}
+.doxa10link:hover, .doxa10link.active {
+    color:orange;
+}
+.doxa100link:hover, .doxa100link.active {
+    color:green;
+}
+.doxa1000link:hover, .doxa1000link.active {
+    color:var(--main-color);
+}
+
 button {
     border: 1px solid var(--main-color);
     background-color: var(--main-color);

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Link, Route } from 'react-router-dom'
+import { BrowserRouter, Link, NavLink, Route } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
 import contract from 'truffle-contract'
 
@@ -12,16 +12,17 @@ const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
 let currentAccount;
 
+
 class DoxaOne extends Component {
     render() {
         return (
             <BrowserRouter>
                 <div>
-                    <nav>
-                        <Link to="/1">Doxa1 </Link>
-                        <Link to="/10">Doxa10 </Link>
-                        <Link to="/100">Doxa100 </Link>
-                        <Link to="/1000">Doxa1000 </Link>
+                    <nav className="navbar">
+                        <NavLink activeClassName="active" className="doxa1link" to="/1">Doxa1 </NavLink>
+                        <NavLink activeClassName="active" className="doxa10link" to="/10">Doxa10 </NavLink>
+                        <NavLink activeClassName="active" className="doxa100link" to="/100">Doxa100 </NavLink>
+                        <NavLink  activeClassName="active" className="doxa1000link" to="/1000">Doxa1000 </NavLink>
                     </nav>
                     <Route path="/1" component={Doxa1}/>
                     <Route path="/10" component={Doxa10}/>
