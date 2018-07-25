@@ -15,6 +15,19 @@ function toAscii(hex) {
     return zeroPaddedString.split("\u0000")[0];
 }
 
+function stringToChunkedArray(string) {
+    return string.match(/.{1,32}/g);
+}
+
+function ByteArrayToString(array) {
+    // should use reduce here instead
+    let output = '';
+    for (let i = 0; i < array.length; i++) {
+        output += toAscii(array[i]);
+    }
+    return output;
+}
+
 
 require('chai')
   .use(require('chai-as-promised'))
@@ -141,14 +154,14 @@ contract('DoxaHub', function(accounts) {
 
     it("should allow user to post Link and receive token", async function() {
         let balanceBefore = await token.balanceOf(accounts[1]);
-        await hub.postLink("reddit.com", {from : accounts[1]});
+        await hub.postLink(stringToChunkedArray("reddit.com"), {from : accounts[1]});
 
         let balanceAfter = await token.balanceOf(accounts[1]);
         const balanceDifference = balanceAfter.toNumber() - balanceBefore.toNumber();
 
         let [index, owner, link, backing] = await hub.getLinkByIndex(0);
 
-        assert.equal("reddit.com", toAscii(link));
+        assert.equal("reddit.com", ByteArrayToString(link));
         assert.equal(accounts[1], owner);
 
         assert.equal(balanceDifference, SUBMISSION_MINT);

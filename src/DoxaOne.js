@@ -5,7 +5,7 @@ import contract from 'truffle-contract'
 
 import { getContract, getCurrentAccount, getAllLinks, preLoadHistory, getPreHistory } from './DappFunctions'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
-import { toAscii, dayOfWeek, month } from './utils/helpers'
+import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 import './ThirtytwoDaily.css'
 
 const doxaHubContract = contract(DoxaHubContract)
@@ -126,7 +126,7 @@ class ThirtytwoDaily extends Component {
     }
 
     mapPost(post) {
-        return {'word': toAscii(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
+        return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
     }
 
     getEventsByType(events, type) {
@@ -164,7 +164,7 @@ class ThirtytwoDaily extends Component {
     }
 
     async postLink(content) {
-        const result = await doxaHub.postLink(content, { from: currentAccount})
+        const result = await doxaHub.postLink(stringToChunkedArray(content), { from: currentAccount})
 
         const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
         const tokenBalance = tokenBalanceBN.toNumber();
@@ -495,35 +495,37 @@ class PublishedWord extends Component {
     }
 }
 class NextWord extends Component {
+
     constructor(props) {
         super(props);
+        this.maxCharacters = 160;
         this.state = {
             content: '',
-            charactersRemaining: 32
+            charactersRemaining: this.maxCharacters
         }
     }
 
     handleContentChange(event) {
-        const charactersRemaining = 32 - event.target.value.length;
+        const charactersRemaining = this.maxCharacters - event.target.value.length;
         this.setState({content: event.target.value, charactersRemaining})
     }
 
     submit(event) {
         this.props.onSubmit(this.state.content);
-        this.setState({content: '', charactersRemaining: 32})
+        this.setState({content: '', charactersRemaining: this.maxCharacters})
         event.preventDefault();
     }
 
     render() {
         const tooManyCharacters = this.state.charactersRemaining < 0 ? 'red' : '';
-        const unsavedState = this.state.charactersRemaining < 32 ? 'unsaved' : '';
+        const unsavedState = this.state.charactersRemaining < this.maxCharacters ? 'unsaved' : '';
 
         return (
             <div className="nextWordBlock">
                 <div className="sectionTitle">What's happening today?</div>
                 <form onSubmit={this.submit.bind(this)} className="nextWordContainer">
                     <div  className="nextWord">
-                        <input autoComplete="off" required pattern=".{1,32}" title="No longer than 32 characters" type="text" placeholder="Write today's headline" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+                        <input autoComplete="off" required pattern=".{1,160}" title="No longer than 160 characters" type="text" placeholder="Write today's headline" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
                         <span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
                     </div>
                     <button className={`${unsavedState}`}type="submit">Submit</button>

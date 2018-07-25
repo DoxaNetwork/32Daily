@@ -26,7 +26,7 @@ contract DoxaHub is Ownable {
     uint public SUBMISSION_MINT = 1;
     uint public nextPublishTime;
 
-    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32 link);
+    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[5] link);
     event PostBacked(address indexed backer, uint32 indexed version, uint postIndex, uint value);
     event Published(uint version, uint index);
 
@@ -50,7 +50,7 @@ contract DoxaHub is Ownable {
         nextPublishTime = nextUTCMidnight(now);
     }
 
-    function postLink(bytes32 link) 
+    function postLink(bytes32[5] link)
     public 
     {
         contentPool.newContent(msg.sender, link);
@@ -60,7 +60,7 @@ contract DoxaHub is Ownable {
 
     function getLinkByIndex( uint256 index ) 
     public view 
-    returns( uint256, address owner, bytes32 link, uint256 backing ) 
+    returns( uint256, address owner, bytes32[5] link, uint256 backing )
     {
         var (poster, content) = contentPool.getItem(index);
         bytes32 postKey = keccak256(contentPool.currentVersion(), index);
@@ -156,7 +156,7 @@ contract DoxaHub is Ownable {
 
     function getPublishedItem(uint32 version, uint index) 
     public view
-    returns (address poster, bytes32 content)
+    returns (address poster, bytes32[5] content)
     {
         uint poolIndex = publishedHistory.getItem(version, index);
         return contentPool.getPastItem(version, poolIndex);

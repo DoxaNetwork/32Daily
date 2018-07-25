@@ -1,6 +1,6 @@
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
 import getWeb3 from './utils/getWeb3'
-import {toAscii, dayOfWeek} from './utils/helpers'
+import {ByteArrayToString, dayOfWeek} from './utils/helpers'
 
 
 const contract = require('truffle-contract')
@@ -67,7 +67,7 @@ async function getAllLinks(){
 
     let links = []
     for (const [index, poster, link, backing] of results) {
-        links.push({'poster': poster, 'word': toAscii(link), 'backing': backing.toNumber(), 'index': index.toNumber()})
+        links.push({'poster': poster, 'word': ByteArrayToString(link), 'backing': backing.toNumber(), 'index': index.toNumber()})
     }
     return links
 }
@@ -111,9 +111,9 @@ async function getHistory(start, end, dateType) {
 
         for (const [poster, content] of results) {
             if(dateType === 'dayOfWeek') {
-                words.push({content:toAscii(content), poster, date:dayOfWeek(date)})
+                words.push({content:ByteArrayToString(content), poster, date:dayOfWeek(date)})
             } else {
-                words.push({content:toAscii(content), poster, date:date.toLocaleDateString('en-US', dateOptions)})
+                words.push({content:ByteArrayToString(content), poster, date:date.toLocaleDateString('en-US', dateOptions)})
             }
         }
     }

@@ -6,7 +6,7 @@ contract ContentPool is Spoke {
     struct Item 
     {
         address poster;
-        bytes32 content;
+        bytes32[5] content;
     }
 
     uint32 public currentVersion;
@@ -21,7 +21,7 @@ contract ContentPool is Spoke {
         currentVersion = 0;
     }
 
-    function newContent(address _poster, bytes32 _content) 
+    function newContent(address _poster, bytes32[5] _content)
     public onlyHub
     returns (bool) 
     {
@@ -41,13 +41,13 @@ contract ContentPool is Spoke {
 
     function getItem(uint _index) 
     public view
-    returns (address poster, bytes32 content) 
+    returns (address poster, bytes32[5] content)
     {
         require(_index < poolLength());
         return (itemList[currentVersion][_index].poster, itemList[currentVersion][_index].content);
     }
 
-    function getIndex(bytes32 _content) 
+    function getIndex(bytes32[5] _content)
     public view
     returns (uint) 
     {
@@ -55,9 +55,9 @@ contract ContentPool is Spoke {
         return hashIndexMap[key];
     }
 
-    function getPastItem(uint32 _poolVersion, uint _index) 
+    function getPastItem(uint32 _poolVersion, uint _index)
     public view
-    returns (address poster, bytes32 content) 
+    returns (address poster, bytes32[5] content)
     {
         return (itemList[_poolVersion][_index].poster, itemList[_poolVersion][_index].content);
     }
