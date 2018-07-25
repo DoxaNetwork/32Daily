@@ -38,7 +38,7 @@ class Doxa1000 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily style={{"--main-color": "#16d"}} title="Doxa1000" period="1000 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily match={this.props.match} style={{"--main-color": "#16d"}} title="Doxa1000" period="1000 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -51,7 +51,7 @@ class Doxa100 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily style={{"--main-color": "#0b8"}} title="Doxa100" period="100 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily match={this.props.match} style={{"--main-color": "#0b8"}} title="Doxa100" period="100 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -60,16 +60,15 @@ class Doxa10 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily style={{"--main-color": "#f80"}} title="Doxa10" period="10 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily match={this.props.match} style={{"--main-color": "#f80"}} title="Doxa10" period="10 hours"></ThirtytwoDaily>
         )
     }
 }
 
 class Doxa1 extends Component {
-
     render() {
         return (
-            <ThirtytwoDaily style={{"--main-color": "#d04"}} title="Doxa1" period="hour"></ThirtytwoDaily>
+            <ThirtytwoDaily match={this.props.match} style={{"--main-color": "#d04"}} title="Doxa1" period="hour"></ThirtytwoDaily>
         )
     }
 }
@@ -83,6 +82,51 @@ class ThirtytwoDaily extends Component {
             'pendingVotes': {},
             'unsavedVotes': false,
             'showSubmissions': false,
+            owner: false,
+            tokenBalance: 0,
+            availableVotes: 0,
+        }
+    }
+
+    async publish() {
+        await doxaHub.publish({from: currentAccount});
+    }
+
+    toggleSubmissionView() {
+        this.setState({showSubmissions: !this.state.showSubmissions})
+    }
+
+    render() {
+        const publishButton = '';
+
+        return (
+            <div style={this.props.style}>
+                {publishButton}
+                <Header title={this.props.title} period={this.props.period} showTimerText={this.state.showSubmissions}/>
+                <Route
+                    exact path={this.props.match.url}
+                    render={(props) => <SubmittedAndPublishedWords showSubmissions={this.state.showSubmissions} toggleSubmissionView={this.toggleSubmissionView.bind(this)} />}
+                />
+                <Route
+                    path={this.props.match.url + '/:id'}
+                    component={User}
+                />
+
+                <div className="footer">
+                </div>
+            </div>
+        )
+    }
+}
+
+class SubmittedAndPublishedWords extends Component {
+
+    constructor(props) {
+        super(props)
+         this.state = {
+            'submittedWords': [],
+            'pendingVotes': {},
+            'unsavedVotes': false,
             owner: false,
             tokenBalance: 0,
             availableVotes: 0,
@@ -175,44 +219,28 @@ class ThirtytwoDaily extends Component {
         const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
         const newPost = this.mapPost(filteredEvents[0].args);
 
+        // needs to toggle showSubmissions
+
         this.setState({
             tokenBalance,
             availableVotes, 
-            showSubmissions: true,
             submittedWords: [...this.state.submittedWords, newPost ]
         })
     }
 
-    async publish() {
-        await doxaHub.publish({from: currentAccount});
-    }
-
-    toggleSubmissionView() {
-        this.setState({showSubmissions: !this.state.showSubmissions})
-    }
-
     render() {
-        const submissionLink = this.state.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
+        const submissionLink = this.props.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
 
-        const submittedWordsBlock = this.state.showSubmissions ? (
+        const submittedWordsBlock = this.props.showSubmissions ? (
             <div className="rightSide">
                 <SubmittedWords availableVotes={this.state.availableVotes} tokenBalance={this.state.tokenBalance} persistVotes={this.persistVotes.bind(this)} submittedWords={this.state.submittedWords}/>
             </div>
             ) : ('');
 
-        // const publishButton = this.state.owner ? (
-        //     <div className="publishButton">
-        //         <button onClick={this.publish.bind(this)}>Publish</button>
-        //     </div>
-        //     ) : '';
-        const publishButton = '';
-
-        const hidden = this.state.showSubmissions ? 'hidden' : '';
+        const hidden = this.props.showSubmissions ? 'hidden' : '';
 
         return (
-            <div style={this.props.style}>
-                {publishButton}
-                <Header title={this.props.title} period={this.props.period} showTimerText={this.state.showSubmissions}/>
+            <div>
                 <div className="appContainer">
                     {submittedWordsBlock}
                     <div className={`rightSide ${hidden}`}>
@@ -220,10 +248,71 @@ class ThirtytwoDaily extends Component {
                         <NextWord onSubmit={this.postLink.bind(this)}/>
                     </div>
                 </div>
-                <div className="showSubmissions link" onClick={this.toggleSubmissionView.bind(this)}>{submissionLink}</div>
+                <div className="showSubmissions link" onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</div>
+            </div>
+        )
+    }
+}
 
-                <div className="footer">
+class User extends Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            userId: '',
+            tokenBalance: 0,
+            availableVotes: 0
+        }
+    }
+
+    async componentWillMount() {
+        doxaHub = await getContract(doxaHubContract);
+        const userId = this.props.match.params.id;
+
+
+        let tokenBalance;
+        let availableVotes;
+        if (userId !== undefined) {
+            const tokenBalanceBN = await doxaHub.balanceOf(userId);
+            tokenBalance = tokenBalanceBN.toNumber();
+
+            const availableVotesBN = await doxaHub.availableToTransfer(userId);
+            availableVotes = availableVotesBN.toNumber();
+        } else {
+            tokenBalance = 0;
+            availableVotes = 0;
+        }
+        this.setState({
+            tokenBalance,
+            availableVotes,
+            userId
+        })
+    }
+
+    render() {
+        console.log(this.props.match.params.id)
+        return (
+            <div className="userContainer">
+                <div className="row">
+                    <div>user id</div>
+                    <div className="row-value">{this.state.userId.substring(0,6)}</div>
                 </div>
+                <div className="row">
+                    <div>token balance</div>
+                    <div className="row-value">{this.state.tokenBalance}</div>
+                </div>
+                <div className="row">
+                    <div>available votes</div>
+                    <div className="row-value">{this.state.availableVotes}</div>
+                </div>
+                <div className="row">
+                    <div>submitted posts</div>
+                    <div className="row-value">todo</div>
+                </div>
+                <div className="row">
+                    <div>published posts</div>
+                    <div className="row-value">todo</div>
+                </div>
+                <div className="address">{this.state.userId}</div>
             </div>
         )
     }
@@ -414,7 +503,7 @@ class SubmittedWord extends Component {
                 <div className="submittedWord">
                     <div className="submittedWordWord">{this.props.word}</div>
                     <div className="votingBar" style={{width: `${votesPercent}%`}}> </div>
-                    <div className="identity2">{this.props.poster.substring(0,6)}</div>
+                    <div className="identity2"><Link to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</Link></div>
                 </div>
             </div>
         )
@@ -487,7 +576,7 @@ class PublishedWord extends Component {
                         {this.props.word.date}
                     </div>
                     <div className="identity">
-                        {this.props.word.poster.substring(0,6)}
+                        <Link to={'1000/' + this.props.word.poster}> {this.props.word.poster.substring(0,6)}</Link>
                     </div>
                 </div>
             </div>

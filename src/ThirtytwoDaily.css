@@ -503,3 +503,33 @@ button.save {
         padding: 0 20px;
     }
 }
+
+/* ==================== User info ==================== */
+
+.userContainer {
+    background-color: white;
+    width: 450px;
+    margin: auto;
+    padding: 50px 50px 30px;
+    margin-top: 50px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    font-size: 1.2em
+}
+
+.userContainer .row  {
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 5px;
+}
+
+.userContainer .row-value {
+    font-weight: 800;
+    /*font-size: 1.2em;*/
+}
+
+.address {
+    text-align: center;
+    margin-top: 30px;
+}
