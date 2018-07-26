@@ -329,6 +329,7 @@ button.save {
     margin:10px 5px;
     height: 125px;
     overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
 }
 .submittedWordContainer.pending .voteCount {
     background-color: var(--secondary-color);
