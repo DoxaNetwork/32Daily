@@ -28,7 +28,7 @@ contract DoxaHub is Ownable {
 
     event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[5] link);
     event PostBacked(address indexed backer, uint32 indexed version, uint postIndex, uint value);
-    event Published(uint version, uint index);
+    event Published(uint indexed version, address indexed owner, bytes32[5] content);
 
     function DoxaHub(
         address _contentPool, 
@@ -118,13 +118,14 @@ contract DoxaHub is Ownable {
     function publish() 
     public 
     {
-        require(now > nextPublishTime);
+        // require(now > nextPublishTime);
         uint maxVotes = 0;
         uint indexToPublish = 0;
         bool somethingSelected = false;
+        uint32 currentVersion = contentPool.currentVersion();
 
         for (uint i = 0; i < contentPool.poolLength(); i++) {
-            bytes32 postKey = keccak256(contentPool.currentVersion(), i);
+            bytes32 postKey = keccak256(currentVersion, i);
             if (!somethingSelected || votes.incomingVotes(postKey) > maxVotes) {
                 maxVotes = votes.incomingVotes(postKey);
                 indexToPublish = i;
@@ -132,9 +133,10 @@ contract DoxaHub is Ownable {
             }
         }
         if(somethingSelected) {
-            publishedHistory.publish(contentPool.currentVersion(), indexToPublish);
-            timeStamps.stamp(contentPool.currentVersion());
-            Published(contentPool.currentVersion(), 0);
+            publishedHistory.publish(currentVersion, indexToPublish);
+            timeStamps.stamp(currentVersion);
+            var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
+            Published(currentVersion, poster, content);
         }
         contentPool.clear();
         nextPublishTime = nextUTCMidnight(now);

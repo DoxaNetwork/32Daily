@@ -12,6 +12,9 @@ const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
 let currentAccount;
 
+function mapPost(post) {
+    return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
+}
 
 class DoxaOne extends Component {
     render() {
@@ -97,7 +100,12 @@ class ThirtytwoDaily extends Component {
     }
 
     render() {
-        const publishButton = '';
+        // const publishButton = '';
+        const publishButton = (
+            <div className="publishButton">
+                <button onClick={this.publish.bind(this)}>Publish</button>
+            </div>
+            );
 
         return (
             <div style={this.props.style}>
@@ -143,7 +151,7 @@ class SubmittedAndPublishedWords extends Component {
 
         const linkPosted = doxaHub.LinkPosted()
         linkPosted.watch((e, r) => {
-            const newPost = this.mapPost(r.args);
+            const newPost = mapPost(r.args);
             this.setState({
                 submittedWords: [...this.state.submittedWords, newPost ]
             })
@@ -217,7 +225,7 @@ class SubmittedAndPublishedWords extends Component {
         const availableVotes = availableVotesBN.toNumber()
 
         const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
-        const newPost = this.mapPost(filteredEvents[0].args);
+        const newPost = mapPost(filteredEvents[0].args);
 
         // needs to toggle showSubmissions
 
@@ -260,8 +268,14 @@ class User extends Component {
         this.state = {
             userId: '',
             tokenBalance: 0,
-            availableVotes: 0
+            availableVotes: 0,
+            submittedWords: [],
+            publishedWords: [],
         }
+    }
+
+    mapPost(post) {
+        return {'poster': post.owner, 'word': ByteArrayToString(post.content), 'version': post.version.toNumber()}
     }
 
     async componentWillMount() {
@@ -281,6 +295,27 @@ class User extends Component {
             tokenBalance = 0;
             availableVotes = 0;
         }
+
+        const submittedWords = []
+        const filter = doxaHub.LinkPosted({owner: userId}, {fromBlock:0})
+        filter.get((e,r) => {
+            for(let i = 0; i < r.length; i++) {
+                const word = mapPost(r[i].args)
+                submittedWords.push(word)
+            }
+            this.setState({submittedWords})
+        })
+
+        const publishedWords = []
+        const filter2 = doxaHub.Published({owner: userId}, {fromBlock:0})
+        filter2.get((e,r) => {
+            for(let i = 0; i < r.length; i++) {
+                const word = this.mapPost(r[i].args)
+                publishedWords.push(word)
+            }
+            this.setState({publishedWords})
+        })
+
         this.setState({
             tokenBalance,
             availableVotes,
@@ -289,30 +324,57 @@ class User extends Component {
     }
 
     render() {
-        console.log(this.props.match.params.id)
+        const submittedWords = this.state.submittedWords.map(obj =>
+            <SubmittedWord
+                key={obj.word}
+                index={obj.index}
+                word={obj.word}
+                poster={obj.poster}
+                backing={obj.backing}/>
+        );
+
+        const publishedWords = this.state.publishedWords.map(obj =>
+            <SubmittedWord
+                key={obj.word}
+                index={0}
+                word={obj.word}
+                poster={obj.poster}
+                backing={0}/>
+        );
         return (
-            <div className="userContainer">
-                <div className="row">
-                    <div>user id</div>
-                    <div className="row-value">{this.state.userId.substring(0,6)}</div>
+            <div>
+                <div className="userContainer">
+                    <div className="row">
+                        <div>user id</div>
+                        <div className="row-value">{this.state.userId.substring(0,6)}</div>
+                    </div>
+                    <div className="row">
+                        <div>token balance</div>
+                        <div className="row-value">{this.state.tokenBalance}</div>
+                    </div>
+                    <div className="row">
+                        <div>available votes</div>
+                        <div className="row-value">{this.state.availableVotes}</div>
+                    </div>
+                    <div className="row">
+                        <div>submitted posts</div>
+                        <div className="row-value">todo</div>
+                    </div>
+                    <div className="row">
+                        <div>published posts</div>
+                        <div className="row-value">todo</div>
+                    </div>
+                    <div className="address">{this.state.userId}</div>
                 </div>
-                <div className="row">
-                    <div>token balance</div>
-                    <div className="row-value">{this.state.tokenBalance}</div>
+                <div className="user-submittedPosts">
+                    <h2>Submitted Posts</h2>
+                    {submittedWords}
                 </div>
-                <div className="row">
-                    <div>available votes</div>
-                    <div className="row-value">{this.state.availableVotes}</div>
+                <div className="user-submittedPosts">
+                    <h2>Published Words</h2>
+                    {publishedWords}
                 </div>
-                <div className="row">
-                    <div>submitted posts</div>
-                    <div className="row-value">todo</div>
-                </div>
-                <div className="row">
-                    <div>published posts</div>
-                    <div className="row-value">todo</div>
-                </div>
-                <div className="address">{this.state.userId}</div>
+
             </div>
         )
     }

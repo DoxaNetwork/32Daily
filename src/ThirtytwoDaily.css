@@ -533,3 +533,13 @@ button.save {
     text-align: center;
     margin-top: 30px;
 }
+
+.user-submittedPosts {
+    width: 71%;
+    margin: auto;
+    margin-top: 40px;
+}
+
+.user-submittedPosts h2 {
+    text-align: center;
+}
