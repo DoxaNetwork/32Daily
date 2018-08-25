@@ -1,3 +1,32 @@
+import { Provider } from 'react-redux'
+import { createStore, applyMiddleware, compose } from 'redux'
+import rootReducer from './redux'
+
+import rootSaga from './sagas'
+import createSagaMiddleware from 'redux-saga'
+
+const sagaMiddleware = createSagaMiddleware()
+// const store = ...
+
+// const store = createStore(
+//   reducer,
+//   applyMiddleware(sagaMiddleware)
+// )
+
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+const store = createStore(
+    rootReducer,
+    composeEnhancers(
+        applyMiddleware(sagaMiddleware)
+    )
+)
+
+sagaMiddleware.run(rootSaga)
+// const store = createStore(
+//     rootReducer,
+//     window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
+//     )
+
 import React, { Component } from 'react'
 import { BrowserRouter, Link, NavLink, Route } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
@@ -19,6 +48,9 @@ function mapPost(post) {
 class DoxaOne extends Component {
     render() {
         return (
+            <Provider store={store}>
+            <div>
+            <ListofWordsRedux/>
             <BrowserRouter>
                 <div>
                     <nav className="navbar">
@@ -33,9 +65,13 @@ class DoxaOne extends Component {
                     <Route path="/1000" component={Doxa1000}/>
                 </div>
             </BrowserRouter>
+            </div>
+            </Provider>
         )
     }
 }
+/*
+            */
 
 class Doxa1000 extends Component {
 
@@ -81,13 +117,10 @@ class ThirtytwoDaily extends Component {
     constructor(props){
         super(props);
         this.state = {
-            'submittedWords': [],
             'pendingVotes': {},
             'unsavedVotes': false,
             'showSubmissions': false,
             owner: false,
-            tokenBalance: 0,
-            availableVotes: 0,
         }
     }
 
@@ -117,7 +150,7 @@ class ThirtytwoDaily extends Component {
                 />
                 <Route
                     path={this.props.match.url + '/:id'}
-                    component={User}
+                    component={UserRedux}
                 />
 
                 <div className="footer">
@@ -127,17 +160,18 @@ class ThirtytwoDaily extends Component {
     }
 }
 
+
+
+
+// need to redux this one
 class SubmittedAndPublishedWords extends Component {
 
     constructor(props) {
         super(props)
          this.state = {
-            'submittedWords': [],
             'pendingVotes': {},
             'unsavedVotes': false,
             owner: false,
-            tokenBalance: 0,
-            availableVotes: 0,
         }
     }
 
@@ -145,34 +179,7 @@ class SubmittedAndPublishedWords extends Component {
         doxaHub = await getContract(doxaHubContract);
         currentAccount = await getCurrentAccount();
         const owner = await doxaHub.owner();
-
-        const submittedWords = await getAllLinks();
-        submittedWords.sort((a, b) => {return b.backing - a.backing})
-
-        const linkPosted = doxaHub.LinkPosted()
-        linkPosted.watch((e, r) => {
-            const newPost = mapPost(r.args);
-            this.setState({
-                submittedWords: [...this.state.submittedWords, newPost ]
-            })
-        })
-
-        let tokenBalance;
-        let availableVotes;
-        if (currentAccount !== undefined) {
-            const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
-            tokenBalance = tokenBalanceBN.toNumber();
-
-            const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
-            availableVotes = availableVotesBN.toNumber();
-        } else {
-            tokenBalance = 0;
-            availableVotes = 0;
-        }
         this.setState({
-            tokenBalance,
-            availableVotes,
-            submittedWords, 
             owner: owner === currentAccount,
         })
     }
@@ -207,33 +214,9 @@ class SubmittedAndPublishedWords extends Component {
 
         submittedWords.sort((a, b) => {return b.backing - a.backing})
 
-        const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
-        const availableVotes = availableVotesBN.toNumber()
-
-        this.setState({submittedWords, availableVotes})
+        this.setState({submittedWords})
         return result;
 
-    }
-
-    async postLink(content) {
-        const result = await doxaHub.postLink(stringToChunkedArray(content), { from: currentAccount})
-
-        const tokenBalanceBN = await doxaHub.balanceOf(currentAccount);
-        const tokenBalance = tokenBalanceBN.toNumber();
-
-        const availableVotesBN = await doxaHub.availableToTransfer(currentAccount);
-        const availableVotes = availableVotesBN.toNumber()
-
-        const filteredEvents = this.getEventsByType(result.logs, "LinkPosted")
-        const newPost = mapPost(filteredEvents[0].args);
-
-        // needs to toggle showSubmissions
-
-        this.setState({
-            tokenBalance,
-            availableVotes, 
-            submittedWords: [...this.state.submittedWords, newPost ]
-        })
     }
 
     render() {
@@ -241,7 +224,7 @@ class SubmittedAndPublishedWords extends Component {
 
         const submittedWordsBlock = this.props.showSubmissions ? (
             <div className="rightSide">
-                <SubmittedWords availableVotes={this.state.availableVotes} tokenBalance={this.state.tokenBalance} persistVotes={this.persistVotes.bind(this)} submittedWords={this.state.submittedWords}/>
+                <SubmittedWordsRedux persistVotes={this.persistVotes.bind(this)}/>
             </div>
             ) : ('');
 
@@ -252,8 +235,8 @@ class SubmittedAndPublishedWords extends Component {
                 <div className="appContainer">
                     {submittedWordsBlock}
                     <div className={`rightSide ${hidden}`}>
-                        <PublishedWords/>
-                        <NextWord onSubmit={this.postLink.bind(this)}/>
+                        <PublishedWordsRedux/>
+                        <NextWordRedux/>
                     </div>
                 </div>
                 <div className="showSubmissions link" onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</div>
@@ -261,14 +244,13 @@ class SubmittedAndPublishedWords extends Component {
         )
     }
 }
+                        // <NextWordRedux onSubmit={this.postLink.bind(this)}/>
 
 class User extends Component {
     constructor(props) {
         super(props)
         this.state = {
             userId: '',
-            tokenBalance: 0,
-            availableVotes: 0,
             submittedWords: [],
             publishedWords: [],
         }
@@ -281,20 +263,6 @@ class User extends Component {
     async componentWillMount() {
         doxaHub = await getContract(doxaHubContract);
         const userId = this.props.match.params.id;
-
-
-        let tokenBalance;
-        let availableVotes;
-        if (userId !== undefined) {
-            const tokenBalanceBN = await doxaHub.balanceOf(userId);
-            tokenBalance = tokenBalanceBN.toNumber();
-
-            const availableVotesBN = await doxaHub.availableToTransfer(userId);
-            availableVotes = availableVotesBN.toNumber();
-        } else {
-            tokenBalance = 0;
-            availableVotes = 0;
-        }
 
         const submittedWords = []
         const filter = doxaHub.LinkPosted({owner: userId}, {fromBlock:0})
@@ -317,8 +285,6 @@ class User extends Component {
         })
 
         this.setState({
-            tokenBalance,
-            availableVotes,
             userId
         })
     }
@@ -350,11 +316,11 @@ class User extends Component {
                     </div>
                     <div className="row">
                         <div>token balance</div>
-                        <div className="row-value">{this.state.tokenBalance}</div>
+                        <div className="row-value">{this.props.tokenBalance}</div>
                     </div>
                     <div className="row">
                         <div>available votes</div>
-                        <div className="row-value">{this.state.availableVotes}</div>
+                        <div className="row-value">{this.props.availableVotes}</div>
                     </div>
                     <div className="row">
                         <div>submitted posts</div>
@@ -379,6 +345,14 @@ class User extends Component {
         )
     }
 }
+
+const mapStateToProps5 = state => ({
+    tokenBalance: state.user.balance,
+    availableVotes: state.user.available
+})
+const UserRedux = connect(
+    mapStateToProps5
+)(User)
 
 
 class Header extends Component {
@@ -440,6 +414,11 @@ class SubmittedWords extends Component {
         }
     }
 
+    componentDidMount() {
+        this.props.loadSubmittedWords()
+        this.props.initTokenBalance() //this should happen higher up and be renamed
+    }
+
     async componentWillMount() {
         let totalVotesCast = 0;
         for (let i = 0; i < this.props.submittedWords.length; i++) {
@@ -450,7 +429,7 @@ class SubmittedWords extends Component {
 
         let pastVotes = {}
         const version = await doxaHub.currentVersion();
-        const filter = doxaHub.PostBacked({backer: currentAccount, version:version}, {fromBlock:0})
+        const filter = doxaHub.PostBacked({backer: this.props.account, version:version}, {fromBlock:0})
         filter.get((e,r) => {
             for(let i = 0; i < r.length; i++) {
                 let index = r[i].args.postIndex.toNumber();
@@ -542,6 +521,27 @@ class SubmittedWords extends Component {
     }
 }
 
+const mapStateToProps4 = state => ({
+    submittedWords: state.submissions,
+    tokenBalance: state.user.balance,
+    availableVotes: state.user.available,
+    account: state.user.account
+})
+
+const mapDispatchToProps4 = dispatch => ({
+    loadSubmittedWords: () => dispatch(loadSubmittedWords()),
+    initTokenBalance: () => {
+        dispatch(initTokenBalance())
+        dispatch(updateAvailableVotes())
+        dispatch(initAccount())
+    }
+})
+
+const SubmittedWordsRedux = connect(
+    mapStateToProps4,
+    mapDispatchToProps4
+)(SubmittedWords)
+
 
 class SubmittedWord extends Component {
 
@@ -573,37 +573,20 @@ class SubmittedWord extends Component {
 }
 
 class PublishedWords extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            'publishedWords': [],
-            'allPreLoaded': false
-        }
-    }
-
-    async componentWillMount() {
-        const [publishedWords, allPreLoaded] = await preLoadHistory();
-        publishedWords.reverse();
-        const firstWord = publishedWords[0];
-        this.setState({publishedWords, allPreLoaded})
-    }
-
-    async loadFullHistory() {
-        const publishedWords = await getPreHistory();
-        publishedWords.reverse();
-        this.setState({ publishedWords: [...this.state.publishedWords, ...publishedWords], allPreLoaded: true})
+    async componentDidMount() {
+        this.props.initHistory()
     }
 
     render() {
-        const publishedWords = this.state.publishedWords.map((word, index) => {
-            return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
-        });
-
-        const firstWord = this.state.publishedWords.map((word, index) => {
+        const firstWord = this.props.publishedWords.map((word, index) => {
             return index == 0 ? <PublishedWord  key={word.content} word={word} /> : '';
         });
 
-        const showAllHistoryLink = this.state.allPreLoaded ? '' : <div className="showHistory link" onClick={this.loadFullHistory.bind(this)}>See full history</div>;
+        const publishedWords = this.props.publishedWords.map((word, index) => {
+            return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
+        });
+
+        const showAllHistoryLink = this.props.allPreLoaded ? '' : <div className="showHistory link" onClick={this.props.allHistory}>See full history</div>;
 
         return (
             <div>
@@ -625,7 +608,22 @@ class PublishedWords extends Component {
         )
     }
 }
- 
+
+const mapStateToProps3 = state => ({
+    publishedWords: state.history,
+    allPreLoaded: state.historyLoaded
+})
+
+const mapDispatchToProps3 = dispatch => ({
+    initHistory: () => dispatch(initHistory()),
+    allHistory: () => dispatch(allHistory())
+})
+
+const PublishedWordsRedux = connect(
+    mapStateToProps3,
+    mapDispatchToProps3
+)(PublishedWords)
+
 class PublishedWord extends Component {
     render() {
         return (
@@ -645,6 +643,49 @@ class PublishedWord extends Component {
         )
     }
 }
+
+class ListofWords extends Component {
+    input = React.createRef()
+
+    render() {
+        const words = this.props.words.map(word =>
+            <div>{word}</div>
+            )
+
+        return (
+            <div>
+                {words}
+                <form>
+                    <input ref={this.input} type="text"/>
+                    <button type="submit" onClick={e => {
+                        e.preventDefault()
+                        this.props.onClick(this.input.current)
+                    }}>Add it</button>
+                </form>
+            </div>
+        )
+    }
+}
+
+import { submitContent, initHistory, allHistory, loadSubmittedWords, initTokenBalance, updateAvailableVotes, initAccount } from './redux'
+import { connect } from 'react-redux'
+const mapStateToProps = state => ({
+  words: state.words
+})
+const mapDispatchToProps = dispatch => ({
+    onClick: something => dispatch(submitContent(something.value, 'me'))
+})
+// ​
+const ListofWordsRedux = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(ListofWords)
+
+
+
+
+
+
 class NextWord extends Component {
 
     constructor(props) {
@@ -662,6 +703,7 @@ class NextWord extends Component {
     }
 
     submit(event) {
+        // this now comes directly from redux
         this.props.onSubmit(this.state.content);
         this.setState({content: '', charactersRemaining: this.maxCharacters})
         event.preventDefault();
@@ -685,6 +727,15 @@ class NextWord extends Component {
         )
     }
 }
+
+const mapDispatchToProps2 = dispatch => ({
+    onSubmit: value => dispatch(submitContent(value))
+})
+
+const NextWordRedux = connect(
+    null,
+    mapDispatchToProps2
+)(NextWord)
 
 class Button extends Component {
     async submit() {
