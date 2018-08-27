@@ -109,11 +109,11 @@ function* persistVotes(action) {
 
 export default function* rootSaga() {
     yield takeEvery('SUBMIT_CONTENT', submitPost),
-    yield takeEvery('INIT_HISTORY', loadInitHistory)
+    yield takeEvery('LOAD_LATEST_HISTORY', loadInitHistory)
     yield takeEvery('LOAD_ALL_HISTORY', loadFullHistory)
     yield takeEvery('LOAD_SUBMISSIONS', loadSubmissions)
-    yield takeEvery('TOKEN_BALANCE_UPDATE', updateTokenBalance)
-    yield takeEvery('AVAILABLE_TO_TRANSFER_UPDATE', updateAvailableToTransfer)
-    yield takeEvery('INIT_ACCOUNT', initAccount)
-    yield takeEvery('PERSIST_VOTES', persistVotes)
+    yield takeEvery('LOAD_BALANCE', updateTokenBalance)
+    yield takeEvery('LOAD_AVAILABLE_BALANCE', updateAvailableToTransfer)
+    yield takeEvery('LOAD_ACCOUNT', initAccount)
+    yield takeEvery('SUBMIT_VOTES', persistVotes)
 }

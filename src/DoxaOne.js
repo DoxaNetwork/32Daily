@@ -8,10 +8,10 @@ import { getContract, getCurrentAccount, getAllLinks, preLoadHistory, getPreHist
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 
 import { Header } from './Header'
-import { UserRedux } from './User'
-import { PublishedWordsRedux } from './Published'
-import { SubmittedWordsRedux } from './Submitted'
-import { NextWordRedux } from './NextWord'
+import { User } from './User'
+import { PublishedWords } from './Published'
+import { SubmittedWords } from './Submitted'
+import { NewContentForm } from './NextWord'
 
 import './ThirtytwoDaily.css'
 
@@ -26,25 +26,23 @@ function mapPost(post) {
 class DoxaOne extends Component {
     render() {
         return (
-                <BrowserRouter>
-                    <div>
-                        <nav className="navbar">
-                            <NavLink activeClassName="active" className="doxa1link" to="/1">Doxa1 </NavLink>
-                            <NavLink activeClassName="active" className="doxa10link" to="/10">Doxa10 </NavLink>
-                            <NavLink activeClassName="active" className="doxa100link" to="/100">Doxa100 </NavLink>
-                            <NavLink  activeClassName="active" className="doxa1000link" to="/1000">Doxa1000 </NavLink>
-                        </nav>
-                        <Route path="/1" component={Doxa1}/>
-                        <Route path="/10" component={Doxa10}/>
-                        <Route path="/100" component={Doxa100}/>
-                        <Route path="/1000" component={Doxa1000}/>
-                    </div>
-                </BrowserRouter>
+            <BrowserRouter>
+                <div>
+                    <nav className="navbar">
+                        <NavLink activeClassName="active" className="doxa1link" to="/1">Doxa1 </NavLink>
+                        <NavLink activeClassName="active" className="doxa10link" to="/10">Doxa10 </NavLink>
+                        <NavLink activeClassName="active" className="doxa100link" to="/100">Doxa100 </NavLink>
+                        <NavLink  activeClassName="active" className="doxa1000link" to="/1000">Doxa1000 </NavLink>
+                    </nav>
+                    <Route path="/1" component={Doxa1}/>
+                    <Route path="/10" component={Doxa10}/>
+                    <Route path="/100" component={Doxa100}/>
+                    <Route path="/1000" component={Doxa1000}/>
+                </div>
+            </BrowserRouter>
         )
     }
 }
-/*
-            */
 
 class Doxa1000 extends Component {
 
@@ -54,10 +52,6 @@ class Doxa1000 extends Component {
         )
     }
 }
-// 10 minutes
-// 100 minutes 1.5 hours
-// 1000 minutes 17 hours
-// 10000 minutes 6.9 days
 
 class Doxa100 extends Component {
 
@@ -86,13 +80,9 @@ class Doxa1 extends Component {
 }
 
 class ThirtytwoDaily extends Component {
-
-    constructor(props){
-        super(props);
-        this.state = {
-            'showSubmissions': false,
-            owner: false,
-        }
+    state = {
+        showSubmissions: false,
+        owner: false,
     }
 
     async publish() {
@@ -120,7 +110,7 @@ class ThirtytwoDaily extends Component {
                 />
                 <Route
                     path={this.props.match.url + '/:id'}
-                    component={UserRedux}
+                    component={User}
                 />
 
                 <div className="footer">
@@ -132,15 +122,11 @@ class ThirtytwoDaily extends Component {
 
 // need to redux this one
 class SubmittedAndPublishedWords extends Component {
-
-    constructor(props) {
-        super(props)
-         this.state = {
-            owner: false,
-        }
+    state = {
+        owner: false
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         doxaHub = await getContract(doxaHubContract);
         currentAccount = await getCurrentAccount();
         const owner = await doxaHub.owner();
@@ -165,22 +151,21 @@ class SubmittedAndPublishedWords extends Component {
 
     render() {
         const submissionLink = this.props.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
-
-        const submittedWordsBlock = this.props.showSubmissions ? (
-            <div className="rightSide">
-                <SubmittedWordsRedux/>
-            </div>
-            ) : ('');
-
         const hidden = this.props.showSubmissions ? 'hidden' : '';
+
+        const submittedWords = this.props.showSubmissions ? (
+            <div className="rightSide">
+                <SubmittedWords/>
+            </div>
+        ) : ('');
 
         return (
             <div>
                 <div className="appContainer">
-                    {submittedWordsBlock}
+                    {submittedWords}
                     <div className={`rightSide ${hidden}`}>
-                        <PublishedWordsRedux/>
-                        <NextWordRedux/>
+                        <PublishedWords/>
+                        <NewContentForm/>
                     </div>
                 </div>
                 <div className="showSubmissions link" onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</div>

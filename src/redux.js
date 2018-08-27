@@ -1,42 +1,3 @@
-// actions
-
-// should I inject owner information here?
-export const submitContent = (text, owner) => ({
-    type: 'SUBMIT_CONTENT',
-    text,
-    owner
-})
-
-export const submitVote = (index, quantity) => ({
-    type: 'SUBMIT_VOTE',
-    index,
-    quantity
-})
-
-export const initHistory = () => ({
-    type: 'INIT_HISTORY'
-})
-
-export const allHistory = () => ({
-    type: 'LOAD_ALL_HISTORY'
-})
-
-export const loadSubmittedWords = () => ({
-    type: 'LOAD_SUBMISSIONS'
-})
-
-export const initTokenBalance = () => ({
-    type: 'TOKEN_BALANCE_UPDATE'
-})
-
-export const updateAvailableVotes = () => ({
-    type: 'AVAILABLE_TO_TRANSFER_UPDATE'
-})
-
-export const initAccount = () => ({
-    type: 'INIT_ACCOUNT'
-})
-
 // reducers
 
 const words = (state = ['word'], action) => {
@@ -128,7 +89,7 @@ const votes = (state = [], action) => {
 
 const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 0, pendingVotes:{}}, action) => {
     switch (action.type) {
-        case 'SET_PENDING_VOTE':
+        case 'PEND_VOTE':
             let pendingVotes = {...state.pendingVotes}
             pendingVotes[action.index] ? pendingVotes[action.index] += 1 : pendingVotes[action.index] = 1;
             return {

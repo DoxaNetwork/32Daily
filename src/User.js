@@ -2,34 +2,32 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { ByteArrayToString } from './utils/helpers'
-
 import contract from 'truffle-contract'
 import { getContract } from './DappFunctions'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
+
+import { SubmittedWord } from './Submitted'
+
 const doxaHubContract = contract(DoxaHubContract)
-
-
-import { SubmittedWordRedux } from './Submitted'
 
 function mapPost(post) {
     return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
 }
 
-class User extends Component {
-    constructor(props) {
-        super(props)
-        this.state = {
-            userId: '',
-            submittedWords: [],
-            publishedWords: [],
-        }
+export class User extends Component {
+    state = {
+        userId: '',
+        submittedWords: [],
+        publishedWords: [],
+        tokenBalance: 0,
+        availableVotes: 0
     }
 
     mapPost(post) {
         return {'poster': post.owner, 'word': ByteArrayToString(post.content), 'version': post.version.toNumber()}
     }
 
-    async componentWillMount() {
+    async componentDidMount() {
         const doxaHub = await getContract(doxaHubContract);
         const userId = this.props.match.params.id;
 
@@ -53,14 +51,23 @@ class User extends Component {
             this.setState({publishedWords})
         })
 
+        const tokenBalanceBN = await doxaHub.balanceOf(userId);
+        const tokenBalance = tokenBalanceBN.toNumber();
+
+        const availableVotesBN = await doxaHub.availableToTransfer(userId);
+        const availableVotes = availableVotesBN.toNumber();
+
         this.setState({
-            userId
+            userId,
+            tokenBalance,
+            availableVotes
         })
+
     }
 
     render() {
         const submittedWords = this.state.submittedWords.map(obj =>
-            <SubmittedWordRedux
+            <SubmittedWord
                 key={obj.word}
                 index={obj.index}
                 word={obj.word}
@@ -69,7 +76,7 @@ class User extends Component {
         );
 
         const publishedWords = this.state.publishedWords.map(obj =>
-            <SubmittedWordRedux
+            <SubmittedWord
                 key={obj.word}
                 index={0}
                 word={obj.word}
@@ -85,11 +92,11 @@ class User extends Component {
                     </div>
                     <div className="row">
                         <div>token balance</div>
-                        <div className="row-value">{this.props.tokenBalance}</div>
+                        <div className="row-value">{this.state.tokenBalance}</div>
                     </div>
                     <div className="row">
                         <div>available votes</div>
-                        <div className="row-value">{this.props.availableVotes}</div>
+                        <div className="row-value">{this.state.availableVotes}</div>
                     </div>
                     <div className="row">
                         <div>submitted posts</div>
@@ -109,16 +116,7 @@ class User extends Component {
                     <h2>Published Words</h2>
                     {publishedWords}
                 </div>
-
             </div>
         )
     }
 }
-
-const mapStateToProps5 = state => ({
-    tokenBalance: state.user.balance,
-    availableVotes: state.user.available
-})
-export const UserRedux = connect(
-    mapStateToProps5
-)(User)

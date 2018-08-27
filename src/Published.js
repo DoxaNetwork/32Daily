@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
-import { connect } from 'react-redux'
-import { initHistory, allHistory } from './redux'
 import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+
+import { loadLatestHistory, loadAllHistory } from './actions'
+
 
 class PublishedWord extends Component {
     render() {
@@ -24,9 +26,9 @@ class PublishedWord extends Component {
     }
 }
 
-export class PublishedWords extends Component {
+class _PublishedWords extends Component {
     async componentDidMount() {
-        this.props.initHistory()
+        this.props.loadLatestHistory()
     }
 
     render() {
@@ -38,7 +40,7 @@ export class PublishedWords extends Component {
             return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
         });
 
-        const showAllHistoryLink = this.props.allPreLoaded ? '' : <div className="showHistory link" onClick={this.props.allHistory}>See full history</div>;
+        const showAllHistoryLink = this.props.allPreLoaded ? '' : <div className="showHistory link" onClick={this.props.loadAllHistory}>See full history</div>;
 
         return (
             <div>
@@ -61,17 +63,17 @@ export class PublishedWords extends Component {
     }
 }
 
-const mapStateToProps3 = state => ({
+const mapStateToProps = state => ({
     publishedWords: state.history,
     allPreLoaded: state.historyLoaded
 })
 
-const mapDispatchToProps3 = dispatch => ({
-    initHistory: () => dispatch(initHistory()),
-    allHistory: () => dispatch(allHistory())
+const mapDispatchToProps = dispatch => ({
+    loadLatestHistory: () => dispatch(loadLatestHistory()),
+    loadAllHistory: () => dispatch(loadAllHistory())
 })
 
-export const PublishedWordsRedux = connect(
-    mapStateToProps3,
-    mapDispatchToProps3
-)(PublishedWords)
+export const PublishedWords = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(_PublishedWords)

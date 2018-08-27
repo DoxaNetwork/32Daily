@@ -1,17 +1,14 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { submitContent } from './redux'
+
+import { submitContent } from './actions'
 
 
-class NextWord extends Component {
-
-    constructor(props) {
-        super(props);
-        this.maxCharacters = 160;
-        this.state = {
-            content: '',
-            charactersRemaining: this.maxCharacters
-        }
+class LimitedTextForm extends Component {
+    maxCharacters = 160;
+    state = {
+        content: '',
+        charactersRemaining: this.maxCharacters
     }
 
     handleContentChange(event) {
@@ -20,7 +17,6 @@ class NextWord extends Component {
     }
 
     submit(event) {
-        // this now comes directly from redux
         this.props.onSubmit(this.state.content);
         this.setState({content: '', charactersRemaining: this.maxCharacters})
         event.preventDefault();
@@ -45,11 +41,11 @@ class NextWord extends Component {
     }
 }
 
-const mapDispatchToProps2 = dispatch => ({
-    onSubmit: value => dispatch(submitContent(value))
+const mapDispatchToProps = dispatch => ({
+    onSubmit: text => dispatch(submitContent(text))
 })
 
-export const NextWordRedux = connect(
+export const NewContentForm = connect(
     null,
-    mapDispatchToProps2
-)(NextWord)
+    mapDispatchToProps
+)(LimitedTextForm)
