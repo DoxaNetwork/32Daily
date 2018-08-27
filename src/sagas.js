@@ -80,6 +80,33 @@ function* submitPost(action) {
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 }
 
+function* persistVotes(action) {
+    // should probably read pendingVotes from state instead of passing
+    const indexes = Object.keys(action.pendingVotes);
+    const votes = Object.values(action.pendingVotes);
+
+    const doxaHub = yield getContract(doxaHubContract);
+    const currentAccount = yield getCurrentAccount();
+
+    const result = yield doxaHub.backPosts(indexes, votes, { from: currentAccount })
+
+    yield put({type: "PERSIST_VOTES_SUCCESS"});
+
+    // after this, need to update how many votes each post has, and re-sort
+
+    
+        // const submittedWords = this.state.submittedWords.map(word => {
+        //     if(pendingVotes[word.index] !== undefined) {
+        //         word.backing += pendingVotes[word.index];
+        //     }
+        //     return word;
+        // } )
+
+        // submittedWords.sort((a, b) => {return b.backing - a.backing})
+
+        // this.setState({submittedWords})
+}
+
 export default function* rootSaga() {
     yield takeEvery('SUBMIT_CONTENT', submitPost),
     yield takeEvery('INIT_HISTORY', loadInitHistory)
@@ -88,4 +115,5 @@ export default function* rootSaga() {
     yield takeEvery('TOKEN_BALANCE_UPDATE', updateTokenBalance)
     yield takeEvery('AVAILABLE_TO_TRANSFER_UPDATE', updateAvailableToTransfer)
     yield takeEvery('INIT_ACCOUNT', initAccount)
+    yield takeEvery('PERSIST_VOTES', persistVotes)
 }

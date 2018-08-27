@@ -40,7 +40,6 @@ export const initAccount = () => ({
 // reducers
 
 const words = (state = ['word'], action) => {
-    console.log('word reducer running')
     switch (action.type) {
         case 'SUBMIT_CONTENT':
             return [
@@ -127,6 +126,33 @@ const votes = (state = [], action) => {
     }
 }
 
+const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 0, pendingVotes:{}}, action) => {
+    switch (action.type) {
+        case 'SET_PENDING_VOTE':
+            let pendingVotes = {...state.pendingVotes}
+            pendingVotes[action.index] ? pendingVotes[action.index] += 1 : pendingVotes[action.index] = 1;
+            return {
+                unsavedVotes: true,
+                totalPending: state.totalPending +=1,
+                totalVotes: state.totalVotes +=1,
+                pendingVotes
+            }
+        case 'CLEAR_VOTES':
+            return { unsavedVotes: false, totalPending: 0, totalVotes: state.totalVotes - state.totalPending, pendingVotes: {} }
+        case 'LOAD_SUBMISSIONS_API_SUCCESS':
+            let totalVotes = 0;
+            // use reduce here 
+            for (let i = 0; i < action.submittedWords.length; i++) {
+                totalVotes += action.submittedWords[i].backing;
+            }
+            return Object.assign({}, state, {
+                totalVotes: totalVotes
+            })
+        default:
+            return state
+    }
+}
+
 import { combineReducers } from 'redux'
 
 export default combineReducers({
@@ -135,5 +161,6 @@ export default combineReducers({
     history,
     historyLoaded,
     submissions,
-    user
+    user,
+    pendingVotes
 })
