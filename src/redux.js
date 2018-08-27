@@ -1,16 +1,5 @@
-// reducers
+import { combineReducers } from 'redux'
 
-const words = (state = ['word'], action) => {
-    switch (action.type) {
-        case 'SUBMIT_CONTENT':
-            return [
-                ...state,
-                action.text
-            ]
-        default:
-            return state
-    }
-}
 
 const history = (state = [], action) => {
     switch (action.type) {
@@ -72,21 +61,6 @@ const user = (state = {}, action) => {
     }
 }
 
-const votes = (state = [], action) => {
-    switch (action.type) {
-        case 'POST_VOTE':
-            return [
-                ...state,
-                {
-                    index: action.index,
-                    quantity: action.quantity
-                }
-            ]
-        default:
-            return state
-    }
-}
-
 const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 0, pendingVotes:{}}, action) => {
     switch (action.type) {
         case 'PEND_VOTE':
@@ -114,11 +88,8 @@ const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 
     }
 }
 
-import { combineReducers } from 'redux'
 
 export default combineReducers({
-    words,
-    votes,
     history,
     historyLoaded,
     submissions,

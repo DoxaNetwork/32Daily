@@ -1,14 +1,14 @@
+import { delay } from 'redux-saga'
+import { put, takeEvery, all } from 'redux-saga/effects'
+
 import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
-
-const doxaHubContract = contract(DoxaHubContract)
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks } from './DappFunctions'
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 
-import { put, takeEvery, all } from 'redux-saga/effects'
+const doxaHubContract = contract(DoxaHubContract)
 
-import { delay } from 'redux-saga'
 
 function getEventsByType(events, type) {
     let matchedEvents = []
@@ -69,7 +69,6 @@ function* submitPost(action) {
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
     const result = yield doxaHub.postLink(stringToChunkedArray(action.text), { from: currentAccount})
-    console.log('post returned')
 
     const filteredEvents = getEventsByType(result.logs, "LinkPosted")
     const newPost = mapPost(filteredEvents[0].args);
@@ -108,12 +107,15 @@ function* persistVotes(action) {
 }
 
 export default function* rootSaga() {
-    yield takeEvery('SUBMIT_CONTENT', submitPost),
     yield takeEvery('LOAD_LATEST_HISTORY', loadInitHistory)
     yield takeEvery('LOAD_ALL_HISTORY', loadFullHistory)
+
     yield takeEvery('LOAD_SUBMISSIONS', loadSubmissions)
+
     yield takeEvery('LOAD_BALANCE', updateTokenBalance)
     yield takeEvery('LOAD_AVAILABLE_BALANCE', updateAvailableToTransfer)
     yield takeEvery('LOAD_ACCOUNT', initAccount)
+
+    yield takeEvery('SUBMIT_CONTENT', submitPost),
     yield takeEvery('SUBMIT_VOTES', persistVotes)
 }
