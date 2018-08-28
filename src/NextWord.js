@@ -2,7 +2,40 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
 import { submitContent } from './actions'
+import { Button, Input } from './styledComponents'
 
+import styled from 'styled-components';
+
+const CountedTextInput = styled.div`
+    color: black;
+    background-color: var(--white);
+    height: 50px;
+    line-height: 50px;
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    box-sizing: border-box;
+    transition: all 200ms ease-in-out;
+    padding: 0 5px 0 15px;
+`
+const CountedTextForm = styled.form`
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 5px 10px;
+    height: 50px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+`
+
+const TextInputCount = styled.span`
+    color: var(--gray);
+    padding: 0 10px;
+`
+
+const Container = styled.div`
+     margin-top: 40px;
+`
 
 class LimitedTextForm extends Component {
     maxCharacters = 160;
@@ -27,16 +60,16 @@ class LimitedTextForm extends Component {
         const unsavedState = this.state.charactersRemaining < this.maxCharacters ? 'unsaved' : '';
 
         return (
-            <div className="nextWordBlock">
+            <Container>
                 <div className="sectionTitle">What's happening today?</div>
-                <form onSubmit={this.submit.bind(this)} className="nextWordContainer">
-                    <div  className="nextWord">
-                        <input autoComplete="off" required pattern=".{1,160}" title="No longer than 160 characters" type="text" placeholder="Write today's headline" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
-                        <span className={`characterCount ${tooManyCharacters}`}>{this.state.charactersRemaining}</span>
-                    </div>
-                    <button className={`${unsavedState}`}type="submit">Submit</button>
-                </form>
-            </div>
+                <CountedTextForm onSubmit={this.submit.bind(this)}>
+                    <CountedTextInput  className="nextWord">
+                        <Input autoComplete="off" required pattern=".{1,160}" title="No longer than 160 characters" type="text" placeholder="Write today's headline" name="content" value={this.state.content} onChange={this.handleContentChange.bind(this)}/>
+                        <TextInputCount className={`${tooManyCharacters}`}>{this.state.charactersRemaining}</TextInputCount>
+                    </CountedTextInput>
+                    <Button className={`${unsavedState}`}type="submit">Submit</Button>
+                </CountedTextForm>
+            </Container>
         )
     }
 }

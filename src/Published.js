@@ -5,22 +5,66 @@ import { connect } from 'react-redux'
 
 import { loadLatestHistory, loadAllHistory } from './actions'
 
+import styled from 'styled-components';
+
+const PublishedContainer = styled.div`
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin:0 5px 5px;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    justify-content: space-between;
+    background-color: var(--white);
+    height: 125px;
+    padding-bottom: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+`
+const Word = styled.div`
+    padding: 10px 15px;
+    background-color:var(--white);
+    color: black;
+    width: 100%;
+`
+
+const SecondaryActionLink = styled.div`
+    margin-top: 20px;
+    color: var(--gray);
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+        color: var(--main-color);
+    }
+`
+const LinkToUser = styled(Link)`
+    margin-right: 20px;
+    color: var(--gray);
+`
+const Date = styled.div`
+    padding: 0 15px;
+    background-color: white;
+    color: var(--gray);
+    width:65px;
+    border-radius: 0 10px 10px 0;
+`
+
 
 class PublishedWord extends Component {
     render() {
         return (
             <div key={this.props.word.content}>
-                <div className="publishedWordContainer">
-                    <div className="word">
+                <PublishedContainer>
+                    <Word>
                         {this.props.word.content}
-                    </div>
-                    <div className="date">
+                    </Word>
+                    <Date>
                         {this.props.word.date}
-                    </div>
+                    </Date>
                     <div className="identity">
-                        <Link to={'1000/' + this.props.word.poster}> {this.props.word.poster.substring(0,6)}</Link>
+                        <LinkToUser to={'1000/' + this.props.word.poster}> {this.props.word.poster.substring(0,6)}</LinkToUser>
                     </div>
-                </div>
+                </PublishedContainer>
             </div>
         )
     }
@@ -40,7 +84,7 @@ class _PublishedWords extends Component {
             return index == 0 ? '' : <PublishedWord  key={word.content} word={word} />
         });
 
-        const showAllHistoryLink = this.props.allPreLoaded ? '' : <div className="showHistory link" onClick={this.props.loadAllHistory}>See full history</div>;
+        const showAllHistoryLink = this.props.allPreLoaded ? '' : <SecondaryActionLink onClick={this.props.loadAllHistory}>See full history</SecondaryActionLink>;
 
         return (
             <div>
@@ -49,14 +93,12 @@ class _PublishedWords extends Component {
                     {firstWord}
                 </div>
                 <div className="sectionTitle">Past moods</div>
-                <div className="wordStreamInner">
-                    <CSSTransitionGroup
-                        transitionName="opacity"
-                        transitionEnterTimeout={5000}
-                        transitionLeaveTimeout={300}>
-                        {publishedWords}
-                    </CSSTransitionGroup>
-                </div>
+                <CSSTransitionGroup
+                    transitionName="opacity"
+                    transitionEnterTimeout={5000}
+                    transitionLeaveTimeout={300}>
+                    {publishedWords}
+                </CSSTransitionGroup>
                 {showAllHistoryLink}
             </div>            
         )

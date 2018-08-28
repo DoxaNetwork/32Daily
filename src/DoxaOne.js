@@ -14,6 +14,8 @@ import { SubmittedWords } from './Submitted'
 import { NewContentForm } from './NextWord'
 
 import './ThirtytwoDaily.css'
+import { Button } from './styledComponents'
+import styled from 'styled-components';
 
 const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
@@ -79,6 +81,9 @@ class Doxa1 extends Component {
     }
 }
 
+
+
+
 class ThirtytwoDaily extends Component {
     state = {
         showSubmissions: false,
@@ -95,9 +100,9 @@ class ThirtytwoDaily extends Component {
 
     render() {
         const publishButton = (
-            <div className="publishButton">
-                <button onClick={this.publish.bind(this)}>Publish</button>
-            </div>
+            <PublishButton>
+                <Button onClick={this.publish.bind(this)}>Publish</Button>
+            </PublishButton>
             );
 
         return (
@@ -119,7 +124,33 @@ class ThirtytwoDaily extends Component {
         )
     }
 }
+const PublishButton = styled.div`
+    background-color: var(--white);
+    border-bottom: 2px solid var(--lightgray);
+    padding: 10px;
+    text-align: center;
 
+    button {
+        border-radius: var(--border-radius);
+    }
+`
+
+const ShowSubmissionsLink = styled.div`
+    background-color: white;
+    padding: 10px;
+    width: 25%;
+    margin: 20px auto;
+    border-radius: var(--border-radius);
+    color: var(--gray);
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+        color: white;
+        background-color: var(--main-color);
+    }
+`
 // need to redux this one
 class SubmittedAndPublishedWords extends Component {
     state = {
@@ -168,7 +199,7 @@ class SubmittedAndPublishedWords extends Component {
                         <NewContentForm/>
                     </div>
                 </div>
-                <div className="showSubmissions link" onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</div>
+                <ShowSubmissionsLink onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</ShowSubmissionsLink>
             </div>
         )
     }

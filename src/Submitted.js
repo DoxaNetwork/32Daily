@@ -13,11 +13,108 @@ import { getContract } from './DappFunctions'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
 const doxaHubContract = contract(DoxaHubContract)
 
+import { Button } from './styledComponents'
+import styled from 'styled-components';
 
-class Button extends Component {
+const VoteBarsContainer = styled.div`
+    border-radius: var(--border-radius);
+    display: flex;
+    overflow: hidden;
+    height: 5px;
+`
+const SpentVotesBar = styled.div`
+    background-color: var(--lightgray);
+    transition: width 300ms ease-out;
+`
+const RemainingVotesBar = styled.div`
+    background: linear-gradient(90deg,var(--main-color), var(--secondary-color));
+    transition: width 300ms ease-out;
+`
+
+const LinkToUser = styled(Link)`
+    color: var(--gray);
+    float: right;
+    padding-right: 15px;
+`
+
+const VoteCount = styled.div`
+    background-color: var(--main-color);
+    color: white;
+    height: 125px;
+    line-height: 125px;
+    min-width:40px;
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: var(--border-radius) 0 0 var(--border-radius);
+    transition: all 300ms ease-in-out;
+`
+
+const ItemVotingBar = styled.div`
+    position: absolute;
+    height: 4px;
+    background-color: var(--main-color);
+    top: -4px;
+    transition: all 300ms ease-in-out !important;
+`
+
+const SubmittedWordInnerContainer = styled.div`
+    color: black;
+    flex-grow: 1;
+    height: 100%;
+    box-sizing: border-box;
+    cursor:pointer;
+    transition: background 300ms ease-out;
+    border-top: 4px solid lightgray;
+    position: relative;
+    border-bottom-right-radius: var(--border-radius);
+`
+
+const SubmittedWordOuterContainer = styled.div`
+    background-color: var(--white);
+    display: flex;
+    cursor: pointer;
+    border-radius: var(--border-radius);
+    margin:10px 5px;
+    height: 125px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+
+    :hover div,
+    :hover div div {
+        background-color: var(--main-color);
+        color: white;
+        transition:none;
+    }
+`
+
+const StyledSubmittedWord = styled.div`
+    text-overflow: ellipsis;
+    padding-left: 15px;
+    padding-top: 7px;
+    height: 82px;
+`
+
+const VoteText = styled.div`
+    text-align: center;
+    color: gray;
+    margin-bottom: 10px;
+`
+
+const WordFactory = styled.div`
+    border-right: 2px solid var(--lightgray);
+`
+const WordFactoryTitle = styled.div`
+    width: 75%;
+    margin:auto;
+`
+const SubmittedWordsContainer = styled.div`
+    padding-top: 30px;
+`
+
+class Button2 extends Component {
     render() {
         return (
-            <button className="save unsaved" onClick={this.props.onClick}>{this.props.text}</button>
+            <Button className="save unsaved" onClick={this.props.onClick}>{this.props.text}</Button>
         )
     }
 }
@@ -34,16 +131,16 @@ class _SubmittedWord extends Component {
         const votesPercent = this.mapVotesToPercent()
 
         return (
-            <div className={`submittedWordContainer ${pendingClass}`} onClick={() => this.props.onClick(this.props.index)}>
-                <div className="voteCount">
+            <SubmittedWordOuterContainer className={`${pendingClass}`} onClick={() => this.props.onClick(this.props.index)}>
+                <VoteCount>
                     {this.props.backing + this.props.pendingVotes}
-                </div>
-                <div className="submittedWord">
-                    <div className="submittedWordWord">{this.props.word}</div>
-                    <div className="votingBar" style={{width: `${votesPercent}%`}}> </div>
-                    <div className="identity2"><Link to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</Link></div>
-                </div>
-            </div>
+                </VoteCount>
+                <SubmittedWordInnerContainer>
+                    <StyledSubmittedWord>{this.props.word}</StyledSubmittedWord>
+                    <ItemVotingBar style={{width: `${votesPercent}%`}}> </ItemVotingBar>
+                    <LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
+                </SubmittedWordInnerContainer>
+            </SubmittedWordOuterContainer>
         )
     }
 }
@@ -116,39 +213,37 @@ class _SubmittedWords extends Component {
 
         const saveButton = this.props.unsavedVotes ? (
             <div className="saveContainer">
-                <Button text="Save" onClick={() => this.props.submitVotes(this.props.pendingVotes)}/>
-                <Button text="Clear" onClick={this.props.clearVotes}/>
+                <Button2 text="Save" onClick={() => this.props.submitVotes(this.props.pendingVotes)}/>
+                <Button2 text="Clear" onClick={this.props.clearVotes}/>
             </div>
         ) : '';
 
 
         return (
-            <div>
-                <div className="wordFactory">
+            <WordFactory>
                 <div className="sectionTitle">
                     {"Choose tomorrow's headline"}
                     <div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
                 </div>
-                    <div className="submittedWords">
-                        <div className="wordFactoryTitle">
-                            <div className="voteText">{availableVotes} of your {this.props.tokenBalance} votes remaining</div>
-                            <div className="voteBarsContainer">
-                                <div style={{width:`${votesRemainingPercent}%`}} className="votesRemaining"></div>
-                                <div style={{width:`${votesSpentPercent}%`}} className="votesSpent"></div>
-                            </div>
-                        </div>
-                        <div className="saveSpaceHolder">
-                            {saveButton}
-                        </div>
-                        <CSSTransitionGroup
-                            transitionName="opacity"
-                            transitionEnterTimeout={5000}
-                            transitionLeaveTimeout={300}>
-                            {submittedWords}
-                        </CSSTransitionGroup>
+                <SubmittedWordsContainer>
+                    <WordFactoryTitle>
+                        <VoteText>{availableVotes} of your {this.props.tokenBalance} votes remaining</VoteText>
+                        <VoteBarsContainer>
+                            <RemainingVotesBar style={{width:`${votesRemainingPercent}%`}}/>
+                            <SpentVotesBar style={{width:`${votesSpentPercent}%`}}/>
+                        </VoteBarsContainer>
+                    </WordFactoryTitle>
+                    <div className="saveSpaceHolder">
+                        {saveButton}
                     </div>
-                </div>
-            </div>
+                    <CSSTransitionGroup
+                        transitionName="opacity"
+                        transitionEnterTimeout={5000}
+                        transitionLeaveTimeout={300}>
+                        {submittedWords}
+                    </CSSTransitionGroup>
+                </SubmittedWordsContainer>
+            </WordFactory>
         )
     }
 }

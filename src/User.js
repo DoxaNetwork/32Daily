@@ -10,6 +10,44 @@ import { SubmittedWord } from './Submitted'
 
 const doxaHubContract = contract(DoxaHubContract)
 
+import styled from 'styled-components';
+
+const UserContainer = styled.div`
+    background-color: white;
+    width: 450px;
+    margin: auto;
+    padding: 50px 50px 30px;
+    margin-top: 50px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    font-size: 1.2em;
+
+    .row {
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        padding: 0 5px;
+    }
+
+    .row-value {
+        font-weight: 800;
+    }
+`
+
+const Address = styled.div`
+    text-align: center;
+    margin-top: 30px;
+`
+
+const PostContainer = styled.div`
+    width: 71%;
+    margin: auto;
+    margin-top: 40px;
+
+    h2 {
+        text-align: center;
+    }
+`
 function mapPost(post) {
     return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
 }
@@ -85,7 +123,7 @@ export class User extends Component {
         );
         return (
             <div>
-                <div className="userContainer">
+                <UserContainer>
                     <div className="row">
                         <div>user id</div>
                         <div className="row-value">{this.state.userId.substring(0,6)}</div>
@@ -106,16 +144,16 @@ export class User extends Component {
                         <div>published posts</div>
                         <div className="row-value">todo</div>
                     </div>
-                    <div className="address">{this.state.userId}</div>
-                </div>
-                <div className="user-submittedPosts">
+                    <Address>{this.state.userId}</Address>
+                </UserContainer>
+                <PostContainer>
                     <h2>Submitted Posts</h2>
                     {submittedWords}
-                </div>
-                <div className="user-submittedPosts">
+                </PostContainer>
+                <PostContainer>
                     <h2>Published Words</h2>
                     {publishedWords}
-                </div>
+                </PostContainer>
             </div>
         )
     }

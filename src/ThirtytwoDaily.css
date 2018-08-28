@@ -21,10 +21,6 @@ body {
     font-family: 'Quicksand', sans-serif;
 }
 
-.title {
-    font-family: 'Fredericka the Great', serif;
-}
-
 .navbar {
     background-color: white;
     display: flex;
@@ -56,55 +52,11 @@ body {
     color:var(--main-color);
 }
 
-button {
-    border: 1px solid var(--main-color);
-    background-color: var(--main-color);
-    width: 127px;
-    height:50px;
-    padding: 0px;
-    color: var(--white);
-    transition: all 200ms ease-in-out;
-    cursor: pointer;
-    font-size: 1em;
-}
-
-button.unsaved {
-    border: 1px solid var(--secondary-color);
-    background-color: var(--secondary-color);
-}
-
-button:hover {
-    background-color: var(--main-color);
-    border: 1px solid var(--main-color);
-}
-
-input {
-    border: none;
-    outline: none;
-    text-align: center;
-    color: black;
-    flex-grow: 1;
-    background-color: var(--white);
-    font-size: 1em;
-}
-
-input:invalid {
-    box-shadow: none;
-}
-
 .red {
     color: red !important;
 }
 
-.link {
-    color: var(--gray);
-    cursor: pointer;
-    text-align: center;
-}
 
-.link:hover {
-    color: var(--main-color);
-}
 
 .appContainer {
     display: flex;
@@ -133,43 +85,6 @@ input:invalid {
 .sectionSubTitle {
     font-size: 0.7em;
     color: var(--gray);
-}
-
-/* ==================== Header ==================== */
-.header {
-    color: var(--main-color);
-    font-size:56pt;
-    padding-bottom: 30px;
-    padding-top:30px;
-    background-color: var(--white);
-    border-bottom: 4px solid var(--main-color);
-    margin:auto;
-    text-align: center;
-}
-
-.subtitle {
-    margin-top: 20px;
-    font-size: 0.3em;
-}
-
-
-.timeBar {
-    margin-top: -5px;
-    height: 2px;
-    border-bottom: 3px solid var(--darkwhite);
-    background-color: lightgray;
-    border-top: 2px solid white;
-    transition: width 1200ms ease-out;
-}
-
-.timerText {
-    color: var(--main-color);
-    text-align: right;
-    padding: 3px 15px;
-    position: absolute;
-    box-sizing: border-box;
-    width: 100%;
-    margin-top: -30px;
 }
 
 /* ==================== Animations ==================== */
@@ -206,37 +121,6 @@ input:invalid {
   transition: opacity 300ms ease-in;
 }
 
-/* ==================== History ====================*/
-.showHistory {
-    margin-top: 20px;
-}
-
-.wordStreamInner {
-}
-
-.word {
-    padding: 10px 15px;
-    background-color:var(--white);
-    color: black;
-    width: 100%;
-}
-
-.publishedWordContainer {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    margin:0 5px 5px;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    justify-content: space-between;
-    background-color: var(--white);
-    height: 125px;
-    padding-bottom: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-}
-
-
-
 /* ==================== Word submission ==================== */
 button.save {
     border-radius: var(--border-radius);
@@ -255,82 +139,7 @@ button.save {
     margin: 0 12.5%;
 }
 
-.nextWordContainer.save {
-    padding: 0;
-    margin-left:0;
-    width: unset;
-    margin: 0;
-}
-
-.showSubmissions {
-    background-color: white;
-    padding: 10px;
-    width: 25%;
-    margin: 20px auto;
-    border-radius: var(--border-radius);
-    color: var(--gray);
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-}
-
-.showSubmissions:hover {
-    color: white;
-    background-color: var(--main-color);
-}
-
-.nextWordBlock {
-    margin-top: 40px;
-}
-.nextWordContainer {
-    display: flex;
-    justify-content: space-between;
-    margin: 20px 5px 10px;
-    height: 50px;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-}
-.nextWord {
-    color: black;
-    background-color: var(--white);
-    height: 50px;
-    line-height: 50px;
-    flex-grow: 1;
-    display: flex;
-    justify-content: space-between;
-    box-sizing: border-box;
-    transition: all 200ms ease-in-out;
-    padding: 0 5px 0 15px;
-}
-
-.characterCount {
-    color: var(--gray);
-    padding: 0 10px;
-}
-
 /* ==================== Word voting ==================== */
-.wordFactory {
-    border-right: 2px solid var(--lightgray);
-}
-
-.wordFactoryTitle {
-    width: 75%;
-    margin:auto;
-}
-
-.submittedWords {
-    padding-top: 30px;
-}
-
-.submittedWordContainer {
-    background-color: var(--white);
-    display: flex;
-    cursor: pointer;
-    border-radius: var(--border-radius);
-    margin:10px 5px;
-    height: 125px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-}
 .submittedWordContainer.pending .voteCount {
     background-color: var(--secondary-color);
 }
@@ -340,109 +149,8 @@ button.save {
     background-color: var(--secondary-color);
 }
 
-.submittedWord {
-    color: black;
-    flex-grow: 1;
-    height: 100%;
-    box-sizing: border-box;
-    cursor:pointer;
-    transition: background 300ms ease-out;
-    border-top: 4px solid lightgray;
-    position: relative;
-    border-bottom-right-radius: var(--border-radius);
-}
-
-.submittedWordWord {
-    text-overflow: ellipsis;
-    padding-left: 15px;
-    padding-top: 7px;
-    height: 82px;
-}
-
-.submittedWordContainer:hover > .submittedWord {
-    background-color: var(--main-color);
-    color: white;
-    transition: none;
-}
-
 .submittedWordContainer.pending:hover > .submittedWord {
     background: linear-gradient(to right, var(--secondary-color) , var(--main-color));
-}
-
-.voteCount {
-    background-color: var(--main-color);
-    color: white;
-    height: 125px;
-    line-height: 125px;
-    min-width:40px;
-    box-sizing: border-box;
-    text-align: center;
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    transition: all 300ms ease-in-out;
-}
-
-.date {
-    padding: 0 15px;
-    background-color: white;
-    color: var(--gray);
-    width:65px;
-    border-radius: 0 10px 10px 0;
-}
-
-.identity {
-    margin-right: 20px;
-    color: var(--gray);
-}
-
-.identity2 {
-    color: var(--gray);
-    float: right;
-    padding-right: 15px;
-}
-
-.votingBar {
-    position: absolute;
-    height: 4px;
-    background-color: var(--main-color);
-    top: -4px;
-    transition: all 300ms ease-in-out;
-}
-
-.votesSpent {
-    background-color: var(--lightgray);
-    transition: width 300ms ease-out;
-}
-
-.votesRemaining {
-    background: linear-gradient(90deg,var(--main-color), var(--secondary-color));
-    transition: width 300ms ease-out;
-}
-
-.voteBarsContainer {
-    border-radius: var(--border-radius);
-    display: flex;
-    overflow: hidden;
-    height: 5px;
-}
-
-.voteText {
-    text-align: center;
-    color: gray;
-    margin-bottom: 10px;
-}
-
-
-/* ==================== Admin controls ==================== */
-
-.publishButton {
-    background-color: var(--white);
-    border-bottom: 2px solid var(--lightgray);
-    padding: 10px;
-    text-align: center;
-}
-
-.publishButton button {
-    border-radius: var(--border-radius);
 }
 
 /* mobile */
@@ -503,44 +211,4 @@ button.save {
         width: 50%;
         padding: 0 20px;
     }
-}
-
-/* ==================== User info ==================== */
-
-.userContainer {
-    background-color: white;
-    width: 450px;
-    margin: auto;
-    padding: 50px 50px 30px;
-    margin-top: 50px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-    font-size: 1.2em
-}
-
-.userContainer .row  {
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    padding: 0 5px;
-}
-
-.userContainer .row-value {
-    font-weight: 800;
-    /*font-size: 1.2em;*/
-}
-
-.address {
-    text-align: center;
-    margin-top: 30px;
-}
-
-.user-submittedPosts {
-    width: 71%;
-    margin: auto;
-    margin-top: 40px;
-}
-
-.user-submittedPosts h2 {
-    text-align: center;
 }
