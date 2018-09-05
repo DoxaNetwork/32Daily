@@ -26,7 +26,7 @@ contract DoxaToken is BasicToken, Spoke {
     {
         require(_to != address(0));
         DoxaHub doxaHub = DoxaHub(hub);
-        require(_value <= doxaHub.availableToTransfer(msg.sender));
+        require(_value <= doxaHub.availableToTransfer(msg.sender, _to));
 
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);

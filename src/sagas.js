@@ -53,7 +53,7 @@ function* updateTokenBalance(action) {
 function* updateAvailableToTransfer(action) {
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
-    const availableVotesBN = yield doxaHub.availableToTransfer(currentAccount);
+    const availableVotesBN = yield doxaHub.availableToTransfer(currentAccount, '0x0');
     const availableVotes = availableVotesBN.toNumber();
     yield put({type: "AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS", availableVotes})
 }

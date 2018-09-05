@@ -116,11 +116,16 @@ contract DoxaHub is Ownable {
         return (votes.outgoingVotes(ownerKey) < 1);
     }
 
-    function availableToTransfer(address _owner) 
+    function availableToTransfer(address _owner, address _receiver)
     view public 
     returns (uint256) {
-        bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
-        return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
+        // token cannot be transferred yet
+        // later, we will add the ability to sell token back to the contract
+        // later, we will add the ability to transfer token to staked accounts
+        return 0;
+        // bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
+        // // can't transfer token if they are alreaddy voted in this cycle
+        // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
     }
 
     function balanceOf(address _owner)
@@ -189,18 +194,18 @@ contract DoxaHub is Ownable {
 
     function getMember(uint _index) 
     public view 
-    returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToBackPosts_) 
+    returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToTransfer_)
     {
         var (name, owner) = memberRegistry.getMember(_index);
-        return (name, owner, token.balanceOf(owner), 0, availableToTransfer(owner));
+        return (name, owner, token.balanceOf(owner), 0, 0);
     }
 
     function getMemberByAddress(address _owner) 
     public view 
-    returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToBackPosts_) 
+    returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToTransfer_)
     {
         var (name, owner) = memberRegistry.getMemberByAddress(_owner);
-        return (name, owner, token.balanceOf(owner), 0, availableToTransfer(owner));
+        return (name, owner, token.balanceOf(owner), 0, 0);
     }
 
     function register(bytes32 _name) 
