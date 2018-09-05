@@ -14,11 +14,22 @@ contract ContentPool is Spoke {
     mapping (uint => Item[]) public itemList;
     mapping (bytes32 => uint) public hashIndexMap;
 
+    // number of posts created by each sha3(version,address)
+    mapping (bytes32 => uint) internal postCountByPosterVersion;
+
     function ContentPool() 
     public 
     {
         owner = msg.sender;
         currentVersion = 0;
+    }
+
+    function outgoingPosts(address _poster)
+    view public
+    returns (uint)
+    {
+        bytes32 posterKey = keccak256(currentVersion, _poster);
+        return postCountByPosterVersion[posterKey];
     }
 
     function newContent(address _poster, bytes32[5] _content)
@@ -35,6 +46,9 @@ contract ContentPool is Spoke {
 
         bytes32 key = keccak256(currentVersion, _content);
         hashIndexMap[key] = itemList[currentVersion].length-1;
+
+        bytes32 posterKey = keccak256(currentVersion, _poster);
+        postCountByPosterVersion[posterKey] += 1;
 
         return true;
     }

@@ -53,9 +53,16 @@ contract DoxaHub is Ownable {
     function postLink(bytes32[5] link)
     public 
     {
+        require(postingAvailable(msg.sender));
         contentPool.newContent(msg.sender, link);
         token.mint(msg.sender, SUBMISSION_MINT);
         LinkPosted(msg.sender, 0, contentPool.poolLength() - 1, link);
+    }
+
+    function postingAvailable(address _owner)
+    view public
+    returns (bool) {
+        return (contentPool.outgoingPosts(_owner) < 1);
     }
 
     function getLinkByIndex( uint256 index ) 
@@ -78,7 +85,7 @@ contract DoxaHub is Ownable {
     public
     {
         require(_postIndex >= 0 && _postIndex < contentPool.poolLength() );
-        require(votesAvailable(msg.sender));
+        require(votingAvailable(msg.sender));
 
         bytes32 ownerKey = keccak256(contentPool.currentVersion(), msg.sender);
         bytes32 postKey = keccak256(contentPool.currentVersion(), _postIndex);
@@ -102,7 +109,7 @@ contract DoxaHub is Ownable {
         return votes.incomingVotes(postKey);
     }
 
-    function votesAvailable(address _owner)
+    function votingAvailable(address _owner)
     view public
     returns (bool) {
         bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
