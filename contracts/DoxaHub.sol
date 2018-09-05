@@ -27,7 +27,7 @@ contract DoxaHub is Ownable {
     uint public nextPublishTime;
 
     event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[5] link);
-    event PostBacked(address indexed backer, uint32 indexed version, uint postIndex, uint value);
+    event PostBacked(address indexed backer, uint32 indexed version, uint postIndex);
     event Published(uint indexed version, address indexed owner, bytes32[5] content);
 
     function DoxaHub(
@@ -74,24 +74,24 @@ contract DoxaHub is Ownable {
         return contentPool.poolLength();
     }
 
-    function backPost(uint256 _postIndex, uint256 _value) 
+    function backPost(uint256 _postIndex)
     public
     {
         require(_postIndex >= 0 && _postIndex < contentPool.poolLength() );
-        require(_value <= availableToTransfer(msg.sender));
+        // require(_value <= availableToTransfer(msg.sender));
 
         bytes32 ownerKey = keccak256(contentPool.currentVersion(), msg.sender);
         bytes32 postKey = keccak256(contentPool.currentVersion(), _postIndex);
 
-        votes.addVote(_value, ownerKey, postKey);
-        PostBacked(msg.sender, contentPool.currentVersion(), _postIndex, _value);
+        votes.addVote(ownerKey, postKey);
+        PostBacked(msg.sender, contentPool.currentVersion(), _postIndex);
     }
 
-    function backPosts(uint256[] _postIndexes, uint256[] voteValues) 
+    function backPosts(uint256[] _postIndexes)
     public 
     {
         for (uint i = 0; i < _postIndexes.length; i++) {
-            backPost(_postIndexes[i], voteValues[i]);
+            backPost(_postIndexes[i]);
         }
     }
 

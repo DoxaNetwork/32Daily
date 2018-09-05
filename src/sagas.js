@@ -82,12 +82,11 @@ function* submitPost(action) {
 function* persistVotes(action) {
     // should probably read pendingVotes from state instead of passing
     const indexes = Object.keys(action.pendingVotes);
-    const votes = Object.values(action.pendingVotes);
 
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
 
-    const result = yield doxaHub.backPosts(indexes, votes, { from: currentAccount })
+    const result = yield doxaHub.backPosts(indexes, { from: currentAccount })
 
     yield put({type: "PERSIST_VOTES_SUCCESS"});
 
