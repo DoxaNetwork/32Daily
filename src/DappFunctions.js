@@ -1,10 +1,12 @@
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
+import HigherFreq from '../build/contracts/HigherFreq.json'
 import getWeb3 from './utils/getWeb3'
 import {ByteArrayToString, dayOfWeek} from './utils/helpers'
 
 
 const contract = require('truffle-contract')
 const doxaHubContract = contract(DoxaHubContract)
+const HigherFreqContract = contract(HigherFreq)
 
 const simpleCache = {};  // This can be used for simple objects, like the current user's account address
 
@@ -54,6 +56,26 @@ async function setUpPostBackedListener() {
     return event;
 }
 
+
+async function getAllFreq2Submissions() {
+
+    const freq = await getContract(HigherFreqContract);
+
+    const [lower, upper] = await freq.range()
+    console.log(lower.toNumber(), upper.toNumber())
+    const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
+    console.log(indexesToRetrieve)
+    const functions = indexesToRetrieve.map(index => freq.getItem(index))
+    let results = await Promise.all(functions)
+
+    let words = []
+    let i = 0;
+    for (const [poster, content, votes] of results) {
+        words.push({'poster': poster, 'word': ByteArrayToString(content), backing: votes.toNumber(), 'index':i })
+        i += 1;
+    }
+    return words;
+}
 /**
  * @summary  Retrieve all links that have been submitted to the site
  */
@@ -74,51 +96,68 @@ async function getAllLinks(){
 
 const numToPreLoad = 6;
 
-async function getPreHistory() {
-    const doxaHub = await getContract(doxaHubContract);
-    const version = await doxaHub.currentVersion();
+async function getPreHistory(freq) {
+    let _contract;
+    if(freq == 'freq1') {
+        _contract = await getContract(doxaHubContract);
+    } else if (freq == 'freq2') {
+        _contract = await getContract(HigherFreqContract);
+    }
+
+    // const doxaHub = await getContract(doxaHubContract);
+    const version = await _contract.publishedIndex();
     const end = version.toNumber() - numToPreLoad;
     const start = 0;
 
-    const words = await getHistory(start, end);
+    const words = await getHistory(_contract, start, end);
     return words;
 }
 
-async function preLoadHistory() {
-    const doxaHub = await getContract(doxaHubContract);
-    const version = await doxaHub.currentVersion();
+async function preLoadHistory(freq) {
+    let _contract;
+    if(freq == 'freq1') {
+        _contract = await getContract(doxaHubContract);
+    } else if (freq == 'freq2') {
+        _contract = await getContract(HigherFreqContract);
+    }
+    // const doxaHub = await getContract(doxaHubContract);
+    const version = await _contract.publishedIndex();
+    console.log('a')
     const end = version.toNumber();
     const start = Math.max(end - numToPreLoad, 0);
 
-    const words = await getHistory(start, end, 'dayOfWeek')
+    const words = await getHistory(_contract, start, end, 'dayOfWeek')
     const allPreLoaded = start === 0;
     return [words, allPreLoaded];
 }
 
-async function getHistory(start, end, dateType) {
-    const dateOptions = {month: 'long', day: 'numeric' };
-    const doxaHub = await getContract(doxaHubContract);
+async function getHistory(_contract, start, end, dateType) {
+    const dateOptions = {month: 'long', day: 'numeric'};
+    // const doxaHub = await getContract(doxaHubContract);
     
     let words = []
-
-    for (let v = start; v < end; v++) {
-        const [blockLength, timeStamp] = await doxaHub.getVersion(v);
-        const date = new Date(timeStamp * 1000)
-        const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
-        const functions = indexesToRetrieve.map(i => doxaHub.getPublishedItem(v, i))
-
-        let results = await Promise.all(functions)
-
-        for (const [poster, content] of results) {
-            if(dateType === 'dayOfWeek') {
-                words.push({content:ByteArrayToString(content), poster, date:dayOfWeek(date)})
-            } else {
-                words.push({content:ByteArrayToString(content), poster, date:date.toLocaleDateString('en-US', dateOptions)})
-            }
+    const indexesToRetrieve = Array.from(new Array(end - start), (x,i) => i + start)
+    const functions = indexesToRetrieve.map(i => _contract.getPublishedItem(i))
+    let results = await Promise.all(functions)
+    for (const [poster, content, timeStamp] of results) {
+        const date = new Date(timeStamp * 1000);
+        if(dateType === 'dayOfWeek') {
+            words.push({content:ByteArrayToString(content), poster, date:dayOfWeek(date)})
+        } else {
+            words.push({content:ByteArrayToString(content), poster, date:date.toLocaleDateString('en-US', dateOptions)})
         }
     }
     return words;
 }
+
+//     for (let v = start; v < end; v++) {
+//         // const [blockLength, timeStamp] = await doxaHub.getVersion(v);
+//         const date = new Date(timeStamp * 1000)
+// 
+//         const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
+// 
+// 
+//     }
 
 export {getContract,
         getCurrentAccount,
@@ -127,4 +166,5 @@ export {getContract,
         setUpUserPostBackedListener,
         setUpPostBackedListener,
         preLoadHistory,
-        getPreHistory }
+        getPreHistory,
+        getAllFreq2Submissions }

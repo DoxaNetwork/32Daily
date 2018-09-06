@@ -249,7 +249,7 @@ class _SubmittedWords extends Component {
 }
 
 const mapStateToProps = state => ({
-    submittedWords: state.submissions,
+    submittedWords: state.submissions.freq1,
     tokenBalance: state.user.balance,
     availableVotes: state.user.available,
     account: state.user.account,
@@ -262,7 +262,7 @@ const mapDispatchToProps = dispatch => ({
     submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes)),
     clearVotes: () => dispatch(clearVotes()),
     load: () => {
-        dispatch(loadSubmissions())
+        dispatch(loadSubmissions('freq1'))
         dispatch(loadBalance())
         dispatch(loadAvailableBalance())
         dispatch(loadAccount())
@@ -272,4 +272,30 @@ const mapDispatchToProps = dispatch => ({
 export const SubmittedWords = connect(
     mapStateToProps,
     mapDispatchToProps
+)(_SubmittedWords)
+
+const mapStateToProps2 = state => ({
+    submittedWords: state.submissions.freq2,
+    tokenBalance: state.user.balance,
+    availableVotes: state.user.available,
+    account: state.user.account,
+    pendingVotes: state.pendingVotes.pendingVotes,
+    unsavedVotes: state.pendingVotes.unsavedVotes,
+    totalPendingVotes: state.pendingVotes.totalPending
+})
+
+const mapDispatchToProps2 = dispatch => ({
+    submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes)),
+    clearVotes: () => dispatch(clearVotes()),
+    load: () => {
+        dispatch(loadSubmissions('freq2'))
+        dispatch(loadBalance())
+        dispatch(loadAvailableBalance())
+        dispatch(loadAccount())
+    }
+})
+
+export const SubmittedWords2 = connect(
+    mapStateToProps2,
+    mapDispatchToProps2
 )(_SubmittedWords)

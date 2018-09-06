@@ -9,6 +9,7 @@ contract PublishedHistory2 is Spoke {
     {
         uint32 contentPoolVersion;
         uint contentIndex;
+        uint publishedTime;
     } 
 
     uint32 public publishedIndex = 0; // this is equal to publishedBlocks.length
@@ -25,11 +26,17 @@ contract PublishedHistory2 is Spoke {
 
     function getItem(uint32 _blockIndex)
     public view
-    returns (uint32 _version, uint _index)
+    returns (uint32 _version, uint _index, uint publishedTime)
     {
         require(_blockIndex < publishedIndex);
-        return (publishedBlocks[_blockIndex].contentPoolVersion, publishedBlocks[_blockIndex].contentIndex);
+        return (
+            publishedBlocks[_blockIndex].contentPoolVersion, 
+            publishedBlocks[_blockIndex].contentIndex,
+            publishedBlocks[_blockIndex].publishedTime
+        );
     }
+
+
 
     function publish(uint32 version, uint index)
     public
@@ -39,7 +46,8 @@ contract PublishedHistory2 is Spoke {
         PublishedBlock memory newBlock = PublishedBlock(
         {
             contentPoolVersion: version,
-            contentIndex: index
+            contentIndex: index,
+            publishedTime: now
         });
         // newBlock.content.push(index);
         publishedBlocks[publishedIndex] = newBlock;

@@ -7,8 +7,8 @@ var HigherFreq = artifacts.require("./HigherFreq.sol");
 module.exports = function(deployer) {
     deployer.deploy(
         HigherFreq,
-        DoxaHub.address,
         2,
+        DoxaHub.address,
         Votes2.address,
         PublishedHistory2.address,
         ContentPool.address

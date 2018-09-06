@@ -1,42 +1,46 @@
 import { combineReducers } from 'redux'
 
 
-const history = (state = [], action) => {
+const history = (state = {freq1:[], freq2:[]}, action) => {
     switch (action.type) {
         case 'INIT_HISTORY_API_SUCCESS':
-            return [
-            ...action.publishedWords
-            ]
+            return Object.assign({}, state, {
+                [action.freq]: action.publishedWords
+            })
         case 'LOAD_ALL_HISTORY_API_SUCCESS':
-            return [
-            ...state,
-            ...action.publishedWords
-            ]
+            return Object.assign({}, state, {
+                [action.freq]: [...state[action.freq], ...action.publishedWords]
+            })
         default:
             return state
     }
 }
 
-const historyLoaded = (state = false, action) => {
+const historyLoaded = (state = {freq1: false, freq2: false}, action) => {
     switch (action.type) {
         case 'INIT_HISTORY_API_SUCCESS':
-            return action.allPreLoaded
+            return Object.assign({}, state, {
+                [action.freq]: action.allPreLoaded
+            })
         case 'LOAD_ALL_HISTORY_API_SUCCESS':
-            return action.allPreLoaded
+            return Object.assign({}, state, {
+                [action.freq]: action.allPreLoaded
+            })
         default:
             return state
     }
 }
 
-const submissions = (state = [], action) => {
+const submissions = (state = {freq1:[], freq2:[]}, action) => {
     switch (action.type) {
         case 'LOAD_SUBMISSIONS_API_SUCCESS':
-            return action.submittedWords
+            return Object.assign({}, state, {
+                [action.freq]: action.submittedWords
+            })
         case 'CONTENT_POST_SUCCEEDED':
-            return [
-            ...state,
-            action.newPost
-            ]
+            return Object.assign({}, state, {
+                [action.freq]: [...state[action.freq], action.newPost]
+            })
         default:
             return state
     }

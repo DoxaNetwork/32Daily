@@ -5,8 +5,9 @@ export const submitContent = (text) => ({
 })
 
 // ========== published content ============
-export const loadLatestHistory = () => ({
-    type: 'LOAD_LATEST_HISTORY'
+export const loadLatestHistory = (freq) => ({
+    type: 'LOAD_LATEST_HISTORY',
+    freq
 })
 
 export const loadAllHistory = () => ({
@@ -14,8 +15,9 @@ export const loadAllHistory = () => ({
 })
 
 // ========== submitted content ============
-export const loadSubmissions = () => ({
-    type: 'LOAD_SUBMISSIONS'
+export const loadSubmissions = (freq) => ({
+    type: 'LOAD_SUBMISSIONS',
+    freq
 })
 
 

@@ -4,7 +4,7 @@ import { put, takeEvery, all } from 'redux-saga/effects'
 import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
 
-import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks } from './DappFunctions'
+import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getAllFreq2Submissions } from './DappFunctions'
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 
 const doxaHubContract = contract(DoxaHubContract)
@@ -25,21 +25,27 @@ function mapPost(post) {
 }
 
 function* loadFullHistory(action) {
-    const publishedWords = yield getPreHistory();
+    const publishedWords = yield getPreHistory(action.freq);
     publishedWords.reverse();
-    yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", publishedWords: publishedWords, allPreLoaded: true})
+    yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: true})
 }
 
 function* loadInitHistory(action) {
-    const [publishedWords, allPreLoaded] = yield preLoadHistory();
+    const [publishedWords, allPreLoaded] = yield preLoadHistory(action.freq);
     publishedWords.reverse();
-    yield put({type: "INIT_HISTORY_API_SUCCESS", publishedWords: publishedWords, allPreLoaded: allPreLoaded})
+    yield put({type: "INIT_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: allPreLoaded})
 }
 
 function* loadSubmissions(action) {
-    const submittedWords = yield getAllLinks();
-    submittedWords.sort((a, b) => {return b.backing - a.backing})
-    yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", submittedWords: submittedWords})
+    let submittedWords;
+    if(action.freq == 'freq2') {
+        submittedWords = yield getAllFreq2Submissions();
+    }
+    else if (action.freq == 'freq1') {
+        submittedWords = yield getAllLinks();
+    }
+    submittedWords.sort((a,b) => {return b.backing - a.backing})
+    yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
 }
 
 function* updateTokenBalance(action) {

@@ -168,7 +168,7 @@ contract DoxaHub is Ownable {
         return contentPool.currentVersion();
     }
 
-    function currentPublishedIndex()
+    function publishedIndex()
     public view
     returns (uint32)
     {
@@ -184,16 +184,18 @@ contract DoxaHub is Ownable {
 
     function getPublishedItem(uint32 publishedIndex) 
     public view
-    returns (address poster, bytes32[5] content)
+    returns (address poster_, bytes32[5] content_, uint publishedTime_)
     {
-        var (version, poolIndex) = publishedHistory.getItem(publishedIndex);
+        var (version, poolIndex, publishedTime) = publishedHistory.getItem(publishedIndex);
         // now we need to convert publishedIndex to version
-        return contentPool.getPastItem(version, poolIndex);
+        var (poster, content) = contentPool.getPastItem(version, poolIndex);
+        return (poster, content, publishedTime);
+        // return (contentPool.getPastItem(version, poolIndex), publishedTime);
     }
 
     function getPublishedCoords(uint32 publishedIndex) 
     public view
-    returns (uint32 version, uint index)
+    returns (uint32 version, uint index, uint publishedTime_)
     {
         return publishedHistory.getItem(publishedIndex);
     }

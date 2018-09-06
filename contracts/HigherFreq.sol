@@ -6,7 +6,7 @@ import './ContentPool.sol';
 contract HigherFreq {
 
 
-    DoxaHub lowerFreq;
+    DoxaHub public lowerFreq;
     Votes votes;
     PublishedHistory promotedContent;
     ContentPool contentPool;
@@ -59,6 +59,13 @@ contract HigherFreq {
         votes.addVote(ownerKey, postKey);
     }
 
+    function range() 
+    public view
+    returns (uint32 lower, uint32 upper)
+    {
+        return (lowerPublishedIndex, upperPublishedIndex);
+    }
+
 
     // to get all items being voted on
     // call this for every item in (lower, upper)
@@ -68,7 +75,7 @@ contract HigherFreq {
     {
         // error: there may be nothing in some publishedIndexs
         bytes32 postKey = keccak256(currentCycle, publishedIndex);
-        var (version, index) = lowerFreq.getPublishedCoords(publishedIndex);
+        var (version, index, publishedTime) = lowerFreq.getPublishedCoords(publishedIndex);
         var (poster, content) = contentPool.getPastItem(version, index);
         return (poster, content, votes.incomingVotes(postKey));
     }
@@ -92,7 +99,7 @@ contract HigherFreq {
         }
 
         if(somethingSelected) {
-            var (version, index) = lowerFreq.getPublishedCoords(indexToPublish);
+            var (version, index, publishedTime) = lowerFreq.getPublishedCoords(indexToPublish);
             promotedContent.publish(version, index);
             // timeStamps.stamp(currentVersion); // move timestampes into publishedHistory
             // var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
@@ -103,6 +110,13 @@ contract HigherFreq {
 
     }
 
+    function publishedIndex()
+    public view
+    returns (uint32)
+    {
+        return promotedContent.publishedIndex();
+    }
+
     function cycle()
     public 
     {
@@ -111,17 +125,19 @@ contract HigherFreq {
         if (lowerPublishedIndex != upperPublishedIndex) {
             lowerPublishedIndex = upperPublishedIndex;
         }
-        upperPublishedIndex = lowerFreq.currentPublishedIndex() + 1;
+        upperPublishedIndex = lowerFreq.publishedIndex();
         currentCycle += 1;
     }
 
-    function getPublishedItem(uint32 publishedIndex)
+    function getPublishedItem(uint32 publishedIndex) 
     public view
-    returns (address poster, bytes32[5] content)
+    returns (address poster_, bytes32[5] content_, uint publishedTime_)
     {
-        var (version, poolIndex) = promotedContent.getItem(publishedIndex);
+        var (version, poolIndex, publishedTime) = promotedContent.getItem(publishedIndex);
         // now we need to convert publishedIndex to version
-        return contentPool.getPastItem(version, poolIndex);
+        var (poster, content) = contentPool.getPastItem(version, poolIndex);
+        return (poster, content, publishedTime);
+        // return (contentPool.getPastItem(version, poolIndex), publishedTime);
     }
 }
 

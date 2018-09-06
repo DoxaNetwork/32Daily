@@ -4,13 +4,14 @@ import { CSSTransitionGroup } from 'react-transition-group'
 
 import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
+import HigherFreqContract from '../build/contracts/HigherFreq.json'
 import { getContract, getCurrentAccount, getAllLinks, preLoadHistory, getPreHistory } from './DappFunctions'
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 
 import { Header } from './Header'
 import { User } from './User'
-import { PublishedWords } from './Published'
-import { SubmittedWords } from './Submitted'
+import { PublishedWords, PublishedWords2 } from './Published'
+import { SubmittedWords, SubmittedWords2 } from './Submitted'
 import { NewContentForm } from './NextWord'
 
 import './ThirtytwoDaily.css'
@@ -20,6 +21,8 @@ import styled from 'styled-components';
 const doxaHubContract = contract(DoxaHubContract)
 let doxaHub;
 let currentAccount;
+let higherFreq;
+const higherFreqContract = contract(HigherFreqContract)
 
 function mapPost(post) {
     return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
@@ -31,15 +34,10 @@ class DoxaOne extends Component {
             <BrowserRouter>
                 <div>
                     <nav className="navbar">
-                        <NavLink activeClassName="active" className="doxa1link" to="/1">Doxa1 </NavLink>
-                        <NavLink activeClassName="active" className="doxa10link" to="/10">Doxa10 </NavLink>
-                        <NavLink activeClassName="active" className="doxa100link" to="/100">Doxa100 </NavLink>
-                        <NavLink  activeClassName="active" className="doxa1000link" to="/1000">Doxa1000 </NavLink>
+                        <NavLink activeClassName="active" className="doxa1link" to="/freq1/">Freq1 </NavLink>
+                        <NavLink activeClassName="active" className="doxa1000link" to="/freq2/">Freq2 </NavLink>
                     </nav>
-                    <Route path="/1" component={Doxa1}/>
-                    <Route path="/10" component={Doxa10}/>
-                    <Route path="/100" component={Doxa100}/>
-                    <Route path="/1000" component={Doxa1000}/>
+                    <Route path="/" component={Doxa1}/>
                 </div>
             </BrowserRouter>
         )
@@ -91,7 +89,11 @@ class ThirtytwoDaily extends Component {
     }
 
     async publish() {
+        doxaHub = await getContract(doxaHubContract)
+        higherFreq = await getContract(higherFreqContract)
+        currentAccount = await getCurrentAccount()
         await doxaHub.publish({from: currentAccount});
+        await higherFreq.cycle({from: currentAccount})
     }
 
     toggleSubmissionView() {
@@ -110,12 +112,16 @@ class ThirtytwoDaily extends Component {
                 {publishButton}
                 <Header title={this.props.title} period={this.props.period} showTimerText={this.state.showSubmissions}/>
                 <Route
-                    exact path={this.props.match.url}
+                    path={this.props.match.url + 'freq1'}
                     render={(props) => <SubmittedAndPublishedWords showSubmissions={this.state.showSubmissions} toggleSubmissionView={this.toggleSubmissionView.bind(this)} />}
                 />
                 <Route
-                    path={this.props.match.url + '/:id'}
+                    path={this.props.match.url + 'user/:id'}
                     component={User}
+                />
+                <Route
+                    path={this.props.match.url + 'freq2'}
+                    render={(props) => <SubmittedAndPublishedWords2 showSubmissions={this.state.showSubmissions} toggleSubmissionView={this.toggleSubmissionView.bind(this)} />}
                 />
 
                 <div className="footer">
@@ -153,18 +159,6 @@ const ShowSubmissionsLink = styled.div`
 `
 // need to redux this one
 class SubmittedAndPublishedWords extends Component {
-    state = {
-        owner: false
-    }
-
-    async componentDidMount() {
-        doxaHub = await getContract(doxaHubContract);
-        currentAccount = await getCurrentAccount();
-        const owner = await doxaHub.owner();
-        this.setState({
-            owner: owner === currentAccount,
-        })
-    }
 
     mapPost(post) {
         return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
@@ -196,6 +190,47 @@ class SubmittedAndPublishedWords extends Component {
                     {submittedWords}
                     <div className={`rightSide ${hidden}`}>
                         <PublishedWords/>
+                        <NewContentForm/>
+                    </div>
+                </div>
+                <ShowSubmissionsLink onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</ShowSubmissionsLink>
+            </div>
+        )
+    }
+}
+
+class SubmittedAndPublishedWords2 extends Component {
+
+    mapPost(post) {
+        return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
+    }
+
+    getEventsByType(events, type) {
+        let matchedEvents = []
+        for (let i = 0; i < events.length; i++) {
+            if (events[i].event === type) {
+                matchedEvents.push(events[i])
+            }
+        }
+        return matchedEvents;
+    }
+
+    render() {
+        const submissionLink = this.props.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
+        const hidden = this.props.showSubmissions ? 'hidden' : '';
+
+        const submittedWords = this.props.showSubmissions ? (
+            <div className="rightSide">
+                <SubmittedWords2/>
+            </div>
+        ) : ('');
+
+        return (
+            <div>
+                <div className="appContainer">
+                    {submittedWords}
+                    <div className={`rightSide ${hidden}`}>
+                        <PublishedWords2/>
                         <NewContentForm/>
                     </div>
                 </div>

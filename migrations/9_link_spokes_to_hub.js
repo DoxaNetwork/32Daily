@@ -36,16 +36,11 @@ module.exports = function(deployer) {
   }).then(function(instance) {
 
     timeStamps = instance;
-    return DoxaHub.deployed();
-
-  }).then(function(instance) {
-
-  	let doxaHub = instance;
-  	votes.assignHub(doxaHub.address);
-  	publishedHistory.assignHub(doxaHub.address);
-    token.assignHub(doxaHub.address);
-  	contentPool.assignHub(doxaHub.address);
-  	timeStamps.assignHub(doxaHub.address);
+  	votes.assignHub(DoxaHub.address);
+  	publishedHistory.assignHub(DoxaHub.address);
+    token.assignHub(DoxaHub.address);
+  	contentPool.assignHub(DoxaHub.address);
+  	timeStamps.assignHub(DoxaHub.address);
 
   });
 };
