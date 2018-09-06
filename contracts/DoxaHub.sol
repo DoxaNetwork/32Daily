@@ -2,7 +2,7 @@ pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
+// import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
 import './ContentPool.sol';
 import './MemberRegistry.sol';
@@ -153,7 +153,7 @@ contract DoxaHub is Ownable {
         }
         if(somethingSelected) {
             publishedHistory.publish(currentVersion, indexToPublish);
-            timeStamps.stamp(currentVersion);
+            timeStamps.stamp(currentVersion); // move timestampes into publishedHistory
             var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
             Published(currentVersion, poster, content);
         }
@@ -168,6 +168,13 @@ contract DoxaHub is Ownable {
         return contentPool.currentVersion();
     }
 
+    function currentPublishedIndex()
+    public view
+    returns (uint32)
+    {
+        return publishedHistory.publishedIndex();
+    }
+
     function getVersion(uint32 version)
     public view
     returns (uint, uint)
@@ -175,12 +182,20 @@ contract DoxaHub is Ownable {
         return (publishedHistory.blockLength(version), timeStamps.getTime(version));
     }
 
-    function getPublishedItem(uint32 version, uint index) 
+    function getPublishedItem(uint32 publishedIndex) 
     public view
     returns (address poster, bytes32[5] content)
     {
-        uint poolIndex = publishedHistory.getItem(version, index);
+        var (version, poolIndex) = publishedHistory.getItem(publishedIndex);
+        // now we need to convert publishedIndex to version
         return contentPool.getPastItem(version, poolIndex);
+    }
+
+    function getPublishedCoords(uint32 publishedIndex) 
+    public view
+    returns (uint32 version, uint index)
+    {
+        return publishedHistory.getItem(publishedIndex);
     }
 
     // ======================= Membership functions =======================

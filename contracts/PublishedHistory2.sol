@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import './Spoke.sol';
 
 
-contract PublishedHistory is Spoke {
+contract PublishedHistory2 is Spoke {
 
     struct PublishedBlock
     {
@@ -32,7 +32,7 @@ contract PublishedHistory is Spoke {
     }
 
     function publish(uint32 version, uint index)
-    public onlyHub
+    public
     {
         // uint[] content;
         // content.push(index);
