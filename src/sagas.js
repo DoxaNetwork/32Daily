@@ -80,7 +80,7 @@ function* submitPost(action) {
     const newPost = mapPost(filteredEvents[0].args);
 
     // also need to update tokenBalance and availableVotes
-    yield put({type: "CONTENT_POST_SUCCEEDED", newPost});
+    yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
     yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 }

@@ -75,10 +75,19 @@ class LimitedTextForm extends Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    onSubmit: text => dispatch(submitContent(text))
+    onSubmit: text => dispatch(submitContent(text, 'freq1'))
 })
 
 export const NewContentForm = connect(
     null,
     mapDispatchToProps
+)(LimitedTextForm)
+
+const mapDispatchToProps2 = dispatch => ({
+    onSubmit: text => dispatch(submitContent(text, 'freq2'))
+})
+
+export const NewContentForm2 = connect(
+    null,
+    mapDispatchToProps2
 )(LimitedTextForm)

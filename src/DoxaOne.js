@@ -12,7 +12,7 @@ import { Header } from './Header'
 import { User } from './User'
 import { PublishedWords, PublishedWords2 } from './Published'
 import { SubmittedWords, SubmittedWords2 } from './Submitted'
-import { NewContentForm } from './NextWord'
+import { NewContentForm, NewContentForm2 } from './NextWord'
 
 import './ThirtytwoDaily.css'
 import { Button } from './styledComponents'
@@ -231,7 +231,7 @@ class SubmittedAndPublishedWords2 extends Component {
                     {submittedWords}
                     <div className={`rightSide ${hidden}`}>
                         <PublishedWords2/>
-                        <NewContentForm/>
+                        <NewContentForm2/>
                     </div>
                 </div>
                 <ShowSubmissionsLink onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</ShowSubmissionsLink>

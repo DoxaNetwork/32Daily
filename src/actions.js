@@ -1,7 +1,8 @@
 // ========== new content ==================
-export const submitContent = (text) => ({
+export const submitContent = (text, freq) => ({
     type: 'SUBMIT_CONTENT',
-    text
+    text,
+    freq
 })
 
 // ========== published content ============
