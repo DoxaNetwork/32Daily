@@ -45,7 +45,8 @@ export const clearVotes = () => ({
     type: 'CLEAR_VOTES'
 })
 
-export const pendVote = (index) => ({
+export const pendVote = (index, freq) => ({
     type: 'PEND_VOTE',
-    index
+    index,
+    freq
 })

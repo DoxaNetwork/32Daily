@@ -62,9 +62,7 @@ async function getAllFreq2Submissions() {
     const freq = await getContract(HigherFreqContract);
 
     const [lower, upper] = await freq.range()
-    console.log(lower.toNumber(), upper.toNumber())
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
-    console.log(indexesToRetrieve)
     const functions = indexesToRetrieve.map(index => freq.getItem(index))
     let results = await Promise.all(functions)
 
@@ -122,7 +120,6 @@ async function preLoadHistory(freq) {
     }
     // const doxaHub = await getContract(doxaHubContract);
     const version = await _contract.publishedIndex();
-    console.log('a')
     const end = version.toNumber();
     const start = Math.max(end - numToPreLoad, 0);
 

@@ -1,46 +1,33 @@
 import { combineReducers } from 'redux'
 
-
-const history = (state = {freq1:[], freq2:[]}, action) => {
+const history = (state = [], action) => {
     switch (action.type) {
         case 'INIT_HISTORY_API_SUCCESS':
-            return Object.assign({}, state, {
-                [action.freq]: action.publishedWords
-            })
+            return action.publishedWords
         case 'LOAD_ALL_HISTORY_API_SUCCESS':
-            return Object.assign({}, state, {
-                [action.freq]: [...state[action.freq], ...action.publishedWords]
-            })
+            return [...state[action.freq], ...action.publishedWords]
         default:
             return state
     }
 }
 
-const historyLoaded = (state = {freq1: false, freq2: false}, action) => {
+const historyLoaded = (state = false, action) => {
     switch (action.type) {
         case 'INIT_HISTORY_API_SUCCESS':
-            return Object.assign({}, state, {
-                [action.freq]: action.allPreLoaded
-            })
+            return action.allPreLoaded
         case 'LOAD_ALL_HISTORY_API_SUCCESS':
-            return Object.assign({}, state, {
-                [action.freq]: action.allPreLoaded
-            })
+            return action.allPreLoaded
         default:
             return state
     }
 }
 
-const submissions = (state = {freq1:[], freq2:[]}, action) => {
+const submissions = (state = [], action) => {
     switch (action.type) {
         case 'LOAD_SUBMISSIONS_API_SUCCESS':
-            return Object.assign({}, state, {
-                [action.freq]: action.submittedWords
-            })
+            return action.submittedWords
         case 'CONTENT_POST_SUCCEEDED':
-            return Object.assign({}, state, {
-                [action.freq]: [...state[action.freq], action.newPost]
-            })
+            return [...state, action.newPost]
         default:
             return state
     }
@@ -77,13 +64,14 @@ const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 
                 pendingVotes
             }
         case 'CLEAR_VOTES':
-            return { unsavedVotes: false, totalPending: 0, totalVotes: state.totalVotes - state.totalPending, pendingVotes: {} }
-        case 'LOAD_SUBMISSIONS_API_SUCCESS':
-            let totalVotes = 0;
-            // use reduce here 
-            for (let i = 0; i < action.submittedWords.length; i++) {
-                totalVotes += action.submittedWords[i].backing;
+            return { 
+                unsavedVotes: false, 
+                totalPending: 0, 
+                totalVotes: state.totalVotes - state.totalPending, 
+                pendingVotes: {} 
             }
+        case 'LOAD_SUBMISSIONS_API_SUCCESS':
+            const totalVotes = action.submittedWords.reduce((sum, word) => (sum + word.backing), 0)
             return Object.assign({}, state, {
                 totalVotes: totalVotes
             })
@@ -92,11 +80,25 @@ const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 
     }
 }
 
-
-export default combineReducers({
+const freqReducer = combineReducers({
     history,
     historyLoaded,
     submissions,
-    user,
     pendingVotes
 })
+
+function createFilteredReducer(reducerFunction, reducerPredicate) {
+    return (state, action) => {
+        const isInitializationCall = state === undefined;
+        const shouldRunWrappedReducer = reducerPredicate(action) || isInitializationCall;
+        return shouldRunWrappedReducer ? reducerFunction(state, action) : state;
+    }
+}
+
+const rootReducer = combineReducers({
+    freq1: createFilteredReducer(freqReducer, action => action.freq === 'freq1'),
+    freq2: createFilteredReducer(freqReducer, action => action.freq === 'freq2'),
+    user
+})
+
+export default rootReducer;

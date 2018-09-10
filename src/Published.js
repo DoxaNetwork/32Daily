@@ -106,8 +106,8 @@ class _PublishedWords extends Component {
 }
 
 const mapStateToProps = state => ({
-    publishedWords: state.history.freq1,
-    allPreLoaded: state.historyLoaded.freq1
+    publishedWords: state.freq1.history,
+    allPreLoaded: state.freq1.historyLoaded
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -121,8 +121,8 @@ export const PublishedWords = connect(
 )(_PublishedWords)
 
 const mapStateToProps2 = state => ({
-    publishedWords: state.history.freq2,
-    allPreLoaded: state.historyLoaded.freq2
+    publishedWords: state.freq2.history,
+    allPreLoaded: state.freq2.historyLoaded
 })
 
 const mapDispatchToProps2 = dispatch => ({

@@ -146,10 +146,10 @@ class _SubmittedWord extends Component {
 }
 
 const mapStateToPropsSubmittedWord = state => ({
-    totalVotes: state.pendingVotes.totalVotes
+    totalVotes: state.freq1.pendingVotes.totalVotes
 })
 const mapDispatchToPropsSubmittedWord = dispatch => ({
-    onClick: index => dispatch(pendVote(index))
+    onClick: index => dispatch(pendVote(index, 'freq1'))
 })
 
 export const SubmittedWord = connect(
@@ -249,13 +249,13 @@ class _SubmittedWords extends Component {
 }
 
 const mapStateToProps = state => ({
-    submittedWords: state.submissions.freq1,
+    submittedWords: state.freq1.submissions,
     tokenBalance: state.user.balance,
     availableVotes: state.user.available,
     account: state.user.account,
-    pendingVotes: state.pendingVotes.pendingVotes,
-    unsavedVotes: state.pendingVotes.unsavedVotes,
-    totalPendingVotes: state.pendingVotes.totalPending
+    pendingVotes: state.freq1.pendingVotes.pendingVotes,
+    unsavedVotes: state.freq1.pendingVotes.unsavedVotes,
+    totalPendingVotes: state.freq1.pendingVotes.totalPending
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -275,13 +275,13 @@ export const SubmittedWords = connect(
 )(_SubmittedWords)
 
 const mapStateToProps2 = state => ({
-    submittedWords: state.submissions.freq2,
+    submittedWords: state.freq2.submissions,
     tokenBalance: state.user.balance,
     availableVotes: state.user.available,
     account: state.user.account,
-    pendingVotes: state.pendingVotes.pendingVotes,
-    unsavedVotes: state.pendingVotes.unsavedVotes,
-    totalPendingVotes: state.pendingVotes.totalPending
+    pendingVotes: state.freq2.pendingVotes.pendingVotes,
+    unsavedVotes: state.freq2.pendingVotes.unsavedVotes,
+    totalPendingVotes: state.freq2.pendingVotes.totalPending
 })
 
 const mapDispatchToProps2 = dispatch => ({
