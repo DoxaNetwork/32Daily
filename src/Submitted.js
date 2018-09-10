@@ -120,7 +120,7 @@ class Button2 extends Component {
 }
 
 
-class _SubmittedWord extends Component {
+class SubmittedWord extends Component {
 
     mapVotesToPercent() {
         return this.props.totalVotes === 0 ? 0 : (this.props.backing + this.props.pendingVotes) / this.props.totalVotes * 100;
@@ -144,18 +144,6 @@ class _SubmittedWord extends Component {
         )
     }
 }
-
-const mapStateToPropsSubmittedWord = state => ({
-    totalVotes: state.freq1.pendingVotes.totalVotes
-})
-const mapDispatchToPropsSubmittedWord = dispatch => ({
-    onClick: index => dispatch(pendVote(index, 'freq1'))
-})
-
-export const SubmittedWord = connect(
-    mapStateToPropsSubmittedWord,
-    mapDispatchToPropsSubmittedWord
-)(_SubmittedWord)
 
 
 class _SubmittedWords extends Component {
@@ -207,8 +195,10 @@ class _SubmittedWords extends Component {
                 word={obj.word} 
                 poster={obj.poster}
                 backing={obj.backing} 
+                totalVotes={this.props.totalVotes}
                 backedAlready={this.state.pastVotes[obj.index] !== undefined} 
-                pendingVotes={this.props.pendingVotes[obj.index] !== undefined ? this.props.pendingVotes[obj.index] : 0} />
+                pendingVotes={this.props.pendingVotes[obj.index] !== undefined ? this.props.pendingVotes[obj.index] : 0}
+                onClick={this.props.onClick} />
         );
 
         const saveButton = this.props.unsavedVotes ? (
@@ -255,11 +245,13 @@ const mapStateToProps = state => ({
     account: state.user.account,
     pendingVotes: state.freq1.pendingVotes.pendingVotes,
     unsavedVotes: state.freq1.pendingVotes.unsavedVotes,
+    totalVotes: state.freq1.pendingVotes.totalVotes,
     totalPendingVotes: state.freq1.pendingVotes.totalPending
 })
 
 const mapDispatchToProps = dispatch => ({
-    submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes)),
+    submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes, 'freq1')),
+    onClick: index => dispatch(pendVote(index, 'freq1')),
     clearVotes: () => dispatch(clearVotes()),
     load: () => {
         dispatch(loadSubmissions('freq1'))
@@ -281,11 +273,13 @@ const mapStateToProps2 = state => ({
     account: state.user.account,
     pendingVotes: state.freq2.pendingVotes.pendingVotes,
     unsavedVotes: state.freq2.pendingVotes.unsavedVotes,
+    totalVotes: state.freq2.pendingVotes.totalVotes,
     totalPendingVotes: state.freq2.pendingVotes.totalPending
 })
 
 const mapDispatchToProps2 = dispatch => ({
-    submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes)),
+    submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes, 'freq2')),
+    onClick: index => dispatch(pendVote(index, 'freq2')),
     clearVotes: () => dispatch(clearVotes()),
     load: () => {
         dispatch(loadSubmissions('freq2'))

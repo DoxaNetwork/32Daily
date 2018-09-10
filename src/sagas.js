@@ -3,11 +3,15 @@ import { put, takeEvery, all } from 'redux-saga/effects'
 
 import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
+import HigherFreq from '../build/contracts/HigherFreq.json'
+
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getAllFreq2Submissions } from './DappFunctions'
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 
 const doxaHubContract = contract(DoxaHubContract)
+const HigherFreqContract = contract(HigherFreq)
+
 
 
 function getEventsByType(events, type) {
@@ -89,10 +93,17 @@ function* persistVotes(action) {
     // should probably read pendingVotes from state instead of passing
     const indexes = Object.keys(action.pendingVotes);
 
-    const doxaHub = yield getContract(doxaHubContract);
+    let _contract;
+    if(action.freq == 'freq1') {
+        _contract = yield getContract(doxaHubContract);
+    }
+    else if (action.freq == 'freq2') {
+        _contract = yield getContract(HigherFreqContract);
+    }
+
     const currentAccount = yield getCurrentAccount();
 
-    const result = yield doxaHub.backPosts(indexes, { from: currentAccount })
+    const result = yield _contract.backPosts(indexes, { from: currentAccount })
 
     yield put({type: "PERSIST_VOTES_SUCCESS"});
 

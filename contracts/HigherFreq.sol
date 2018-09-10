@@ -47,7 +47,7 @@ contract HigherFreq {
     }
 
 
-    function vote(uint32 publishedIndex) 
+    function backPost(uint32 publishedIndex) 
     public 
     {
         // require(currentCycle >= 0);
@@ -57,6 +57,14 @@ contract HigherFreq {
         bytes32 ownerKey = keccak256(currentCycle, msg.sender);
         bytes32 postKey = keccak256(currentCycle, publishedIndex);
         votes.addVote(ownerKey, postKey);
+    }
+
+    function backPosts(uint32[] _postIndexes)
+    public 
+    {
+        for (uint i = 0; i < _postIndexes.length; i++) {
+            backPost(_postIndexes[i]);
+        }
     }
 
     function range() 
