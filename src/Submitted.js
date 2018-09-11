@@ -37,63 +37,6 @@ const LinkToUser = styled(Link)`
     padding-right: 15px;
 `
 
-const VoteCount = styled.div`
-    background-color: var(--main-color);
-    color: white;
-    height: 125px;
-    line-height: 125px;
-    min-width:40px;
-    box-sizing: border-box;
-    text-align: center;
-    border-radius: var(--border-radius) 0 0 var(--border-radius);
-    transition: all 300ms ease-in-out;
-`
-
-const ItemVotingBar = styled.div`
-    position: absolute;
-    height: 4px;
-    background-color: var(--main-color);
-    top: -4px;
-    transition: all 300ms ease-in-out !important;
-`
-
-const SubmittedWordInnerContainer = styled.div`
-    color: black;
-    flex-grow: 1;
-    height: 100%;
-    box-sizing: border-box;
-    cursor:pointer;
-    transition: background 300ms ease-out;
-    border-top: 4px solid lightgray;
-    position: relative;
-    border-bottom-right-radius: var(--border-radius);
-`
-
-const SubmittedWordOuterContainer = styled.div`
-    background-color: var(--white);
-    display: flex;
-    cursor: pointer;
-    border-radius: var(--border-radius);
-    margin:10px 5px;
-    height: 125px;
-    overflow: hidden;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-
-    :hover div,
-    :hover div div {
-        background-color: var(--main-color);
-        color: white;
-        transition:none;
-    }
-`
-
-const StyledSubmittedWord = styled.div`
-    text-overflow: ellipsis;
-    padding-left: 15px;
-    padding-top: 7px;
-    height: 82px;
-`
-
 const VoteText = styled.div`
     text-align: center;
     color: gray;
@@ -118,33 +61,6 @@ class Button2 extends Component {
         )
     }
 }
-
-
-class SubmittedWord extends Component {
-
-    mapVotesToPercent() {
-        return this.props.totalVotes === 0 ? 0 : (this.props.backing + this.props.pendingVotes) / this.props.totalVotes * 100;
-    }
-
-    render() {
-        const pendingClass = this.props.pendingVotes !== 0 || this.props.backedAlready ? 'pending' : ''
-        const votesPercent = this.mapVotesToPercent()
-
-        return (
-            <SubmittedWordOuterContainer className={`${pendingClass}`} onClick={() => this.props.onClick(this.props.index)}>
-                <VoteCount>
-                    {this.props.backing + this.props.pendingVotes}
-                </VoteCount>
-                <SubmittedWordInnerContainer>
-                    <StyledSubmittedWord>{this.props.word}</StyledSubmittedWord>
-                    <ItemVotingBar style={{width: `${votesPercent}%`}}> </ItemVotingBar>
-                    <LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
-                </SubmittedWordInnerContainer>
-            </SubmittedWordOuterContainer>
-        )
-    }
-}
-
 
 class _SubmittedWords extends Component {
     state = {
@@ -189,15 +105,12 @@ class _SubmittedWords extends Component {
         const votesSpentPercent = 100 - votesRemainingPercent;
 
         const submittedWords = this.props.submittedWords.map(obj =>
-            <SubmittedWord 
+            <NewSubmittedWord 
                 key={obj.index} 
                 index={obj.index} 
                 word={obj.word} 
                 poster={obj.poster}
                 backing={obj.backing} 
-                totalVotes={this.props.totalVotes}
-                backedAlready={this.state.pastVotes[obj.index] !== undefined} 
-                pendingVotes={this.props.pendingVotes[obj.index] !== undefined ? this.props.pendingVotes[obj.index] : 0}
                 onClick={this.props.onClick} />
         );
 
@@ -237,6 +150,48 @@ class _SubmittedWords extends Component {
         )
     }
 }
+
+class NewSubmittedWord extends Component {
+    render() {
+        return (
+            <ContentCard>
+                <ContentHeader>
+                    <div><LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser></div>
+                    <div>10m</div>
+                </ContentHeader>
+                <ContentBody>
+                    {this.props.word}
+                </ContentBody>
+                <ContentFooter>
+                    <div onClick={() => this.props.onClick(this.props.index)}>+ Vote</div>
+                    <div>{this.props.backing}</div>
+                </ContentFooter>
+            </ContentCard>
+        )
+    }
+}
+
+const ContentCard = styled.div`
+    background-color:white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    margin: 20px;
+`
+
+const ContentHeader = styled.div`
+    display:flex;
+    justify-content: space-between;
+    padding: 20px 20px 10px;
+`
+const ContentBody = styled.div`
+    padding: 20px 20px;
+`
+const ContentFooter = styled.div`
+    display:flex;
+    justify-content: space-between;
+    border-top: 1px solid gray;
+    padding: 10px 20px;
+`
 
 const mapStateToProps = state => ({
     submittedWords: state.freq1.submissions,
