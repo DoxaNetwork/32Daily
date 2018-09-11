@@ -1,4 +1,5 @@
 import './DoxaHub.sol';
+import './DoxaToken2.sol';
 import './Votes.sol';
 import './PublishedHistory.sol';
 import './ContentPool.sol';
@@ -10,6 +11,8 @@ contract HigherFreq {
     Votes votes;
     PublishedHistory promotedContent;
     ContentPool contentPool;
+    DoxaToken2 doxaToken; 
+
     // Votes freq2Votes;
     // PublishedHistory higherFreqPublishedHistory;
 
@@ -25,13 +28,15 @@ contract HigherFreq {
         address _lowerFreq, 
         address _votes, 
         address _promoted,
-        address _contentPool)
+        address _contentPool,
+        address _doxaToken)
     public
     {
         lowerFreq = DoxaHub(_lowerFreq);
         votes = Votes(_votes);
         promotedContent = PublishedHistory(_promoted);
         contentPool = ContentPool(_contentPool);
+        doxaToken = DoxaToken2(_doxaToken);
 
         lowerPublishedIndex = 0;
         upperPublishedIndex = 0;
@@ -107,15 +112,27 @@ contract HigherFreq {
         }
 
         if(somethingSelected) {
+            // don't like how we call two different methods here
             var (version, index, publishedTime) = lowerFreq.getPublishedCoords(indexToPublish);
+            var (poster, content) = contentPool.getPastItem(version, index);
             promotedContent.publish(version, index);
-            // timeStamps.stamp(currentVersion); // move timestampes into publishedHistory
-            // var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
-            // Published(currentVersion, poster, content);
+            doxaToken.mint(poster, 1);
         }
 
         cycle();
 
+    }
+
+    function availableToTransfer(address _owner, address _receiver)
+    view public 
+    returns (uint256) {
+        // token cannot be transferred yet
+        // later, we will add the ability to sell token back to the contract
+        // later, we will add the ability to transfer token to staked accounts
+        return 0;
+        // bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
+        // // can't transfer token if they are alreaddy voted in this cycle
+        // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
     }
 
     function publishedIndex()
