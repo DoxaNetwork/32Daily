@@ -257,7 +257,7 @@ class SubmittedAndPublishedWords2 extends Component {
 const SubmittedContainer = styled.div`
     padding: 40px 30px;
     width:42%;
-    background-color:#f8f8f8;
+    background-color:#fafafa;
 `
 const SubmittedHeader = styled.div`
     border-bottom: 1px solid black;
