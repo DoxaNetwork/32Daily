@@ -32,13 +32,7 @@ class DoxaOne extends Component {
     render() {
         return (
             <BrowserRouter>
-                <div>
-                    <nav className="navbar">
-                        <NavLink activeClassName="active" className="doxa1link" to="/freq1/">Freq1 </NavLink>
-                        <NavLink activeClassName="active" className="doxa1000link" to="/freq2/">Freq2 </NavLink>
-                    </nav>
-                    <Route path="/" component={Doxa1}/>
-                </div>
+                <Route path="/" component={Doxa1}/>
             </BrowserRouter>
         )
     }
@@ -106,6 +100,17 @@ class ThirtytwoDaily extends Component {
             <div style={this.props.style}>
                 {publishButton}
                 <Header title={this.props.title} period={this.props.period} showTimerText={true}/>
+                <FreqSelector>
+                    <NavLink activeClassName="active" className="doxa1link" to="/freq1/">
+                        <div>10 minutes</div>
+                    </NavLink>
+                    <NavLink activeClassName="active" className="doxa1000link" to="/freq2/">
+                        <div>100 minutes</div>
+                    </NavLink>
+                    <div>1,000 minutes</div>
+                    <div>10,000 minutes</div>
+                    <div>100,000 minutes</div>
+                </FreqSelector>
                 <Route
                     path={this.props.match.url + 'freq1'}
                     render={(props) => <SubmittedAndPublishedWords/>}
@@ -125,6 +130,30 @@ class ThirtytwoDaily extends Component {
         )
     }
 }
+
+const FreqSelector = styled.div`
+    display: flex;
+    justify-content: center;
+    padding: 20px 50px;
+    background-color: white;
+
+    div {
+        border: 1px solid black;
+        border-left: none;
+        width: 150px;
+        text-align:center;
+        padding: 10px 0;
+    }
+    div:first-child {
+        border-left: 1px solid black;
+    }
+
+    div:hover {
+        background-color:black;
+        color: white;
+    }
+`
+
 const PublishButton = styled.div`
     background-color: var(--white);
     border-bottom: 2px solid var(--lightgray);

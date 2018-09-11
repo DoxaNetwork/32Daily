@@ -21,24 +21,6 @@ body {
     font-family: 'Quicksand', sans-serif;
 }
 
-.navbar {
-    background-color: white;
-    display: flex;
-    height: 40px;
-}
-
-.navbar a {
-    text-decoration: none;
-    flex-grow: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.3em;
-    font-family: 'Fredericka the Great', serif;
-    border-bottom: 2px solid;
-    color: lightgray;
-}
-
 .doxa1link:hover, .doxa1link.active {
     color:red;
 }
