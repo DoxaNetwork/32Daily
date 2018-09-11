@@ -45,13 +45,11 @@ class _PublishedWords extends Component {
 
         return (
             <div>
-                <div className="sectionTitle">Current mood</div>
-                <div className="sectionTitle">Past moods</div>
-                    {publishedWords}
                 <CSSTransitionGroup
                     transitionName="opacity"
                     transitionEnterTimeout={5000}
                     transitionLeaveTimeout={300}>
+                    {publishedWords}
                 </CSSTransitionGroup>
                 {showAllHistoryLink}
             </div>            

@@ -17,42 +17,10 @@ import { Button } from './styledComponents'
 import { ContentCard } from './ContentCard.js'
 import styled from 'styled-components';
 
-const VoteBarsContainer = styled.div`
-    border-radius: var(--border-radius);
-    display: flex;
-    overflow: hidden;
-    height: 5px;
-`
-const SpentVotesBar = styled.div`
-    background-color: var(--lightgray);
-    transition: width 300ms ease-out;
-`
-const RemainingVotesBar = styled.div`
-    background: linear-gradient(90deg,var(--main-color), var(--secondary-color));
-    transition: width 300ms ease-out;
-`
-
 const LinkToUser = styled(Link)`
     color: var(--gray);
     float: right;
     padding-right: 15px;
-`
-
-const VoteText = styled.div`
-    text-align: center;
-    color: gray;
-    margin-bottom: 10px;
-`
-
-const WordFactory = styled.div`
-    border-right: 2px solid var(--lightgray);
-`
-const WordFactoryTitle = styled.div`
-    width: 75%;
-    margin:auto;
-`
-const SubmittedWordsContainer = styled.div`
-    padding-top: 30px;
 `
 
 class Button2 extends Component {
@@ -124,30 +92,14 @@ class _SubmittedWords extends Component {
 
 
         return (
-            <WordFactory>
-                <div className="sectionTitle">
-                    {"Choose tomorrow's headline"}
-                    <div className="sectionSubTitle">for {dayOfWeek(tomorrow)} {month(tomorrow)} {tomorrow.getUTCDate()}</div>
-                </div>
-                <SubmittedWordsContainer>
-                    <WordFactoryTitle>
-                        <VoteText>{availableVotes} of your {this.props.tokenBalance} votes remaining</VoteText>
-                        <VoteBarsContainer>
-                            <RemainingVotesBar style={{width:`${votesRemainingPercent}%`}}/>
-                            <SpentVotesBar style={{width:`${votesSpentPercent}%`}}/>
-                        </VoteBarsContainer>
-                    </WordFactoryTitle>
-                    <div className="saveSpaceHolder">
-                        {saveButton}
-                    </div>
-                    <CSSTransitionGroup
-                        transitionName="opacity"
-                        transitionEnterTimeout={5000}
-                        transitionLeaveTimeout={300}>
-                        {submittedWords}
-                    </CSSTransitionGroup>
-                </SubmittedWordsContainer>
-            </WordFactory>
+            <div>
+                <CSSTransitionGroup
+                    transitionName="opacity"
+                    transitionEnterTimeout={5000}
+                    transitionLeaveTimeout={300}>
+                    {submittedWords}
+                </CSSTransitionGroup>
+            </div>
         )
     }
 }

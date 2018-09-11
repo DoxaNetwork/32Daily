@@ -136,6 +136,7 @@ const FreqSelector = styled.div`
     justify-content: center;
     padding: 20px 50px;
     background-color: white;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
 
     div {
         border: 1px solid black;
@@ -233,19 +234,43 @@ class SubmittedAndPublishedWords2 extends Component {
 
     render() {
         return (
-            <div>
-                <div className="appContainer">
-                    <div className="rightSide">
-                        <SubmittedWords2/>
-                    </div>
-                    <div className="rightSide">
-                        <PublishedWords2/>
-                        <NewContentForm2/>
-                    </div>
-                </div>
+            <div className="appContainer">
+                <SubmittedContainer>
+                    <SubmittedHeader>
+                        Submitted
+                    </SubmittedHeader>
+                    <SubmittedWords2/>
+                </SubmittedContainer>
+
+                <PublishedContainer>
+                    <PublishedHeader>
+                        Published
+                    </PublishedHeader>
+                    <PublishedWords2/>
+                    <NewContentForm2/>
+                </PublishedContainer>
             </div>
         )
     }
 }
+
+const SubmittedContainer = styled.div`
+    padding: 40px 30px;
+    width:42%;
+    background-color:#f8f8f8;
+`
+const SubmittedHeader = styled.div`
+    border-bottom: 1px solid black;
+    font-size: 2em;
+`
+const PublishedContainer = styled.div`
+    background-color: white;
+    padding: 40px 30px;
+    width:58%;
+`
+const PublishedHeader = styled.div`
+    border-bottom: 1px solid black;
+    font-size: 2em;
+`
 
 export default DoxaOne

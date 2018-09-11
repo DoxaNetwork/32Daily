@@ -9,9 +9,9 @@
     --border-radius: 8px;
 }
 
-html {
+/*html {
     background-color: var(--darkwhite);
-}
+}*/
 
 body {
     margin: 0;
@@ -43,9 +43,11 @@ body {
 .appContainer {
     display: flex;
     justify-content: center;
-    padding-top: 55px;
-    max-width: 1000px;
+    /*max-width: 1000px;*/
     margin: auto;
+    min-height:100vh;
+    position: relative;
+    z-index:-1;
 }
 
 .sectionTitle {
