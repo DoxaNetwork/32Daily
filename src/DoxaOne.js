@@ -137,6 +137,7 @@ const FreqSelector = styled.div`
     padding: 20px 50px;
     background-color: white;
     box-shadow: 0 0 10px rgba(0,0,0,.14);
+    position: relative;
 
     div {
         border: 1px solid black;
