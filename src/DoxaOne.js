@@ -201,16 +201,21 @@ class SubmittedAndPublishedWords extends Component {
 
     render() {
         return (
-            <div>
-                <div className="appContainer">
-                    <div className="rightSide">
-                        <SubmittedWords/>
-                    </div>
-                    <div className="rightSide">
-                        <PublishedWords/>
-                        <NewContentForm/>
-                    </div>
-                </div>
+            <div className="appContainer">
+                <SubmittedContainer>
+                    <SubmittedHeader>
+                        Submitted
+                    </SubmittedHeader>
+                    <SubmittedWords/>
+                </SubmittedContainer>
+
+                <PublishedContainer>
+                    <PublishedHeader>
+                        Published
+                    </PublishedHeader>
+                    <PublishedWords/>
+                    <NewContentForm/>
+                </PublishedContainer>
             </div>
         )
     }
