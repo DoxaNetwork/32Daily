@@ -32,7 +32,7 @@ class DoxaOne extends Component {
     render() {
         return (
             <BrowserRouter>
-                <Route path="/" component={Doxa1}/>
+                <Route path="/" component={Doxa1000}/>
             </BrowserRouter>
         )
     }
@@ -251,7 +251,7 @@ class Timer extends Component {
 
         return (
             <TimerContainer>
-                <h3>Next item published in</h3>
+                <h4>Next item published in</h4>
                 <h1>{minutes} : {('00' + seconds).slice(-2)}</h1>
             </TimerContainer>
             )
@@ -259,6 +259,10 @@ class Timer extends Component {
 }
 const TimerContainer = styled.div`
     text-align:center;
+
+    h4,h1 {
+        margin:0;
+    }
 `
 
 class SubmittedAndPublishedWords2 extends Component {
@@ -284,7 +288,12 @@ class SubmittedAndPublishedWords2 extends Component {
                     <SubmittedHeader>
                         Submitted
                     </SubmittedHeader>
-                    <Timer/>
+                    <TimerAndSubmit>
+                        <Timer/>
+                        <Submit>
+                            <Button>Create Post</Button>
+                        </Submit>
+                    </TimerAndSubmit>
                     <SubmittedWords2/>
                 </SubmittedContainer>
 
@@ -299,6 +308,18 @@ class SubmittedAndPublishedWords2 extends Component {
         )
     }
 }
+
+const TimerAndSubmit = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    padding: 20px 20px;
+`
+const Submit = styled.div`
+    button {
+        border-radius:5px;
+    }
+`
 
 const SubmittedContainer = styled.div`
     padding: 40px 30px;
