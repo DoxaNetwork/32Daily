@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Link, NavLink, Route } from 'react-router-dom'
+import { BrowserRouter, Link, NavLink, Route, withRouter } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
+import { connect } from 'react-redux'
+
 
 import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
@@ -12,10 +14,10 @@ import { Header } from './Header'
 import { User } from './User'
 import { PublishedWords, PublishedWords2 } from './Published'
 import { SubmittedWords, SubmittedWords2 } from './Submitted'
-import { NewContentForm, NewContentForm2 } from './NextWord'
+// import { NewContentForm, NewContentForm2 } from './NextWord'
 
 import './ThirtytwoDaily.css'
-import { Button } from './styledComponents'
+import { Button, Input } from './styledComponents'
 import styled from 'styled-components';
 
 const doxaHubContract = contract(DoxaHubContract)
@@ -98,7 +100,7 @@ class ThirtytwoDaily extends Component {
 
         return (
             <div style={this.props.style}>
-                {/* {publishButton} */}
+                {publishButton}
                 <Header title={this.props.title} period={this.props.period} showTimerText={true}/>
                 <FreqSelector>
                     <NavLink activeClassName="active" className="doxa1link" to="/freq1/">
@@ -112,6 +114,7 @@ class ThirtytwoDaily extends Component {
                     <div>100,000 minutes</div>
                 </FreqSelector>
                 <Route
+                    exact
                     path={this.props.match.url + 'freq1'}
                     render={(props) => <SubmittedAndPublishedWords/>}
                 />
@@ -123,7 +126,10 @@ class ThirtytwoDaily extends Component {
                     path={this.props.match.url + 'freq2'}
                     render={(props) => <SubmittedAndPublishedWords2/>}
                 />
-
+                <Route
+                    path={this.props.match.url + 'freq1/create'}
+                    render={(props => <NewContentForm/>)}
+                />
                 <div className="footer">
                 </div>
             </div>
@@ -188,6 +194,8 @@ const ShowSubmissionsLink = styled.div`
         background-color: var(--main-color);
     }
 `
+
+import {ContentContainer, ContentHeader, ContentBody, ContentFooter } from './ContentCard.js'
 // need to redux this one
 class SubmittedAndPublishedWords extends Component {
 
@@ -215,7 +223,9 @@ class SubmittedAndPublishedWords extends Component {
                     <TimerAndSubmit>
                         <Timer/>
                         <Submit>
+                            <NavLink to="/freq1/create">
                             <Button>Create Post</Button>
+                            </NavLink>
                         </Submit>
                     </TimerAndSubmit>
                     <SubmittedWords/>
@@ -226,12 +236,131 @@ class SubmittedAndPublishedWords extends Component {
                         Published
                     </PublishedHeader>
                     <PublishedWords/>
-                    {/* <NewContentForm/> */}
                 </PublishedContainer>
             </div>
         )
     }
 }
+
+
+
+
+class Create extends Component {
+    maxCharacters = 160;
+    state = {
+        content: '',
+        charactersRemaining: this.maxCharacters
+    }
+
+    handleContentChange(event) {
+        const charactersRemaining = this.maxCharacters - event.target.value.length;
+        this.setState({content: event.target.value, charactersRemaining})
+    }
+
+    submit(event) {
+        this.props.onSubmit(this.state.content);
+        // this.setState({content: '', charactersRemaining: this.maxCharacters})
+        event.preventDefault();
+        setTimeout(() => this.props.history.push('/freq1'),1000);
+    }
+
+    render() {
+        const tooManyCharacters = this.state.charactersRemaining < 0 ? 'red' : '';
+        const unsavedState = this.state.charactersRemaining < this.maxCharacters ? 'unsaved' : '';
+
+        return (
+            <CreateContainer>
+                <Back>
+                    <NavLink to="/freq1">{"< Back"}</NavLink>
+                </Back>
+                <CreateHeader>
+                    Create
+                </CreateHeader>
+                <FormContainer>
+                    
+                    <CountedTextForm>
+                        <textarea 
+                            autoComplete="off" 
+                            autoFocus
+                            required 
+                            pattern=".{1,160}" 
+                            title="No longer than 160 characters" 
+                            placeholder="What do you want to tell the world?" 
+                            name="content" 
+                            value={this.state.content} 
+                            onChange={this.handleContentChange.bind(this)}/>
+                        <TextInputCount className={`${tooManyCharacters}`}>{this.state.charactersRemaining}</TextInputCount>
+                    </CountedTextForm>
+                    <CreateFooter>
+                        <Button onClick={this.submit.bind(this)}>
+                            Submit
+                        </Button>
+                    </CreateFooter>
+                </FormContainer>  
+            </CreateContainer>
+        )
+    }
+}
+import { submitContent } from './actions'
+const mapDispatchToProps = dispatch => ({
+    onSubmit: text => dispatch(submitContent(text, 'freq1'))
+})
+
+export const NewContentForm = withRouter(connect(
+    null,
+    mapDispatchToProps
+)(Create))
+
+const Back = styled.div`
+    margin-bottom:20px;
+    font-size:1.2em;
+    a {
+        color: var(--main-color);
+        text-decoration: none;
+    }
+
+    
+`
+const CreateContainer = styled.div`
+    background-color:#fafafa;
+    padding: 20px 25%;
+    min-height:100vh;
+`
+const CreateHeader = styled.div`
+    border-bottom: 1px solid black;
+    font-size: 2em;
+`
+const FormContainer = styled.div`
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    margin-top: 40px;
+`
+const TextInputCount = styled.span`
+    color: var(--gray);
+    padding: 0 20px;
+`
+const CountedTextForm = styled.form`
+    padding: 40px 40px 20px;
+    textarea {
+        padding:20px;
+        font-size:1.2em;
+        resize:none;
+        border:none;
+        width:calc(100% - 45px);
+        height:100px;
+        max-width:500px;
+    }
+`
+const CreateFooter = styled.div`
+    text-align: center;
+    padding: 20px;
+    border-top: 1px solid gray;
+
+    button {
+        border-radius: 5px;
+    }
+`
 class Timer extends Component {
     state = {
         time: new Date(),
@@ -300,9 +429,6 @@ class SubmittedAndPublishedWords2 extends Component {
                     </SubmittedHeader>
                     <TimerAndSubmit>
                         <Timer/>
-                        <Submit>
-                            <Button>Create Post</Button>
-                        </Submit>
                     </TimerAndSubmit>
                     <SubmittedWords2/>
                 </SubmittedContainer>
@@ -312,7 +438,6 @@ class SubmittedAndPublishedWords2 extends Component {
                         Published
                     </PublishedHeader>
                     <PublishedWords2/>
-                    {/* <NewContentForm2/> */}
                 </PublishedContainer>
             </div>
         )
@@ -322,7 +447,7 @@ class SubmittedAndPublishedWords2 extends Component {
 const TimerAndSubmit = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: space-evenly;
     padding: 20px 20px;
 `
 const Submit = styled.div`

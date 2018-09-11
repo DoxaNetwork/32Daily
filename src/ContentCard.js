@@ -3,27 +3,27 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom'
 
 
-const ContentContainer = styled.div`
+export const ContentContainer = styled.div`
     background-color:white;
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,.14);
     margin: 20px;
 `
-const ContentHeader = styled.div`
+export const ContentHeader = styled.div`
     display:flex;
     justify-content: space-between;
     padding: 20px 20px 10px;
 `
-const ContentBody = styled.div`
+export const ContentBody = styled.div`
     padding: 20px 20px;
 `
-const ContentFooter = styled.div`
+export const ContentFooter = styled.div`
     display:flex;
     justify-content: space-between;
     border-top: 1px solid gray;
     padding: 10px 20px;
 `
-const LinkToUser = styled(Link)`
+export const LinkToUser = styled(Link)`
     color: var(--gray);
     float: right;
     padding-right: 15px;
