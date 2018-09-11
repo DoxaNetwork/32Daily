@@ -32,16 +32,6 @@ const TimeBar = styled.div`
     transition: width 1200ms ease-out;
 `
 
-const TimerText = styled.div`
-    color: var(--main-color);
-    text-align: right;
-    padding: 3px 15px;
-    position: absolute;
-    box-sizing: border-box;
-    width: 100%;
-    margin-top: -30px;
-`
-
 export class Header extends Component {
     state = {
         time: new Date()
@@ -60,25 +50,13 @@ export class Header extends Component {
         const minutesRemaining = 59 - this.state.time.getUTCMinutes();
         const timeConsumedPercent = (this.state.time.getUTCHours() * 60 + this.state.time.getUTCMinutes()) / (24 * 60) * 100;
 
-        const timerText = this.props.showTimerText ? (
-            <TimerText>{hoursRemaining} hours and {minutesRemaining} minutes remaining</TimerText> 
-        ) : '';
-
         return (
             <div>
                 <StyledHeader>
                     <Title>{this.props.title}</Title>
                     <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle>
                 </StyledHeader>
-                <CSSTransitionGroup
-                    transitionName="timeBar"
-                    transitionAppear={true}
-                    transitionAppearTimeout={400}
-                    transitionEnter={false}
-                    transitionLeave={false}>
-                    <TimeBar style={{width: `${timeConsumedPercent}%`}}></TimeBar>
-                </CSSTransitionGroup>
-                {timerText}
+                <TimeBar style={{width: `${0}%`}}></TimeBar>
             </div>
         )
     }

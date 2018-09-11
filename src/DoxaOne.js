@@ -207,6 +207,7 @@ class SubmittedAndPublishedWords extends Component {
                     <SubmittedHeader>
                         Submitted
                     </SubmittedHeader>
+                    <Timer/>
                     <SubmittedWords/>
                 </SubmittedContainer>
 
@@ -221,6 +222,44 @@ class SubmittedAndPublishedWords extends Component {
         )
     }
 }
+class Timer extends Component {
+    state = {
+        time: new Date(),
+        endingTime: new Date()
+    }
+
+    componentDidMount() {
+        const endingTime = new Date()
+        endingTime.setMinutes(endingTime.getMinutes() + 5);
+        this.setState({endingTime})
+        this.interval = setInterval(() => this.setState({ time: new Date() }), 1000);
+    }
+
+    componentWillUnmount() {
+      clearInterval(this.interval);
+    }
+
+    render() {
+        let msec = this.state.endingTime.getTime() - this.state.time.getTime();
+        const hours = Math.floor(msec / 1000 / 60 / 60);
+        msec -= hours * 1000 * 60 * 60;
+        const minutes = Math.floor(msec / 1000 / 60);
+        msec -= minutes * 1000 * 60;
+        const seconds = Math.floor(msec / 1000);
+        msec -= seconds * 1000;
+
+
+        return (
+            <TimerContainer>
+                <h3>Next item published in</h3>
+                <h1>{minutes} : {('00' + seconds).slice(-2)}</h1>
+            </TimerContainer>
+            )
+    }
+}
+const TimerContainer = styled.div`
+    text-align:center;
+`
 
 class SubmittedAndPublishedWords2 extends Component {
 
@@ -245,6 +284,7 @@ class SubmittedAndPublishedWords2 extends Component {
                     <SubmittedHeader>
                         Submitted
                     </SubmittedHeader>
+                    <Timer/>
                     <SubmittedWords2/>
                 </SubmittedContainer>
 
