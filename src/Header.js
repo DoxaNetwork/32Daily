@@ -4,7 +4,7 @@ import { CSSTransitionGroup } from 'react-transition-group'
 import styled from 'styled-components';
 
 const Title = styled.div`
-    font-family: 'Fredericka the Great', serif;
+    font-family: 'Comfortaa', serif;
 `
 
 const SubTitle = styled.div`
@@ -13,23 +13,16 @@ const SubTitle = styled.div`
 `
 
 const StyledHeader = styled.div`
-    color: var(--main-color);
+    color: var(--white);
     font-size:56pt;
-    padding-bottom: 30px;
-    padding-top:30px;
-    background-color: var(--white);
-    border-bottom: 4px solid var(--main-color);
+    padding: 120px 0;
+    /*background: linear-gradient(to bottom right, #000033 , #880033);*/
+    background: linear-gradient(to bottom right, #000033 , var(--main-color));
+    /*background: linear-gradient(to bottom right, var(--main-color) , #880033);*/
+    /*background-color: var(--main-color);*/
+    /*border-bottom: 4px solid var(--main-color);*/
     margin:auto;
     text-align: center;
-`
-
-const TimeBar = styled.div`
-    margin-top: -5px;
-    height: 2px;
-    border-bottom: 3px solid var(--darkwhite);
-    background-color: lightgray;
-    border-top: 2px solid white;
-    transition: width 1200ms ease-out;
 `
 
 export class Header extends Component {
@@ -56,7 +49,6 @@ export class Header extends Component {
                     <Title>{this.props.title}</Title>
                     <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle>
                 </StyledHeader>
-                <TimeBar style={{width: `${0}%`}}></TimeBar>
             </div>
         )
     }

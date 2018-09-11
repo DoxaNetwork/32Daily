@@ -42,7 +42,7 @@ class Doxa1000 extends Component {
 
     render() {
         return (
-            <ThirtytwoDaily match={this.props.match} style={{"--main-color": "#16d"}} title="Doxa1000" period="1000 hours"></ThirtytwoDaily>
+            <ThirtytwoDaily match={this.props.match} style={{"--main-color": "#16d"}} title="Tempos" period="1000 hours"></ThirtytwoDaily>
         )
     }
 }
@@ -98,7 +98,7 @@ class ThirtytwoDaily extends Component {
 
         return (
             <div style={this.props.style}>
-                {publishButton}
+                {/* {publishButton} */}
                 <Header title={this.props.title} period={this.props.period} showTimerText={true}/>
                 <FreqSelector>
                     <NavLink activeClassName="active" className="doxa1link" to="/freq1/">
@@ -140,19 +140,24 @@ const FreqSelector = styled.div`
     position: relative;
 
     div {
-        border: 1px solid black;
+        border: 1px solid var(--main-color);
         border-left: none;
         width: 150px;
         text-align:center;
         padding: 10px 0;
+        /*color: var(--main-color)*/
     }
     div:first-child {
-        border-left: 1px solid black;
+        border-left: 1px solid var(--main-color);
     }
 
     div:hover {
-        background-color:black;
+        background-color:var(--main-color);
         color: white;
+    }
+    a {
+        text-decoration: none;
+        color:var(--main-color);
     }
 `
 
@@ -207,7 +212,12 @@ class SubmittedAndPublishedWords extends Component {
                     <SubmittedHeader>
                         Submitted
                     </SubmittedHeader>
-                    <Timer/>
+                    <TimerAndSubmit>
+                        <Timer/>
+                        <Submit>
+                            <Button>Create Post</Button>
+                        </Submit>
+                    </TimerAndSubmit>
                     <SubmittedWords/>
                 </SubmittedContainer>
 
@@ -216,7 +226,7 @@ class SubmittedAndPublishedWords extends Component {
                         Published
                     </PublishedHeader>
                     <PublishedWords/>
-                    <NewContentForm/>
+                    {/* <NewContentForm/> */}
                 </PublishedContainer>
             </div>
         )
@@ -302,7 +312,7 @@ class SubmittedAndPublishedWords2 extends Component {
                         Published
                     </PublishedHeader>
                     <PublishedWords2/>
-                    <NewContentForm2/>
+                    {/* <NewContentForm2/> */}
                 </PublishedContainer>
             </div>
         )
@@ -312,7 +322,7 @@ class SubmittedAndPublishedWords2 extends Component {
 const TimerAndSubmit = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     padding: 20px 20px;
 `
 const Submit = styled.div`
