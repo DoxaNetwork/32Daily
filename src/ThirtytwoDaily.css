@@ -172,10 +172,6 @@ button.save {
         width: 100%
     }
 
-    .hidden {
-        display: none;
-    }
-
     .showSubmissions {
         width: 200px;
     }

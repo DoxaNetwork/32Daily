@@ -84,7 +84,6 @@ class Doxa1 extends Component {
 
 class ThirtytwoDaily extends Component {
     state = {
-        showSubmissions: false,
         owner: false,
     }
 
@@ -94,10 +93,6 @@ class ThirtytwoDaily extends Component {
         currentAccount = await getCurrentAccount()
         await doxaHub.publish({from: currentAccount});
         await higherFreq.cycle({from: currentAccount})
-    }
-
-    toggleSubmissionView() {
-        this.setState({showSubmissions: !this.state.showSubmissions})
     }
 
     render() {
@@ -110,10 +105,10 @@ class ThirtytwoDaily extends Component {
         return (
             <div style={this.props.style}>
                 {publishButton}
-                <Header title={this.props.title} period={this.props.period} showTimerText={this.state.showSubmissions}/>
+                <Header title={this.props.title} period={this.props.period} showTimerText={true}/>
                 <Route
                     path={this.props.match.url + 'freq1'}
-                    render={(props) => <SubmittedAndPublishedWords showSubmissions={this.state.showSubmissions} toggleSubmissionView={this.toggleSubmissionView.bind(this)} />}
+                    render={(props) => <SubmittedAndPublishedWords/>}
                 />
                 <Route
                     path={this.props.match.url + 'user/:id'}
@@ -121,7 +116,7 @@ class ThirtytwoDaily extends Component {
                 />
                 <Route
                     path={this.props.match.url + 'freq2'}
-                    render={(props) => <SubmittedAndPublishedWords2 showSubmissions={this.state.showSubmissions} toggleSubmissionView={this.toggleSubmissionView.bind(this)} />}
+                    render={(props) => <SubmittedAndPublishedWords2/>}
                 />
 
                 <div className="footer">
@@ -175,25 +170,17 @@ class SubmittedAndPublishedWords extends Component {
     }
 
     render() {
-        const submissionLink = this.props.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
-        const hidden = this.props.showSubmissions ? 'hidden' : '';
-
-        const submittedWords = this.props.showSubmissions ? (
-            <div className="rightSide">
-                <SubmittedWords/>
-            </div>
-        ) : ('');
-
         return (
             <div>
                 <div className="appContainer">
-                    {submittedWords}
-                    <div className={`rightSide ${hidden}`}>
+                    <div className="rightSide">
+                        <SubmittedWords/>
+                    </div>
+                    <div className="rightSide">
                         <PublishedWords/>
                         <NewContentForm/>
                     </div>
                 </div>
-                <ShowSubmissionsLink onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</ShowSubmissionsLink>
             </div>
         )
     }
@@ -216,25 +203,17 @@ class SubmittedAndPublishedWords2 extends Component {
     }
 
     render() {
-        const submissionLink = this.props.showSubmissions ? 'Hide current submissions' : 'Show current submissions';
-        const hidden = this.props.showSubmissions ? 'hidden' : '';
-
-        const submittedWords = this.props.showSubmissions ? (
-            <div className="rightSide">
-                <SubmittedWords2/>
-            </div>
-        ) : ('');
-
         return (
             <div>
                 <div className="appContainer">
-                    {submittedWords}
-                    <div className={`rightSide ${hidden}`}>
+                    <div className="rightSide">
+                        <SubmittedWords2/>
+                    </div>
+                    <div className="rightSide">
                         <PublishedWords2/>
                         <NewContentForm2/>
                     </div>
                 </div>
-                <ShowSubmissionsLink onClick={this.props.toggleSubmissionView.bind(this)}>{submissionLink}</ShowSubmissionsLink>
             </div>
         )
     }
