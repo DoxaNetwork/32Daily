@@ -14,6 +14,7 @@ import DoxaHubContract from '../build/contracts/DoxaHub.json'
 const doxaHubContract = contract(DoxaHubContract)
 
 import { Button } from './styledComponents'
+import { ContentCard } from './ContentCard.js'
 import styled from 'styled-components';
 
 const VoteBarsContainer = styled.div`
@@ -105,7 +106,7 @@ class _SubmittedWords extends Component {
         const votesSpentPercent = 100 - votesRemainingPercent;
 
         const submittedWords = this.props.submittedWords.map(obj =>
-            <NewSubmittedWord 
+            <ContentCard 
                 key={obj.index} 
                 index={obj.index} 
                 word={obj.word} 
@@ -150,48 +151,6 @@ class _SubmittedWords extends Component {
         )
     }
 }
-
-class NewSubmittedWord extends Component {
-    render() {
-        return (
-            <ContentCard>
-                <ContentHeader>
-                    <div><LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser></div>
-                    <div>10m</div>
-                </ContentHeader>
-                <ContentBody>
-                    {this.props.word}
-                </ContentBody>
-                <ContentFooter>
-                    <div onClick={() => this.props.onClick(this.props.index)}>+ Vote</div>
-                    <div>{this.props.backing}</div>
-                </ContentFooter>
-            </ContentCard>
-        )
-    }
-}
-
-const ContentCard = styled.div`
-    background-color:white;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-    margin: 20px;
-`
-
-const ContentHeader = styled.div`
-    display:flex;
-    justify-content: space-between;
-    padding: 20px 20px 10px;
-`
-const ContentBody = styled.div`
-    padding: 20px 20px;
-`
-const ContentFooter = styled.div`
-    display:flex;
-    justify-content: space-between;
-    border-top: 1px solid gray;
-    padding: 10px 20px;
-`
 
 const mapStateToProps = state => ({
     submittedWords: state.freq1.submissions,
