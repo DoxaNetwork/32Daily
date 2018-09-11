@@ -21,19 +21,3 @@ export const Button = styled.button`
         border: 1px solid var(--main-color);
     }
 `
-
-export const Input = styled.input`
-    border: none;
-    outline: none;
-    /*text-align: center;*/
-    color: black;
-    flex-grow: 1;
-    background-color: var(--white);
-    font-size: 1em;
-    width:100%;
-    height:100px;
-
-    &:invalid {
-        box-shadow: none;
-    }
-`
