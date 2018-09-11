@@ -155,6 +155,7 @@ contract DoxaHub is Ownable {
             publishedHistory.publish(currentVersion, indexToPublish);
             timeStamps.stamp(currentVersion); // move timestampes into publishedHistory
             var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
+            token.mint(poster, 1);
             Published(currentVersion, poster, content);
         }
         contentPool.clear();
