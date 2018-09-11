@@ -16,7 +16,7 @@ import { PublishedWords, PublishedWords2 } from './Published'
 import { SubmittedWords, SubmittedWords2 } from './Submitted'
 // import { NewContentForm, NewContentForm2 } from './NextWord'
 import { ContentForm } from './Create.js'
-import { Timer } from './Timer.js'
+import { Timer1, Timer2 } from './Timer.js'
 import { FreqSelector } from './FreqSelector.js'
 
 import './ThirtytwoDaily.css'
@@ -166,7 +166,7 @@ class SubmittedAndPublishedWords extends Component {
                         Submitted
                     </SubmittedHeader>
                     <TimerAndSubmit>
-                        <Timer/>
+                        <Timer1/>
                         <Submit>
                             <NavLink to="/freq1/create">
                             <Button>Create Post</Button>
@@ -211,7 +211,7 @@ class SubmittedAndPublishedWords2 extends Component {
                         Submitted
                     </SubmittedHeader>
                     <TimerAndSubmit>
-                        <Timer/>
+                        <Timer2/>
                     </TimerAndSubmit>
                     <SubmittedWords2/>
                 </SubmittedContainer>

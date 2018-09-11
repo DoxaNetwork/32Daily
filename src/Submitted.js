@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { connect } from 'react-redux'
 
-import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVotes, clearVotes, pendVote } from './actions'
+import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVotes, clearVotes, pendVote, loadPublishTime } from './actions'
 import { dayOfWeek, month } from './utils/helpers'
 
 
@@ -124,6 +124,7 @@ const mapDispatchToProps = dispatch => ({
         dispatch(loadBalance())
         dispatch(loadAvailableBalance())
         dispatch(loadAccount())
+        dispatch(loadPublishTime('freq1'))
     }
 })
 
@@ -152,6 +153,7 @@ const mapDispatchToProps2 = dispatch => ({
         dispatch(loadBalance())
         dispatch(loadAvailableBalance())
         dispatch(loadAccount())
+        dispatch(loadPublishTime('freq2'))
     }
 })
 

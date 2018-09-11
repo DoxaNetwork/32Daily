@@ -21,6 +21,11 @@ export const loadSubmissions = (freq) => ({
     freq
 })
 
+export const loadPublishTime = (freq) => ({
+    type: 'LOAD_PUBLISH_TIME',
+    freq
+})
+
 
 // ========== user info ====================
 export const loadBalance = () => ({

@@ -89,6 +89,19 @@ function* submitPost(action) {
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 }
 
+function* loadPublishTime(action) {
+    let _contract;
+    if(action.freq == 'freq1') {
+        _contract = yield getContract(doxaHubContract);
+    }
+    else if (action.freq == 'freq2') {
+        _contract = yield getContract(HigherFreqContract);
+    }
+    const nextPublishTime = yield _contract.nextPublishTime();
+
+    yield put({type: "LOAD_PUBLISH_TIME_SUCCESS", nextPublishTime, freq: action.freq})
+}
+
 function* persistVotes(action) {
     // should probably read pendingVotes from state instead of passing
     const indexes = Object.keys(action.pendingVotes);
@@ -134,4 +147,6 @@ export default function* rootSaga() {
 
     yield takeEvery('SUBMIT_CONTENT', submitPost),
     yield takeEvery('SUBMIT_VOTES', persistVotes)
+
+    yield takeEvery('LOAD_PUBLISH_TIME', loadPublishTime)
 }

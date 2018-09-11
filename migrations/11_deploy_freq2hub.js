@@ -11,7 +11,7 @@ module.exports = function(deployer) {
 
     deployer.deploy(
         HigherFreq,
-        2,
+        5,
         DoxaHub.address,
         Votes2.address,
         PublishedHistory2.address,

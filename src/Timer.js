@@ -11,16 +11,12 @@ const TimerContainer = styled.div`
     }
 `
 
-export class Timer extends Component {
+class Timer extends Component {
     state = {
         time: new Date(),
-        endingTime: new Date()
     }
 
     componentDidMount() {
-        const endingTime = new Date()
-        endingTime.setMinutes(endingTime.getMinutes() + 5);
-        this.setState({endingTime})
         this.interval = setInterval(() => this.setState({ time: new Date() }), 1000);
     }
 
@@ -29,7 +25,9 @@ export class Timer extends Component {
     }
 
     render() {
-        let msec = this.state.endingTime.getTime() - this.state.time.getTime();
+        const endingTime = new Date(this.props.nextPublishTime*1000)
+
+        let msec = endingTime.getTime() - this.state.time.getTime();
         const hours = Math.floor(msec / 1000 / 60 / 60);
         msec -= hours * 1000 * 60 * 60;
         const minutes = Math.floor(msec / 1000 / 60);
@@ -41,8 +39,22 @@ export class Timer extends Component {
         return (
             <TimerContainer>
                 <h4>Next item published in</h4>
-                <h1>{minutes} : {('00' + seconds).slice(-2)}</h1>
+                <h1>{hours} : {minutes} : {('00' + seconds).slice(-2)}</h1>
             </TimerContainer>
             )
     }
 }
+
+const mapStateToProps1 = state => ({
+    nextPublishTime: state.freq1.nextPublishTime
+})
+export const Timer1 = connect(
+    mapStateToProps1
+    )(Timer)
+
+const mapStateToProps2 = state => ({
+    nextPublishTime: state.freq2.nextPublishTime
+})
+export const Timer2 = connect(
+    mapStateToProps2
+    )(Timer)

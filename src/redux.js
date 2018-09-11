@@ -80,11 +80,21 @@ const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 
     }
 }
 
+const nextPublishTime = (state = 0, action) => {
+    switch (action.type) {
+        case 'LOAD_PUBLISH_TIME_SUCCESS':
+            return action.nextPublishTime
+        default:
+            return state
+    }
+}
+
 const freqReducer = combineReducers({
     history,
     historyLoaded,
     submissions,
-    pendingVotes
+    pendingVotes,
+    nextPublishTime
 })
 
 function createFilteredReducer(reducerFunction, reducerPredicate) {

@@ -21,7 +21,7 @@ contract HigherFreq {
     uint public currentCycle;
     uint32 lowerPublishedIndex;
     uint32 upperPublishedIndex;
-    uint nextPublishTime;
+    uint public nextPublishTime;
 
     function HigherFreq(
         uint period, 
@@ -40,7 +40,7 @@ contract HigherFreq {
 
         lowerPublishedIndex = 0;
         upperPublishedIndex = 0;
-        // nextPublishTime = now + period minutes;
+        nextPublishTime = now + period * 1 minutes;
 
         // if (lowerFreq.currentPublishedIndex() > )
         // higherFreqPublishedHistory = PublishedHistory(_publishedHistory)
