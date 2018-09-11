@@ -178,23 +178,6 @@ const PublishButton = styled.div`
     }
 `
 
-const ShowSubmissionsLink = styled.div`
-    background-color: white;
-    padding: 10px;
-    width: 25%;
-    margin: 20px auto;
-    border-radius: var(--border-radius);
-    color: var(--gray);
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
-    cursor: pointer;
-    text-align: center;
-
-    &:hover {
-        color: white;
-        background-color: var(--main-color);
-    }
-`
-
 import {ContentContainer, ContentHeader, ContentBody, ContentFooter } from './ContentCard.js'
 // need to redux this one
 class SubmittedAndPublishedWords extends Component {
