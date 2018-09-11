@@ -37,6 +37,7 @@ const TextInputCount = styled.span`
 const CountedTextForm = styled.form`
     padding: 40px 40px 20px;
     textarea {
+        outline: none;
         padding:20px;
         font-size:1.2em;
         resize:none;
