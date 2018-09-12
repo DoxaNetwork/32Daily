@@ -45,16 +45,15 @@ class Timer extends Component {
     }
 }
 
-const mapStateToProps1 = state => ({
-    nextPublishTime: state.freq1.nextPublishTime
-})
+const mapFreqtoMapStateToProps = freq => (
+    state => ({
+        nextPublishTime: state[freq].nextPublishTime
+    })
+)
 export const Timer1 = connect(
-    mapStateToProps1
-    )(Timer)
+    mapFreqtoMapStateToProps('freq1')
+)(Timer)
 
-const mapStateToProps2 = state => ({
-    nextPublishTime: state.freq2.nextPublishTime
-})
 export const Timer2 = connect(
-    mapStateToProps2
-    )(Timer)
+    mapFreqtoMapStateToProps('freq2')
+)(Timer)

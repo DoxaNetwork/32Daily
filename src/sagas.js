@@ -28,30 +28,6 @@ function mapPost(post) {
     return {'poster': post.owner, 'word': ByteArrayToString(post.link), 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
 }
 
-function* loadFullHistory(action) {
-    const publishedWords = yield getPreHistory(action.freq);
-    publishedWords.reverse();
-    yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: true})
-}
-
-function* loadInitHistory(action) {
-    const [publishedWords, allPreLoaded] = yield preLoadHistory(action.freq);
-    publishedWords.reverse();
-    yield put({type: "INIT_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: allPreLoaded})
-}
-
-function* loadSubmissions(action) {
-    let submittedWords;
-    if(action.freq == 'freq2') {
-        submittedWords = yield getAllFreq2Submissions();
-    }
-    else if (action.freq == 'freq1') {
-        submittedWords = yield getAllLinks();
-    }
-    submittedWords.sort((a,b) => {return b.backing - a.backing})
-    yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
-}
-
 function* updateTokenBalance(action) {
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
@@ -75,7 +51,7 @@ function* initAccount(action) {
 }
 
 function* submitPost(action) {
-    // need to iniit doxaHub
+    // need to init doxaHub
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
     const result = yield doxaHub.postLink(stringToChunkedArray(action.text), { from: currentAccount})
@@ -89,51 +65,69 @@ function* submitPost(action) {
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 }
 
+
+
+
+// ===========================================================================================================================================
+// ============================== Functions shared between all freqs =========================================================================
+// ===========================================================================================================================================
+
+async function _getContract(action) {
+    let contract;
+    switch (action.freq) {
+        case 'freq1':
+            contract = doxaHubContract;
+        case 'freq2':
+            contract = HigherFreqContract
+        default:
+            contract = doxaHubContract
+        return await getContract(contract)
+    }
+}
+
+function* loadSubmissions(action) {
+    let submittedWords;
+    if(action.freq == 'freq2') {
+        submittedWords = yield getAllFreq2Submissions();
+    }
+    else if (action.freq == 'freq1') {
+        submittedWords = yield getAllLinks();
+    }
+    submittedWords.sort((a,b) => {return b.backing - a.backing})
+    yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
+}
+
 function* loadPublishTime(action) {
-    let _contract;
-    if(action.freq == 'freq1') {
-        _contract = yield getContract(doxaHubContract);
-    }
-    else if (action.freq == 'freq2') {
-        _contract = yield getContract(HigherFreqContract);
-    }
-    const nextPublishTime = yield _contract.nextPublishTime();
+    const contract = yield _getContract(action)
+    const nextPublishTime = yield contract.nextPublishTime();
 
     yield put({type: "LOAD_PUBLISH_TIME_SUCCESS", nextPublishTime, freq: action.freq})
 }
 
+function* loadInitHistory(action) {
+    const contract = yield _getContract(action)
+    const [publishedWords, allPreLoaded] = yield preLoadHistory(contract);
+    publishedWords.reverse();
+    yield put({type: "INIT_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: allPreLoaded})
+}
+
+function* loadFullHistory(action) {
+    const contract = yield _getContract(action)
+    const publishedWords = yield getPreHistory(contract);
+    publishedWords.reverse();
+    yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: true})
+}
+
 function* persistVotes(action) {
-    // should probably read pendingVotes from state instead of passing
+    const contract = yield _getContract(action)
     const indexes = Object.keys(action.pendingVotes);
-
-    let _contract;
-    if(action.freq == 'freq1') {
-        _contract = yield getContract(doxaHubContract);
-    }
-    else if (action.freq == 'freq2') {
-        _contract = yield getContract(HigherFreqContract);
-    }
-
     const currentAccount = yield getCurrentAccount();
 
-    const result = yield _contract.backPosts(indexes, { from: currentAccount })
+    const result = yield contract.backPosts(indexes, { from: currentAccount })
 
-    yield put({type: "PERSIST_VOTES_SUCCESS"});
-
-    // after this, need to update how many votes each post has, and re-sort
-
-    
-        // const submittedWords = this.state.submittedWords.map(word => {
-        //     if(pendingVotes[word.index] !== undefined) {
-        //         word.backing += pendingVotes[word.index];
-        //     }
-        //     return word;
-        // } )
-
-        // submittedWords.sort((a, b) => {return b.backing - a.backing})
-
-        // this.setState({submittedWords})
+    yield put({type: "PERSIST_VOTES_SUCCESS", freq: action.freq});
 }
+
 
 export default function* rootSaga() {
     yield takeEvery('LOAD_LATEST_HISTORY', loadInitHistory)

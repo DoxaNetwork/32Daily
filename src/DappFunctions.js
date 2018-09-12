@@ -94,15 +94,7 @@ async function getAllLinks(){
 
 const numToPreLoad = 6;
 
-async function getPreHistory(freq) {
-    let _contract;
-    if(freq == 'freq1') {
-        _contract = await getContract(doxaHubContract);
-    } else if (freq == 'freq2') {
-        _contract = await getContract(HigherFreqContract);
-    }
-
-    // const doxaHub = await getContract(doxaHubContract);
+async function getPreHistory(_contract) {
     const version = await _contract.publishedIndex();
     const end = version.toNumber() - numToPreLoad;
     const start = 0;
@@ -111,14 +103,7 @@ async function getPreHistory(freq) {
     return words;
 }
 
-async function preLoadHistory(freq) {
-    let _contract;
-    if(freq == 'freq1') {
-        _contract = await getContract(doxaHubContract);
-    } else if (freq == 'freq2') {
-        _contract = await getContract(HigherFreqContract);
-    }
-    // const doxaHub = await getContract(doxaHubContract);
+async function preLoadHistory(_contract) {
     const version = await _contract.publishedIndex();
     const end = version.toNumber();
     const start = Math.max(end - numToPreLoad, 0);

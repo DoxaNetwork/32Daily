@@ -2,12 +2,10 @@ import React, { Component } from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
+import styled from 'styled-components';
 
 import { loadLatestHistory, loadAllHistory } from './actions'
-
 import { ContentCard } from './ContentCard.js'
-
-import styled from 'styled-components';
 
 
 const SecondaryActionLink = styled.div`
@@ -57,32 +55,26 @@ class _PublishedWords extends Component {
     }
 }
 
-const mapStateToProps = state => ({
-    publishedWords: state.freq1.history,
-    allPreLoaded: state.freq1.historyLoaded
-})
+const mapFreqToStateToProps = freq => (
+    state => ({
+        publishedWords: state[freq].history,
+        allPreLoaded: state[freq].historyLoaded
+    })
+)
 
-const mapDispatchToProps = dispatch => ({
-    loadLatestHistory: () => dispatch(loadLatestHistory('freq1')),
-    loadAllHistory: () => dispatch(loadAllHistory('freq1'))
-})
+const mapFreqToDispatchToProps = freq => (
+    dispatch => ({
+        loadLatestHistory: () => dispatch(loadLatestHistory(freq)),
+        loadAllHistory: () => dispatch(loadAllHistory(freq))
+    })
+)
 
-export const PublishedWords = connect(
-    mapStateToProps,
-    mapDispatchToProps
+export const PublishedWords1 = connect(
+    mapFreqToStateToProps('freq1'),
+    mapFreqToDispatchToProps('freq1')
 )(_PublishedWords)
 
-const mapStateToProps2 = state => ({
-    publishedWords: state.freq2.history,
-    allPreLoaded: state.freq2.historyLoaded
-})
-
-const mapDispatchToProps2 = dispatch => ({
-    loadLatestHistory: () => dispatch(loadLatestHistory('freq2')),
-    loadAllHistory: () => dispatch(loadAllHistory('freq2'))
-})
-
 export const PublishedWords2 = connect(
-    mapStateToProps2,
-    mapDispatchToProps2
+    mapFreqToStateToProps('freq2'),
+    mapFreqToDispatchToProps('freq2')
 )(_PublishedWords)
