@@ -108,6 +108,7 @@ function createFilteredReducer(reducerFunction, reducerPredicate) {
 const rootReducer = combineReducers({
     freq1: createFilteredReducer(freqReducer, action => action.freq === 'freq1'),
     freq2: createFilteredReducer(freqReducer, action => action.freq === 'freq2'),
+    freq3: createFilteredReducer(freqReducer, action => action.freq === 'freq3'),
     user
 })
 

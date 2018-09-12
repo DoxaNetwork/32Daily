@@ -4,13 +4,15 @@ import { put, takeEvery, all } from 'redux-saga/effects'
 import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
 import HigherFreq from '../build/contracts/HigherFreq.json'
+import Freq3 from '../build/contracts/Freq3.json'
 
 
-import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getAllFreq2Submissions } from './DappFunctions'
+import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
 
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
+const Freq3Contract = contract(Freq3)
 
 
 
@@ -81,6 +83,9 @@ async function _getContract(action) {
         case 'freq2':
             contract = HigherFreqContract
             break;
+        case 'freq3':
+            contract = Freq3Contract
+            break;
         default:
             contract = doxaHubContract
     }
@@ -89,8 +94,9 @@ async function _getContract(action) {
 
 function* loadSubmissions(action) {
     let submittedWords;
-    if(action.freq == 'freq2') {
-        submittedWords = yield getAllFreq2Submissions();
+    if(['freq2', 'freq3'].includes(action.freq)) {
+        const contract = yield _getContract(action)
+        submittedWords = yield getHigherFreqSubmissions(contract);
     }
     else if (action.freq == 'freq1') {
         submittedWords = yield getAllLinks();

@@ -41,7 +41,9 @@ export class FreqSelector extends Component {
                 <NavLink activeClassName="active" className="doxa1000link" to="/freq2/">
                     <div>100 minutes</div>
                 </NavLink>
-                <div>1,000 minutes</div>
+                <NavLink activeClassName="active" className="doxa1000link" to="/freq3/">
+                    <div>1000 minutes</div>
+                </NavLink>
                 <div>10,000 minutes</div>
                 <div>100,000 minutes</div>
             </_FreqSelector>

@@ -57,3 +57,7 @@ export const Timer1 = connect(
 export const Timer2 = connect(
     mapFreqtoMapStateToProps('freq2')
 )(Timer)
+
+export const Timer3 = connect(
+    mapFreqtoMapStateToProps('freq3')
+)(Timer)

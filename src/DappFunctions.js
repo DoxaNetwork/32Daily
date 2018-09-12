@@ -57,13 +57,10 @@ async function setUpPostBackedListener() {
 }
 
 
-async function getAllFreq2Submissions() {
-
-    const freq = await getContract(HigherFreqContract);
-
-    const [lower, upper] = await freq.range()
+async function getHigherFreqSubmissions(_contract) {
+    const [lower, upper] = await _contract.range()
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
-    const functions = indexesToRetrieve.map(index => freq.getItem(index))
+    const functions = indexesToRetrieve.map(index => _contract.getItem(index))
     let results = await Promise.all(functions)
 
     let words = []
@@ -149,4 +146,4 @@ export {getContract,
         setUpPostBackedListener,
         preLoadHistory,
         getPreHistory,
-        getAllFreq2Submissions }
+        getHigherFreqSubmissions }

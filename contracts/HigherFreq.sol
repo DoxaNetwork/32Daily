@@ -7,7 +7,6 @@ import './TransferGate.sol';
 
 contract HigherFreq is TransferGate {
 
-
     DoxaHub public lowerFreq;
     Votes votes;
     PublishedHistory promotedContent;
@@ -92,6 +91,13 @@ contract HigherFreq is TransferGate {
         var (version, index, publishedTime) = lowerFreq.getPublishedCoords(publishedIndex);
         var (poster, content) = contentPool.getPastItem(version, index);
         return (poster, content, votes.incomingVotes(postKey));
+    }
+
+    function getPublishedCoords(uint32 publishedIndex) 
+    public view
+    returns (uint32 version, uint index, uint publishedTime_)
+    {
+        return promotedContent.getItem(publishedIndex);
     }
 
     function publish()

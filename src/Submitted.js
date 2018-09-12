@@ -78,3 +78,8 @@ export const SubmittedWords2 = connect(
     mapFreqToStateToProps('freq2'),
     mapFreqToDispatchToProps('freq2')
 )(_SubmittedWords)
+
+export const SubmittedWords3 = connect(
+    mapFreqToStateToProps('freq3'),
+    mapFreqToDispatchToProps('freq3')
+)(_SubmittedWords)
