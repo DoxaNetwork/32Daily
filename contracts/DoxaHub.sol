@@ -8,10 +8,11 @@ import './ContentPool.sol';
 import './PublishedHistory.sol';
 import './Votes.sol';
 import './DoxaToken.sol';
+import './TransferGate.sol';
 
 // switch tests and app to use ethjS
 
-contract DoxaHub is Ownable {
+contract DoxaHub is TransferGate, Ownable {
   using SafeMath for uint256;
 
     ContentPool contentPool;

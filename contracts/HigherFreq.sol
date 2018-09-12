@@ -1,17 +1,18 @@
 import './DoxaHub.sol';
-import './DoxaToken2.sol';
+import './DoxaToken.sol';
 import './Votes.sol';
 import './PublishedHistory.sol';
 import './ContentPool.sol';
+import './TransferGate.sol';
 
-contract HigherFreq {
+contract HigherFreq is TransferGate {
 
 
     DoxaHub public lowerFreq;
     Votes votes;
     PublishedHistory promotedContent;
     ContentPool contentPool;
-    DoxaToken2 doxaToken; 
+    DoxaToken doxaToken; 
 
     // Votes freq2Votes;
     // PublishedHistory higherFreqPublishedHistory;
@@ -36,7 +37,7 @@ contract HigherFreq {
         votes = Votes(_votes);
         promotedContent = PublishedHistory(_promoted);
         contentPool = ContentPool(_contentPool);
-        doxaToken = DoxaToken2(_doxaToken);
+        doxaToken = DoxaToken(_doxaToken);
 
         lowerPublishedIndex = 0;
         upperPublishedIndex = 0;
