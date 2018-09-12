@@ -77,12 +77,14 @@ async function _getContract(action) {
     switch (action.freq) {
         case 'freq1':
             contract = doxaHubContract;
+            break;
         case 'freq2':
             contract = HigherFreqContract
+            break;
         default:
             contract = doxaHubContract
-        return await getContract(contract)
     }
+    return await getContract(contract)
 }
 
 function* loadSubmissions(action) {

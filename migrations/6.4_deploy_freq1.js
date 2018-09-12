@@ -3,7 +3,6 @@ const MemberRegistry = artifacts.require("./MemberRegistry.sol");
 const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
-const TimeStamps = artifacts.require("./TimeStamps.sol");
 const DoxaHub = artifacts.require("./DoxaHub.sol");
 
 const helpers = require('../src/utils/helpers')
@@ -16,10 +15,8 @@ module.exports = function(deployer) {
     deployer.deploy(
         DoxaHub,
         ContentPool.address,
-        MemberRegistry.address,
         tokenAddress,
         historyAddress,
-        votesAddress,
-        TimeStamps.address
+        votesAddress
     );
 };

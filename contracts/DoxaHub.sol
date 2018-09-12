@@ -2,12 +2,10 @@ pragma solidity ^0.4.18;
 
 import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
-import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
+import './Ownable.sol';
 import './ContentPool.sol';
-import './MemberRegistry.sol';
 import './PublishedHistory.sol';
-import './TimeStamps.sol';
 import './Votes.sol';
 import './DoxaToken.sol';
 
@@ -18,8 +16,6 @@ contract DoxaHub is Ownable {
 
     ContentPool contentPool;
     PublishedHistory publishedHistory;
-    TimeStamps timeStamps;
-    MemberRegistry memberRegistry;
     Votes votes;
     DoxaToken token;
 
@@ -32,19 +28,15 @@ contract DoxaHub is Ownable {
 
     function DoxaHub(
         address _contentPool, 
-        address _memberRegistry, 
         address _token, 
         address _publishedHistory, 
-        address _votes,
-        address _timeStamps) 
+        address _votes)
     public 
     {
         contentPool = ContentPool(_contentPool);
-        memberRegistry = MemberRegistry(_memberRegistry);
         token = DoxaToken(_token);
         publishedHistory = PublishedHistory(_publishedHistory);
         votes = Votes(_votes);
-        timeStamps = TimeStamps(_timeStamps);
 
         owner = msg.sender;
         nextPublishTime = nextUTCMidnight(now);
@@ -153,7 +145,6 @@ contract DoxaHub is Ownable {
         }
         if(somethingSelected) {
             publishedHistory.publish(currentVersion, indexToPublish);
-            timeStamps.stamp(currentVersion); // move timestampes into publishedHistory
             var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
             token.mint(poster, 1);
             Published(currentVersion, poster, content);
@@ -178,9 +169,9 @@ contract DoxaHub is Ownable {
 
     function getVersion(uint32 version)
     public view
-    returns (uint, uint)
+    returns (uint)
     {
-        return (publishedHistory.blockLength(version), timeStamps.getTime(version));
+        return publishedHistory.blockLength(version);
     }
 
     function getPublishedItem(uint32 publishedIndex) 
@@ -199,39 +190,6 @@ contract DoxaHub is Ownable {
     returns (uint32 version, uint index, uint publishedTime_)
     {
         return publishedHistory.getItem(publishedIndex);
-    }
-
-    // ======================= Membership functions =======================
-
-    function memberCount() 
-    public view 
-    returns (uint count) 
-    {
-        return memberRegistry.memberCount();
-    }
-
-    function getMember(uint _index) 
-    public view 
-    returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToTransfer_)
-    {
-        var (name, owner) = memberRegistry.getMember(_index);
-        return (name, owner, token.balanceOf(owner), 0, 0);
-    }
-
-    function getMemberByAddress(address _owner) 
-    public view 
-    returns (bytes32 name_, address owner_, uint balance_, uint backing_, uint availableToTransfer_)
-    {
-        var (name, owner) = memberRegistry.getMemberByAddress(_owner);
-        return (name, owner, token.balanceOf(owner), 0, 0);
-    }
-
-    function register(bytes32 _name) 
-    public 
-    {
-        uint256 dispersal = 1000; 
-        token.mint(msg.sender, dispersal);
-        memberRegistry.createMember(msg.sender, _name);
     }
 
     // ========================= Helpers =================================

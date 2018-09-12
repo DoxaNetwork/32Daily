@@ -3,7 +3,6 @@ const MemberRegistry = artifacts.require("./MemberRegistry.sol");
 const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
-const TimeStamps = artifacts.require("./TimeStamps.sol");
 const DoxaHub = artifacts.require("./DoxaHub.sol");
 
 const helpers = require('../src/utils/helpers')
@@ -13,7 +12,7 @@ module.exports = function(deployer) {
   const tokenAddress = helpers.readFactory('freq1', 'TokenFactory');
   const votesAddress = helpers.readFactory('freq1', 'VotesFactory');
 
-  let votes, publishedHistory, token, contentPool, timeStamps;
+  let votes, publishedHistory, token, contentPool;
 
   Votes.at(votesAddress)
   .then(function(instance) {
@@ -34,16 +33,9 @@ module.exports = function(deployer) {
   }).then(function(instance) {
 
     contentPool = instance;
-    return TimeStamps.deployed();
-
-  }).then(function(instance) {
-
-    timeStamps = instance;
     votes.assignHub(DoxaHub.address);
     publishedHistory.assignHub(DoxaHub.address);
     token.assignHub(DoxaHub.address);
     contentPool.assignHub(DoxaHub.address);
-    timeStamps.assignHub(DoxaHub.address);
-
   });
 };
