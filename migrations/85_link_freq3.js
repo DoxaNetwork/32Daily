@@ -1,20 +1,21 @@
 const ContentPool = artifacts.require("./ContentPool.sol");
-const MemberRegistry = artifacts.require("./MemberRegistry.sol");
 const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
-const DoxaHub = artifacts.require("./DoxaHub.sol");
+const Freq3 = artifacts.require("./Freq3.sol")
 
 const helpers = require('../src/utils/helpers')
 
 module.exports = function(deployer) {
-  const historyAddress = helpers.readFactory('freq1', 'HistoryFactory');
-  const tokenAddress = helpers.readFactory('freq1', 'TokenFactory');
-  const votesAddress = helpers.readFactory('freq1', 'VotesFactory');
+  const historyAddress = helpers.readFactory('freq3', 'HistoryFactory');
+  const tokenAddress = helpers.readFactory('freq3', 'TokenFactory');
+  const votesAddress = helpers.readFactory('freq3', 'VotesFactory');
 
   let votes, publishedHistory, token, contentPool;
 
-  Votes.at(votesAddress)
+  deployer.then(function(){
+    return Votes.at(votesAddress)
+  })
   .then(function(instance) {
 
     votes = instance;
@@ -33,9 +34,10 @@ module.exports = function(deployer) {
   }).then(function(instance) {
 
     contentPool = instance;
-    votes.assignHub(DoxaHub.address);
-    publishedHistory.assignHub(DoxaHub.address);
-    token.assignHub(DoxaHub.address);
-    contentPool.assignHub(DoxaHub.address);
-  });
-};
+
+    votes.assignHub(Freq3.address);
+    publishedHistory.assignHub(Freq3.address);
+    token.assignHub(Freq3.address);
+    // contentPool.assignHub(HigherFreq.address);
+  })
+}

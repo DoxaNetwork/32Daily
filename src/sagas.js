@@ -5,6 +5,8 @@ import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
 import HigherFreq from '../build/contracts/HigherFreq.json'
 import Freq3 from '../build/contracts/Freq3.json'
+import Freq4 from '../build/contracts/Freq4.json'
+import Freq5 from '../build/contracts/Freq5.json'
 
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
@@ -13,6 +15,8 @@ import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './uti
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
 const Freq3Contract = contract(Freq3)
+const Freq4Contract = contract(Freq4)
+const Freq5Contract = contract(Freq5)
 
 
 
@@ -86,6 +90,12 @@ async function _getContract(action) {
         case 'freq3':
             contract = Freq3Contract
             break;
+        case 'freq4':
+            contract = Freq4Contract
+            break;
+        case 'freq5':
+            contract = Freq5Contract
+            break;
         default:
             contract = doxaHubContract
     }
@@ -94,7 +104,7 @@ async function _getContract(action) {
 
 function* loadSubmissions(action) {
     let submittedWords;
-    if(['freq2', 'freq3'].includes(action.freq)) {
+    if(['freq2', 'freq3', 'freq4', 'freq5'].includes(action.freq)) {
         const contract = yield _getContract(action)
         submittedWords = yield getHigherFreqSubmissions(contract);
     }

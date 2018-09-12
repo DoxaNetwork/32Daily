@@ -2,7 +2,9 @@ const TokenFactory = artifacts.require("./TokenFactory.sol");
 const helpers = require('../src/utils/helpers')
 
 module.exports = function(deployer) {
-  TokenFactory.deployed()
+  deployer.then(function(){
+    return TokenFactory.deployed()
+  })
   .then(function(instance) {
     return instance.newContract();
   })

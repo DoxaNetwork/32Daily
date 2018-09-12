@@ -83,3 +83,13 @@ export const PublishedWords3 = connect(
     mapFreqToStateToProps('freq3'),
     mapFreqToDispatchToProps('freq3')
 )(_PublishedWords)
+
+export const PublishedWords4 = connect(
+    mapFreqToStateToProps('freq4'),
+    mapFreqToDispatchToProps('freq4')
+)(_PublishedWords)
+
+export const PublishedWords5 = connect(
+    mapFreqToStateToProps('freq5'),
+    mapFreqToDispatchToProps('freq5')
+)(_PublishedWords)

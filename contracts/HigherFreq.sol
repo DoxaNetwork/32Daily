@@ -8,10 +8,10 @@ import './TransferGate.sol';
 contract HigherFreq is TransferGate {
 
     DoxaHub public lowerFreq;
-    Votes votes;
-    PublishedHistory promotedContent;
-    ContentPool contentPool;
-    DoxaToken doxaToken; 
+    Votes public votes;
+    PublishedHistory public promotedContent;
+    ContentPool public contentPool;
+    DoxaToken public doxaToken; 
 
     // Votes freq2Votes;
     // PublishedHistory higherFreqPublishedHistory;
