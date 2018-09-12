@@ -34,5 +34,4 @@ contract Votes is Spoke {
         outgoingPostBackings[_ownerKey] = outgoingPostBackings[_ownerKey].add(1);
         incomingPostBackings[_contentKey] = incomingPostBackings[_contentKey].add(1);
     }
-
 }

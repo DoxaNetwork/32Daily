@@ -68,7 +68,7 @@ class ThirtytwoDaily extends Component {
         higherFreq = await getContract(higherFreqContract)
         currentAccount = await getCurrentAccount()
         await doxaHub.publish({from: currentAccount});
-        await higherFreq.cycle({from: currentAccount})
+        await higherFreq.publish({from: currentAccount})
     }
 
     render() {
@@ -89,16 +89,16 @@ class ThirtytwoDaily extends Component {
                     render={(props) => <Freq submit={true} timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
                 />
                 <Route
-                    path={this.props.match.url + 'user/:id'}
-                    component={User}
-                />
-                <Route
                     path={this.props.match.url + 'freq2'}
                     render={(props) => <Freq timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
                 />
                 <Route
                     path={this.props.match.url + 'freq1/create'}
                     render={ContentForm}
+                />
+                <Route
+                    path={this.props.match.url + 'user/:id'}
+                    component={User}
                 />
                 <div className="footer">
                 </div>

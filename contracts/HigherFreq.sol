@@ -1,7 +1,7 @@
 import './DoxaHub.sol';
 import './DoxaToken2.sol';
 import './Votes.sol';
-import './PublishedHistory2.sol';
+import './PublishedHistory.sol';
 import './ContentPool.sol';
 
 contract HigherFreq {
@@ -9,7 +9,7 @@ contract HigherFreq {
 
     DoxaHub public lowerFreq;
     Votes votes;
-    PublishedHistory2 promotedContent;
+    PublishedHistory promotedContent;
     ContentPool contentPool;
     DoxaToken2 doxaToken; 
 
@@ -34,7 +34,7 @@ contract HigherFreq {
     {
         lowerFreq = DoxaHub(_lowerFreq);
         votes = Votes(_votes);
-        promotedContent = PublishedHistory2(_promoted);
+        promotedContent = PublishedHistory(_promoted);
         contentPool = ContentPool(_contentPool);
         doxaToken = DoxaToken2(_doxaToken);
 
