@@ -43,7 +43,7 @@ const CountedTextForm = styled.form`
         resize:none;
         border:none;
         width:calc(100% - 45px);
-        height:100px;
+        height:160px;
         max-width:500px;
     }
 `
@@ -58,7 +58,7 @@ const CreateFooter = styled.div`
 `
 
 class Create extends Component {
-    maxCharacters = 160;
+    maxCharacters = 256;
     state = {
         content: '',
         charactersRemaining: this.maxCharacters

@@ -23,9 +23,9 @@ contract DoxaHub is TransferGate, Ownable {
     uint public SUBMISSION_MINT = 1;
     uint public nextPublishTime;
 
-    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[5] link);
+    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[8] link);
     event PostBacked(address indexed backer, uint32 indexed version, uint postIndex);
-    event Published(uint indexed version, address indexed owner, bytes32[5] content);
+    event Published(uint indexed version, address indexed owner, bytes32[8] content);
 
     function DoxaHub(
         address _contentPool, 
@@ -43,7 +43,7 @@ contract DoxaHub is TransferGate, Ownable {
         nextPublishTime = nextUTCMidnight(now);
     }
 
-    function postLink(bytes32[5] link)
+    function postLink(bytes32[8] link)
     public 
     {
         require(postingAvailable(msg.sender));
@@ -60,7 +60,7 @@ contract DoxaHub is TransferGate, Ownable {
 
     function getLinkByIndex( uint256 index ) 
     public view 
-    returns( uint256, address owner, bytes32[5] link, uint256 backing )
+    returns( uint256, address owner, bytes32[8] link, uint256 backing )
     {
         var (poster, content) = contentPool.getItem(index);
         bytes32 postKey = keccak256(contentPool.currentVersion(), index);
@@ -169,7 +169,7 @@ contract DoxaHub is TransferGate, Ownable {
 
     function getPublishedItem(uint32 publishedIndex) 
     public view
-    returns (address poster_, bytes32[5] content_, uint publishedTime_)
+    returns (address poster_, bytes32[8] content_, uint publishedTime_)
     {
         var (version, poolIndex, publishedTime) = publishedHistory.getItem(publishedIndex);
         // now we need to convert publishedIndex to version

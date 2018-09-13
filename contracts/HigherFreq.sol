@@ -84,7 +84,7 @@ contract HigherFreq is TransferGate {
     // call this for every item in (lower, upper)
     function getItem(uint32 publishedIndex) 
     public view
-    returns (address poster_, bytes32[5] content_, uint votes_)
+    returns (address poster_, bytes32[8] content_, uint votes_)
     {
         // error: there may be nothing in some publishedIndexs
         bytes32 postKey = keccak256(currentCycle, publishedIndex);
@@ -163,7 +163,7 @@ contract HigherFreq is TransferGate {
 
     function getPublishedItem(uint32 publishedIndex) 
     public view
-    returns (address poster_, bytes32[5] content_, uint publishedTime_)
+    returns (address poster_, bytes32[8] content_, uint publishedTime_)
     {
         var (version, poolIndex, publishedTime) = promotedContent.getItem(publishedIndex);
         // now we need to convert publishedIndex to version
