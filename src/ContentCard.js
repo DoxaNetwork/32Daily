@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom'
-
+import identicon from 'identicon.js'
 
 const ContentContainer = styled.div`
     background-color:white;
@@ -36,7 +36,7 @@ const LinkToUser = styled(Link)`
     color: black;
     text-decoration: none;
     float: right;
-    padding-right: 15px;
+    padding: 0 10px;
     font-weight: 700;
 
     &:hover {
@@ -57,13 +57,46 @@ const VoteCount = styled.div`
     color: var(--main-color);
 `
 
+const Identity = styled.img`
+    width:25px;
+    height:25px;
+    border-radius:25px;
+`
+
+const UserContainer = styled.div`
+    display: flex;
+    align-items: center;
+`
+
+class Identicon extends Component {
+    options = {
+      // foreground: [0, 0, 0, 255],               // rgba black
+      // background: [255, 255, 255, 255],         // rgba white
+      margin: 0.2,                              // 20% margin
+      size: 420,                                // 420px square
+      format: 'png'                             // could use SVG instead of PNG
+    };
+
+    render() {
+        const data = new identicon(this.props.poster, this.options);
+        const src = "data:image/png;base64," + data.toString();
+        return (
+            <Identity width="25" height="25" src={src}/>
+        )
+    }
+}
+
 export class ContentCard extends Component {
+
     render() {
         const voteLink = this.props.onClick ? <VoteLink onClick={() => this.props.onClick(this.props.index)}>+ Vote</VoteLink> : <div></div>;
         return (
             <ContentContainer>
                 <ContentHeader>
-                    <LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
+                    <UserContainer>
+                        <Identicon poster={this.props.poster}/>
+                        <LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
+                    </UserContainer>
                     <div></div>
                 </ContentHeader>
                 <ContentBody fontsize={this.props.fontsize}>

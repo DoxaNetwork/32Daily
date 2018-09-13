@@ -53,6 +53,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "dotenv": "^2.0.0",
+    "identicon.js": "^2.3.2",
     "inquirer": "^6.1.0",
     "react": "^16.4.2",
     "react-dev-utils": "^5.0.1",
