@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 const TimerContainer = styled.div`
     text-align:center;
+    padding: 20px 20px
 
     h4,h1 {
         margin:0;

@@ -4,12 +4,6 @@ import styled from 'styled-components';
 
 import { Button } from './styledComponents'
 
-const TimerAndSubmit = styled.div`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 20px 20px;
-`
 const Submit = styled.div`
     button {
         border-radius:5px;
@@ -34,24 +28,13 @@ const PublishedContainer = styled.div`
 
 export class Freq extends Component {
     render() {
-        const submit = this.props.submit ? (
-            <Submit>
-                <NavLink to="/freq1/create">
-                <Button>Create Post</Button>
-                </NavLink>
-            </Submit>
-        ) : '';
-
         return (
             <div className="appContainer">
                 <SubmittedContainer>
                     <Title>
                         Submitted
                     </Title>
-                    <TimerAndSubmit>
-                        {this.props.timer}
-                        {submit}
-                    </TimerAndSubmit>
+                    {this.props.timer}
                     {this.props.submittedWords}
                 </SubmittedContainer>
 
