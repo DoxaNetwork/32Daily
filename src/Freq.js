@@ -7,7 +7,7 @@ import { Button } from './styledComponents'
 const TimerAndSubmit = styled.div`
     display: flex;
     align-items: center;
-    justify-content: space-evenly;
+    justify-content: space-between;
     padding: 20px 20px;
 `
 const Submit = styled.div`
@@ -16,17 +16,19 @@ const Submit = styled.div`
     }
 `
 const SubmittedContainer = styled.div`
-    padding: 40px 30px;
+    padding: 40px 40px;
     width:42%;
     background-color:#fafafa;
 `
 const Title = styled.div`
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid black;
+    padding-bottom: 10px;
     font-size: 2em;
+    font-weight:700;
 `
 const PublishedContainer = styled.div`
     background-color: white;
-    padding: 40px 30px;
+    padding: 40px 40px;
     width:58%;
 `
 

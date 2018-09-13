@@ -31,6 +31,7 @@ class _PublishedWords extends Component {
     render() {
         const publishedWords = this.props.publishedWords.map((word,index) =>
             <ContentCard 
+                fontsize={20}
                 key={word.index} 
                 index={word.index} 
                 word={word.content} 

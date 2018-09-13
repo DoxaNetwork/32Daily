@@ -82,7 +82,7 @@ class Create extends Component {
         return (
             <CreateContainer>
                 <Back>
-                    <NavLink to="/freq1">{"< Back"}</NavLink>
+                    <NavLink to="/freq1">{"◀ Back"}</NavLink>
                 </Back>
                 <CreateHeader>
                     Create
