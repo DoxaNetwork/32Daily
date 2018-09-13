@@ -10,10 +10,6 @@
     --border-radius: 8px;
 }
 
-/*html {
-    background-color: var(--darkwhite);
-}*/
-
 body {
     margin: 0;
 }
@@ -22,26 +18,14 @@ body {
     font-family: 'Quicksand', sans-serif;
 }
 
-.doxa1link:hover, .doxa1link.active {
-    background-color:#d04;
-    color:white;
-}
-.doxa10link:hover, .doxa10link.active {
-    color:orange;
-}
-.doxa100link:hover, .doxa100link.active {
-    color:green;
-}
-.doxa1000link:hover, .doxa1000link.active {
-    color:white;
+.navLink-active {
     background-color: var(--main-color);
+    color:white !important;
 }
 
 .red {
     color: red !important;
 }
-
-
 
 .appContainer {
     display: flex;

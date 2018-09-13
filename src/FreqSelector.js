@@ -17,10 +17,10 @@ const _FreqSelector = styled.div`
         text-align:center;
         padding: 10px 0;
     }
-    div:first-child {
+    .first {
         border-left: 1px solid var(--main-color);
+        
     }
-
     div:hover {
         background-color:var(--main-color);
         color: white;
@@ -35,19 +35,19 @@ export class FreqSelector extends Component {
     render() {
         return (
             <_FreqSelector>
-                <NavLink activeClassName="active" className="doxa1link" to="/freq1/">
-                    <div>10 minutes</div>
+                <NavLink activeClassName="navLink-active" to="/freq1/">
+                    <div className="first">10 minutes</div>
                 </NavLink>
-                <NavLink activeClassName="active" className="doxa1000link" to="/freq2/">
+                <NavLink activeClassName="navLink-active" to="/freq2/">
                     <div>100 minutes</div>
                 </NavLink>
-                <NavLink activeClassName="active" className="doxa1000link" to="/freq3/">
+                <NavLink activeClassName="navLink-active" to="/freq3/">
                     <div>1000 minutes</div>
                 </NavLink>
-                <NavLink activeClassName="active" className="doxa1000link" to="/freq4/">
+                <NavLink activeClassName="navLink-active" to="/freq4/">
                     <div>10000 minutes</div>
                 </NavLink>
-                <NavLink activeClassName="active" className="doxa1000link" to="/freq5/">
+                <NavLink activeClassName="navLink-active" to="/freq5/">
                     <div>10000 minutes</div>
                 </NavLink>
             </_FreqSelector>
