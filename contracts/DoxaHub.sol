@@ -87,14 +87,6 @@ contract DoxaHub is TransferGate, Ownable {
         PostBacked(msg.sender, contentPool.currentVersion(), _postIndex);
     }
 
-    function backPosts(uint256[] _postIndexes)
-    public 
-    {
-        for (uint i = 0; i < _postIndexes.length; i++) {
-            backPost(_postIndexes[i]);
-        }
-    }
-
     function totalPostBacking(uint256 _index)
     view public 
     returns (uint256) {

@@ -56,20 +56,20 @@ contract HigherFreq is TransferGate {
     public 
     {
         // require(currentCycle >= 0);
+        bytes32 ownerKey = keccak256(currentCycle, msg.sender);
+
+        require(votingAvailable(ownerKey));
         require(publishedIndex >= lowerPublishedIndex && publishedIndex < upperPublishedIndex);
         // is there something at this version?
 
-        bytes32 ownerKey = keccak256(currentCycle, msg.sender);
         bytes32 postKey = keccak256(currentCycle, publishedIndex);
         votes.addVote(ownerKey, postKey);
     }
 
-    function backPosts(uint32[] _postIndexes)
-    public 
-    {
-        for (uint i = 0; i < _postIndexes.length; i++) {
-            backPost(_postIndexes[i]);
-        }
+    function votingAvailable(bytes32 _ownerKey)
+    view public
+    returns (bool) {
+        return (votes.outgoingVotes(_ownerKey) < 1);
     }
 
     function range() 
