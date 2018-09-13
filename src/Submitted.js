@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import styled from 'styled-components';
 import contract from 'truffle-contract'
 
-import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVotes, clearVotes, pendVote, loadPublishTime } from './actions'
+import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVote, loadPublishTime } from './actions'
 import { ContentCard } from './ContentCard.js'
 
 
@@ -47,19 +47,13 @@ const mapFreqToStateToProps = freq => (
         tokenBalance: state.user.balance,
         availableVotes: state.user.available,
         account: state.user.account,
-        submittedWords: state[freq].submissions,
-        pendingVotes: state[freq].pendingVotes.pendingVotes,
-        unsavedVotes: state[freq].pendingVotes.unsavedVotes,
-        totalVotes: state[freq].pendingVotes.totalVotes,
-        totalPendingVotes: state[freq].pendingVotes.totalPending
+        submittedWords: state[freq].submissions
     })
 )
 
 const mapFreqToDispatchToProps = freq => (
     dispatch => ({
-        submitVotes: (pendingVotes) => dispatch(submitVotes(pendingVotes, freq)),
-        onClick: index => dispatch(pendVote(index, freq)),
-        clearVotes: () => dispatch(clearVotes()),
+        onClick: index => dispatch(submitVote(index, freq)),
         load: () => {
             dispatch(loadSubmissions(freq))
             dispatch(loadBalance())

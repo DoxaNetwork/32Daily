@@ -52,34 +52,6 @@ const user = (state = {}, action) => {
     }
 }
 
-const pendingVotes = (state = {unsavedVotes:false, totalPending: 0, totalVotes: 0, pendingVotes:{}}, action) => {
-    switch (action.type) {
-        case 'PEND_VOTE':
-            let pendingVotes = {...state.pendingVotes}
-            pendingVotes[action.index] ? pendingVotes[action.index] += 1 : pendingVotes[action.index] = 1;
-            return {
-                unsavedVotes: true,
-                totalPending: state.totalPending +=1,
-                totalVotes: state.totalVotes +=1,
-                pendingVotes
-            }
-        case 'CLEAR_VOTES':
-            return { 
-                unsavedVotes: false, 
-                totalPending: 0, 
-                totalVotes: state.totalVotes - state.totalPending, 
-                pendingVotes: {} 
-            }
-        case 'LOAD_SUBMISSIONS_API_SUCCESS':
-            const totalVotes = action.submittedWords.reduce((sum, word) => (sum + word.backing), 0)
-            return Object.assign({}, state, {
-                totalVotes: totalVotes
-            })
-        default:
-            return state
-    }
-}
-
 const nextPublishTime = (state = 0, action) => {
     switch (action.type) {
         case 'LOAD_PUBLISH_TIME_SUCCESS':
@@ -93,7 +65,6 @@ const freqReducer = combineReducers({
     history,
     historyLoaded,
     submissions,
-    pendingVotes,
     nextPublishTime
 })
 

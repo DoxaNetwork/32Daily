@@ -136,16 +136,12 @@ function* loadFullHistory(action) {
     yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: true})
 }
 
-function* persistVotes(action) {
-    const contract = yield _getContract(action)
-    const indexes = Object.keys(action.pendingVotes);
+function* persistVote(action) {
+    const contract = yield _getContract(action);
     const currentAccount = yield getCurrentAccount();
-
-    const result = yield contract.backPosts(indexes, { from: currentAccount })
-
-    yield put({type: "PERSIST_VOTES_SUCCESS", freq: action.freq});
+    const result = yield contract.backPost(action.index, { from: currentAccount })
+    yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
 }
-
 
 export default function* rootSaga() {
     yield takeEvery('LOAD_LATEST_HISTORY', loadInitHistory)
@@ -158,7 +154,7 @@ export default function* rootSaga() {
     yield takeEvery('LOAD_ACCOUNT', initAccount)
 
     yield takeEvery('SUBMIT_CONTENT', submitPost),
-    yield takeEvery('SUBMIT_VOTES', persistVotes)
+    yield takeEvery('SUBMIT_VOTE', persistVote)
 
     yield takeEvery('LOAD_PUBLISH_TIME', loadPublishTime)
 }

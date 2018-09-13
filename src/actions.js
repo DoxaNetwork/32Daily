@@ -41,18 +41,8 @@ export const loadAccount = () => ({
 })
 
 // ========== votes ========================
-export const submitVotes = (pendingVotes, freq) => ({
-    type: 'SUBMIT_VOTES',
-    pendingVotes,
-    freq
-})
-
-export const clearVotes = () => ({
-    type: 'CLEAR_VOTES'
-})
-
-export const pendVote = (index, freq) => ({
-    type: 'PEND_VOTE',
+export const submitVote = (index, freq) => ({
+    type: 'SUBMIT_VOTE',
     index,
     freq
 })

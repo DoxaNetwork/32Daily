@@ -31,7 +31,10 @@ export const LinkToUser = styled(Link)`
 
 export class ContentCard extends Component {
     render() {
-        const voteLink = this.props.onClick ? <div onClick={() => this.props.onClick(this.props.index)}>+ Vote</div> : <div></div>;
+        const voteLink = this.props.onClick ? <div onClick={() => {
+            console.log('triggered'); 
+            this.props.onClick(this.props.index)
+        }}>+ Vote</div> : <div></div>;
         return (
             <ContentContainer>
                 <ContentHeader>
