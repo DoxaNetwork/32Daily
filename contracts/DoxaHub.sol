@@ -40,7 +40,9 @@ contract DoxaHub is TransferGate, Ownable {
         votes = Votes(_votes);
 
         owner = msg.sender;
-        nextPublishTime = nextUTCMidnight(now);
+        // nextPublishTime = nextUTCMidnight(now);
+        uint period = 30;
+        nextPublishTime = now + period * 1 seconds;
     }
 
     function postLink(bytes32[8] link)
@@ -143,7 +145,8 @@ contract DoxaHub is TransferGate, Ownable {
             Published(currentVersion, poster, content);
         }
         contentPool.clear();
-        nextPublishTime = nextUTCMidnight(now);
+        nextPublishTime = nextPublishTime + 30 seconds;
+        // nextPublishTime = nextUTCMidnight(now);
     }
 
     function currentVersion() 

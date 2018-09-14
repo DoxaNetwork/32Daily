@@ -11,7 +11,7 @@ module.exports = function(deployer) {
 
     deployer.deploy(
         Freq5,
-        10000,
+        35,
         Freq4.address,
         votesAddress,
         historyAddress,

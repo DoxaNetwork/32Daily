@@ -15,16 +15,18 @@ contract HigherFreq is TransferGate {
 
     // Votes freq2Votes;
     // PublishedHistory higherFreqPublishedHistory;
-
+    event Published(uint indexed version, address indexed owner, bytes32[8] content);
+    
 
     // public uint nextCycleChange;
     uint public currentCycle;
     uint32 lowerPublishedIndex;
     uint32 upperPublishedIndex;
     uint public nextPublishTime;
+    uint period;
 
     function HigherFreq(
-        uint period, 
+        uint _period, 
         address _lowerFreq, 
         address _votes, 
         address _promoted,
@@ -40,7 +42,8 @@ contract HigherFreq is TransferGate {
 
         lowerPublishedIndex = 0;
         upperPublishedIndex = 0;
-        nextPublishTime = now + period * 1 minutes;
+        period = _period;
+        nextPublishTime = now + _period * 1 seconds;
 
         // if (lowerFreq.currentPublishedIndex() > )
         // higherFreqPublishedHistory = PublishedHistory(_publishedHistory)
@@ -124,6 +127,7 @@ contract HigherFreq is TransferGate {
             var (poster, content) = contentPool.getPastItem(version, index);
             promotedContent.publish(version, index);
             doxaToken.mint(poster, 1);
+            Published(currentCycle, poster, content);
         }
 
         cycle();
@@ -159,6 +163,7 @@ contract HigherFreq is TransferGate {
         }
         upperPublishedIndex = lowerFreq.publishedIndex();
         currentCycle += 1;
+        nextPublishTime = nextPublishTime + period;
     }
 
     function getPublishedItem(uint32 publishedIndex) 
