@@ -13,12 +13,12 @@ self.addEventListener('fetch', function(event) {
 });
 
 self.addEventListener('push', function(event) {
+  const data = event.data.json();
   console.log('[Service Worker] Push Received.');
-  console.log(`[Service Worker] Push had this data: "${event.data.text()}"`);
 
-  const title = 'Doxa10k just posted a new Award';
+  const title = `${data.freq} just posted a new Award`;
   const options = {
-    body: 'New post in doxa10k by 0x823a9',
+    body: `New post in ${data.freq} by ${data.owner.substring(0,6)}. View on Tempo!`,
     icon: '/apple-icon-180x180.png',
     badge: 'images/badge.png',
   };
