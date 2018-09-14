@@ -15,7 +15,7 @@ const SecondaryActionLink = styled.div`
     text-align: center;
 
     &:hover {
-        color: var(--main-color);
+        color: var(--primary);
     }
 `
 const LinkToUser = styled(Link)`

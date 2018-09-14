@@ -11,7 +11,7 @@ const Back = styled.div`
     margin-bottom:20px;
     font-size:1.2em;
     a {
-        color: var(--main-color);
+        color: var(--primary);
         text-decoration: none;
     }
 `
@@ -54,6 +54,10 @@ const CreateFooter = styled.div`
 
     button {
         border-radius: 5px;
+        &:hover {
+            background-color:var(--bright);
+            border-color:var(--bright);
+        }
     }
 `
 

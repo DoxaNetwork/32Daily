@@ -41,20 +41,21 @@ const LinkToUser = styled(Link)`
 
     &:hover {
         text-decoration: underline;
-        color: var(--user-color);
+        color: var(--bright);
     }
 `
 const VoteLink = styled.div`
     font-weight: 700;
-    color:var(--main-color);
+    color:var(--primary);
+    transition: color 200ms ease-in-out;
     &:hover {
         cursor: pointer;
-        color: var(--secondary-color)
+        color: var(--bright);
     }
 `
 const VoteCount = styled.div`
     font-weight:700;
-    color: var(--main-color);
+    color: var(--primary);
 `
 
 const Identity = styled.img`

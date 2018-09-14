@@ -1,19 +1,11 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { connect } from 'react-redux'
-import styled from 'styled-components';
 import contract from 'truffle-contract'
 
 import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVote, loadPublishTime } from './actions'
 import { ContentCard } from './ContentCard.js'
 
-
-const LinkToUser = styled(Link)`
-    color: var(--gray);
-    float: right;
-    padding-right: 15px;
-`
 
 class _SubmittedWords extends Component {
     componentDidMount() {

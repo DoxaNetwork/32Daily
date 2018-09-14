@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const Button = styled.button`
-    border: 1px solid var(--main-color);
-    background-color: var(--main-color);
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
     width: 127px;
     height: 50px;
     padding: 0px;
@@ -12,12 +12,12 @@ export const Button = styled.button`
     font-size: 1em;
 
     &.unsaved {
-        border: 1px solid var(--secondary-color);
-        background-color: var(--secondary-color);
+        border: 1px solid var(--secondary);
+        background-color: var(--secondary);
     }
 
     &:hover {
-        background-color: var(--main-color);
-        border: 1px solid var(--main-color);
+        background-color: var(--primary);
+        border: 1px solid var(--primary);
     }
 `
