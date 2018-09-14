@@ -21,10 +21,10 @@ const SubmittedOuterContainer = styled.div`
     width: 42%;
 `
 const Title = styled.div`
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid lightgray;
     padding-bottom: 10px;
     font-size: 2em;
-    font-weight:700;
+    /*font-weight:700;*/
 `
 const PublishedContainer = styled.div`
     /*background-color: white;*/
