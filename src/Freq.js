@@ -21,10 +21,10 @@ const SubmittedOuterContainer = styled.div`
     width: 42%;
 `
 const Title = styled.div`
-    border-bottom: 2px solid black;
+    border-bottom: 2px solid var(--secondary);
     padding-bottom: 10px;
     font-size: 2em;
-    font-weight:700;
+    /*font-weight:700;*/
 `
 const PublishedContainer = styled.div`
     /*background-color: white;*/
@@ -37,11 +37,16 @@ const PublishedOuterContainer = styled.div`
     width:58%;
     background-color:white;
 `
+const FreqContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    min-height:100vh;
+`
 
 export class Freq extends Component {
     render() {
         return (
-            <div className="appContainer">
+            <FreqContainer>
                 <SubmittedOuterContainer>
                 <SubmittedContainer>
                     <Title>
@@ -60,7 +65,7 @@ export class Freq extends Component {
                         {this.props.publishedWords}
                     </PublishedContainer>
                 </PublishedOuterContainer>
-            </div>
+            </FreqContainer>
         )
     }
 }

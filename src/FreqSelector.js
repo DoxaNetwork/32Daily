@@ -11,23 +11,23 @@ const _FreqSelector = styled.div`
     position: relative;
 
     div {
-        border: 1px solid var(--main-color);
+        border: 1px solid var(--primary);
         border-left: none;
         width: 150px;
         text-align:center;
         padding: 10px 0;
     }
     .first {
-        border-left: 1px solid var(--main-color);
+        border-left: 1px solid var(--primary);
         
     }
     div:hover {
-        background-color:var(--main-color);
+        background-color:var(--primary);
         color: white;
     }
     a {
         text-decoration: none;
-        color:var(--main-color);
+        color:var(--primary);
     }
 `
 

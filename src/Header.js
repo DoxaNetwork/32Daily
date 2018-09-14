@@ -14,9 +14,10 @@ const SubTitle = styled.div`
 
 const StyledHeader = styled.div`
     color: var(--white);
-    font-size:56pt;
-    padding: 120px 0;
-    background: linear-gradient(to bottom right, #000033 , var(--main-color));
+    font-size:24px;
+    padding: 15px 0 10px;
+    /*background: linear-gradient(to bottom right, #000033 , var(--primary));*/
+    background-color: var(--primary);
     margin:auto;
     text-align: center;
 `
@@ -26,8 +27,8 @@ export class Header extends Component {
         return (
             <div>
                 <StyledHeader>
-                    <Title>{this.props.title}</Title>
-                    <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle>
+                    <Title>⊿ tempos</Title>
+                    {/* <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle> */}
                 </StyledHeader>
             </div>
         )
