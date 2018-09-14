@@ -28,11 +28,10 @@ contract Votes is Spoke {
         return incomingPostBackings[_contentKey];
     }
 
-    function addVote(uint _value, bytes32 _ownerKey, bytes32 _contentKey)
+    function addVote(bytes32 _ownerKey, bytes32 _contentKey)
     public onlyHub
     {
-        outgoingPostBackings[_ownerKey] = outgoingPostBackings[_ownerKey].add(_value);
-        incomingPostBackings[_contentKey] = incomingPostBackings[_contentKey].add(_value);
+        outgoingPostBackings[_ownerKey] = outgoingPostBackings[_ownerKey].add(1);
+        incomingPostBackings[_contentKey] = incomingPostBackings[_contentKey].add(1);
     }
-
 }

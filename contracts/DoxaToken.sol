@@ -2,8 +2,8 @@ pragma solidity ^0.4.18;
  
 import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 
-import './DoxaHub.sol';
 import './Spoke.sol';
+import './TransferGate.sol';
 
 
 contract DoxaToken is BasicToken, Spoke {
@@ -25,8 +25,8 @@ contract DoxaToken is BasicToken, Spoke {
     returns (bool) 
     {
         require(_to != address(0));
-        DoxaHub doxaHub = DoxaHub(hub);
-        require(_value <= doxaHub.availableToTransfer(msg.sender));
+        TransferGate gate = TransferGate(hub);
+        require(_value <= gate.availableToTransfer(msg.sender, _to));
 
         balances[msg.sender] = balances[msg.sender].sub(_value);
         balances[_to] = balances[_to].add(_value);
