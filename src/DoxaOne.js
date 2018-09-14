@@ -88,7 +88,7 @@ class ThirtytwoDaily extends Component {
 
         return (
             <div style={this.props.style}>
-                {publishButton}
+                {/* {publishButton} */}
                 <Header title={this.props.title} period={this.props.period} showTimerText={true}/>
                 <FreqSelector/>
                 <Route
