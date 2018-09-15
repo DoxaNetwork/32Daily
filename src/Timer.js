@@ -6,9 +6,13 @@ import { loadPublishTime } from './actions'
 const TimerContainer = styled.div`
     text-align:center;
     padding: 20px 20px
-
-    h4,h1 {
+    h4 {
         margin:0;
+    }
+    h1 {
+        text-align: left;
+        margin: 0 auto;
+        width:172px;
     }
 `
 
@@ -53,7 +57,7 @@ class Timer extends Component {
         return (
             <TimerContainer>
                 <h4>Next item published in</h4>
-                <h1>{hours} : {minutes} : {('00' + seconds).slice(-2)}</h1>
+                <h1>{('00' + hours).slice(-2)} : {('00' + minutes).slice(-2)} : {('00' + seconds).slice(-2)}</h1>
             </TimerContainer>
             )
     }
