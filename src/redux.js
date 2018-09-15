@@ -5,7 +5,7 @@ const history = (state = [], action) => {
         case 'INIT_HISTORY_API_SUCCESS':
             return action.publishedWords
         case 'LOAD_ALL_HISTORY_API_SUCCESS':
-            return [...state[action.freq], ...action.publishedWords]
+            return [...state, ...action.publishedWords]
         default:
             return state
     }

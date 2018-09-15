@@ -11,8 +11,9 @@ export const loadLatestHistory = (freq) => ({
     freq
 })
 
-export const loadAllHistory = () => ({
-    type: 'LOAD_ALL_HISTORY'
+export const loadAllHistory = (freq) => ({
+    type: 'LOAD_ALL_HISTORY',
+    freq
 })
 
 // ========== submitted content ============

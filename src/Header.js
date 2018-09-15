@@ -27,7 +27,7 @@ export class Header extends Component {
         return (
             <div>
                 <StyledHeader>
-                    <Title>⊿ tempos</Title>
+                    <Title>tempo</Title>
                     {/* <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle> */}
                 </StyledHeader>
             </div>
