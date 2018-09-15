@@ -111,32 +111,16 @@ async function preLoadHistory(_contract) {
 }
 
 async function getHistory(_contract, start, end, dateType) {
-    const dateOptions = {month: 'long', day: 'numeric'};
-    // const doxaHub = await getContract(doxaHubContract);
-    
     let words = []
     const indexesToRetrieve = Array.from(new Array(end - start), (x,i) => i + start)
     const functions = indexesToRetrieve.map(i => _contract.getPublishedItem(i))
     let results = await Promise.all(functions)
     for (const [poster, content, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
-        if(dateType === 'dayOfWeek') {
-            words.push({content:ByteArrayToString(content), poster, date:dayOfWeek(date)})
-        } else {
-            words.push({content:ByteArrayToString(content), poster, date:date.toLocaleDateString('en-US', dateOptions)})
-        }
+        words.push({content:ByteArrayToString(content), poster, date:date})
     }
     return words;
 }
-
-//     for (let v = start; v < end; v++) {
-//         // const [blockLength, timeStamp] = await doxaHub.getVersion(v);
-//         const date = new Date(timeStamp * 1000)
-// 
-//         const indexesToRetrieve = [...Array(blockLength.toNumber()).keys()]
-// 
-// 
-//     }
 
 export {getContract,
         getCurrentAccount,

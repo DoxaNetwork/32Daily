@@ -36,6 +36,7 @@ class _PublishedWords extends Component {
                 index={word.index} 
                 word={word.content} 
                 poster={word.poster}
+                date={word.date}
                 backing={0}
                 onClick={false} />
         );

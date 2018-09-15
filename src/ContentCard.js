@@ -87,9 +87,45 @@ class Identicon extends Component {
     }
 }
 
+function displayDate(then) {
+    const dateOptions = {month: 'short', day: 'numeric'};
+    return then.toLocaleDateString('en-US', dateOptions)
+}
+
+function displayHour(then) {
+    const now = new Date();
+    const msec = now.getTime() - then.getTime();
+    const hours = Math.floor(msec / 1000 / 60 / 60);
+    return `${hours}h`;
+}
+
+function displayMins(then) {
+    const now = new Date();
+    let msec = now.getTime() - then.getTime();
+    const hours = Math.floor(msec / 1000 / 60 / 60);
+    msec -= hours * 1000 * 60 * 60;
+    const minutes = Math.floor(msec / 1000 / 60);
+    return `${minutes}m`;
+}
+
+function displayPublishDate(then) {
+    let dateDisplay;
+    let msec = new Date() - then;
+    if (msec > 86400000) {
+        dateDisplay = displayDate(then)
+    } else if (msec > 3600000) {
+        dateDisplay = displayHour(then)
+    } else {
+        dateDisplay = displayMins(then)
+    }
+    return dateDisplay;
+}
+
 export class ContentCard extends Component {
+    dateOptions = {month: 'short', day: 'numeric'};
 
     render() {
+        const publishDate = this.props.date ? displayPublishDate(this.props.date) : '';
         const voteLink = this.props.onClick ? <VoteLink onClick={() => this.props.onClick(this.props.index)}>+ Vote</VoteLink> : <div></div>;
         return (
             <ContentContainer>
@@ -98,7 +134,7 @@ export class ContentCard extends Component {
                         <Identicon poster={this.props.poster}/>
                         <LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
                     </UserContainer>
-                    <div></div>
+                    <div>{publishDate}</div>
                 </ContentHeader>
                 <ContentBody fontsize={this.props.fontsize}>
                     {this.props.word}
