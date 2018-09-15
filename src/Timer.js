@@ -6,13 +6,10 @@ import { loadPublishTime } from './actions'
 const TimerContainer = styled.div`
     text-align:center;
     padding: 20px 20px
-    h4 {
-        margin:0;
-    }
-    h1 {
+    h1,h4 {
         text-align: left;
         margin: 0 auto;
-        width:172px;
+        width:190px;
     }
 `
 
