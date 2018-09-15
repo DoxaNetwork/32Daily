@@ -105,7 +105,7 @@ export class ContentCard extends Component {
                 </ContentBody>
                 <ContentFooter>
                     {voteLink}
-                    <VoteCount>{this.props.backing}</VoteCount>
+                    <VoteCount>{this.props.backing + 1}</VoteCount>
                 </ContentFooter>
             </ContentContainer>
         )
