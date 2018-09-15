@@ -132,7 +132,7 @@ export class ContentCard extends Component {
                 <ContentHeader>
                     <UserContainer>
                         <Identicon poster={this.props.poster}/>
-                        <LinkToUser to={'1000/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
+                        <LinkToUser to={'/u/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
                     </UserContainer>
                     <div>{publishDate}</div>
                 </ContentHeader>

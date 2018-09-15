@@ -18,7 +18,7 @@ const Back = styled.div`
 const CreateContainer = styled.div`
     background-color:#fafafa;
     padding: 20px 25%;
-    min-height:100vh;
+    min-height:70vh;
 `
 const CreateHeader = styled.div`
     border-bottom: 1px solid black;

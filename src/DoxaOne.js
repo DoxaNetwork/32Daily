@@ -63,7 +63,7 @@ class ThirtytwoDaily extends Component {
                     render={ContentForm}
                 />
                 <Route
-                    path={'user/:id'}
+                    path={'/u/:id'}
                     component={User}
                 />
                 <Footer>
