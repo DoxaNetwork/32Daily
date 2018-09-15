@@ -18,6 +18,11 @@ const Freq3Contract = contract(Freq3)
 const Freq4Contract = contract(Freq4)
 const Freq5Contract = contract(Freq5)
 
+const freq1Instance = getContract(doxaHubContract);
+const freq2Instance = getContract(HigherFreqContract);
+const freq3Instance = getContract(Freq3Contract);
+const freq4Instance = getContract(Freq4Contract);
+const freq5Instance = getContract(Freq5Contract);
 
 
 function getEventsByType(events, type) {
@@ -82,24 +87,18 @@ async function _getContract(action) {
     let contract;
     switch (action.freq) {
         case 'freq1':
-            contract = doxaHubContract;
-            break;
+            return freq1Instance;
         case 'freq2':
-            contract = HigherFreqContract
-            break;
+            return freq2Instance;
         case 'freq3':
-            contract = Freq3Contract
-            break;
+            return freq3Instance;
         case 'freq4':
-            contract = Freq4Contract
-            break;
+            return freq4Instance;
         case 'freq5':
-            contract = Freq5Contract
-            break;
+            return freq5Instance;
         default:
-            contract = doxaHubContract
+            return freq1Instance;
     }
-    return await getContract(contract)
 }
 
 function* loadSubmissions(action) {

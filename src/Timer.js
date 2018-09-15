@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
-
+import { loadPublishTime } from './actions'
 
 const TimerContainer = styled.div`
     text-align:center;
@@ -18,7 +18,16 @@ class Timer extends Component {
     }
 
     componentDidMount() {
-        this.interval = setInterval(() => this.setState({ time: new Date() }), 1000);
+        this.interval = setInterval(() => {
+            const endingTime = new Date(this.props.nextPublishTime*1000)
+            let msec = endingTime.getTime() - this.state.time.getTime();
+
+            if (msec < 0) {
+                this.props.refreshTime();
+            } else {
+                this.setState({ time: new Date() });
+            }
+        }, 1000);
     }
 
     componentWillUnmount() {
@@ -28,7 +37,11 @@ class Timer extends Component {
     render() {
         const endingTime = new Date(this.props.nextPublishTime*1000)
 
+
         let msec = endingTime.getTime() - this.state.time.getTime();
+        if (msec < 0) {
+            msec = 0;
+        }
         const hours = Math.floor(msec / 1000 / 60 / 60);
         msec -= hours * 1000 * 60 * 60;
         const minutes = Math.floor(msec / 1000 / 60);
@@ -51,22 +64,33 @@ const mapFreqtoMapStateToProps = freq => (
         nextPublishTime: state[freq].nextPublishTime
     })
 )
+const mapFreqtoMapDispatchToProps = freq => (
+    dispatch => ({
+        refreshTime: () => dispatch(loadPublishTime(freq))
+    })
+)
+
 export const Timer1 = connect(
-    mapFreqtoMapStateToProps('freq1')
+    mapFreqtoMapStateToProps('freq1'),
+    mapFreqtoMapDispatchToProps('freq1')
 )(Timer)
 
 export const Timer2 = connect(
-    mapFreqtoMapStateToProps('freq2')
+    mapFreqtoMapStateToProps('freq2'),
+    mapFreqtoMapDispatchToProps('freq2')
 )(Timer)
 
 export const Timer3 = connect(
-    mapFreqtoMapStateToProps('freq3')
+    mapFreqtoMapStateToProps('freq3'),
+    mapFreqtoMapDispatchToProps('freq3')
 )(Timer)
 
 export const Timer4 = connect(
-    mapFreqtoMapStateToProps('freq4')
+    mapFreqtoMapStateToProps('freq4'),
+    mapFreqtoMapDispatchToProps('freq4')
 )(Timer)
 
 export const Timer5 = connect(
-    mapFreqtoMapStateToProps('freq5')
+    mapFreqtoMapStateToProps('freq5'),
+    mapFreqtoMapDispatchToProps('freq5')
 )(Timer)
