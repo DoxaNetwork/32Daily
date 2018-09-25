@@ -163,7 +163,7 @@ contract HigherFreq is TransferGate {
         }
         upperPublishedIndex = lowerFreq.publishedIndex();
         currentCycle += 1;
-        nextPublishTime = nextPublishTime + period;
+        nextPublishTime = now + period * 1 seconds
     }
 
     function getPublishedItem(uint32 publishedIndex) 

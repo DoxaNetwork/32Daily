@@ -145,7 +145,7 @@ contract DoxaHub is TransferGate, Ownable {
             Published(currentVersion, poster, content);
         }
         contentPool.clear();
-        nextPublishTime = nextPublishTime + 30 seconds;
+        nextPublishTime = now + 30 seconds;
         // nextPublishTime = nextUTCMidnight(now);
     }
 
