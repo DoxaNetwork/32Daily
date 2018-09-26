@@ -25,7 +25,7 @@ contract DoxaHub is TransferGate, Ownable {
 
     event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[8] link);
     event PostBacked(address indexed backer, uint32 indexed version, uint postIndex);
-    event Published(uint indexed version, address indexed owner, bytes32[8] content);
+    event Published(address indexed poster, uint publishedTime, uint currentVersion, uint indexToPublish);
 
     function DoxaHub(
         address _contentPool, 
@@ -41,7 +41,7 @@ contract DoxaHub is TransferGate, Ownable {
 
         owner = msg.sender;
         // nextPublishTime = nextUTCMidnight(now);
-        nextPublishTime = now + 1 hours;
+        nextPublishTime = now + 1 minutes;
     }
 
     function postLink(bytes32[8] link)
@@ -141,10 +141,10 @@ contract DoxaHub is TransferGate, Ownable {
             publishedHistory.publish(currentVersion, indexToPublish);
             var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
             token.mint(poster, 1);
-            Published(currentVersion, poster, content);
+            Published(poster, now, currentVersion, indexToPublish);
         }
         contentPool.clear();
-        nextPublishTime = now + 1 hours;
+        nextPublishTime = now + 1 minutes;
         // nextPublishTime = nextUTCMidnight(now);
     }
 

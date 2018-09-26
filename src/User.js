@@ -2,6 +2,15 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 
+import { loadUser } from './actions'
+
+import contract from 'truffle-contract'
+
+import DoxaHubContract from '../build/contracts/DoxaHub.json'
+const doxaHubContract = contract(DoxaHubContract)
+
+import { getContract } from './DappFunctions'
+
 const UserContainer = styled.div`
     background-color: white;
     width: 450px;
@@ -32,30 +41,39 @@ const UserOuterContainer = styled.div`
 `
 
 export class User extends Component {
+    state = {
+        postsPublished: '...'
+    }
+
+    async componentDidMount() {
+        // this.props.load(this.props.match.params.id)
+        const doxaHub = await getContract(doxaHubContract);
+
+        const filter = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
+
+        const filterPromise = () => {
+            return new Promise((resolve, reject) => {
+                filter.get( (e, r) => {
+                    resolve(r)
+                })
+            })
+        }
+
+        const results = await filterPromise();
+        this.setState({postsPublished: results.length});
+    }
 
     render() {
         return (
             <UserOuterContainer>
                 <UserContainer>
                     <div className="row">
-                        <div>user id</div>
+                        <div>User id</div>
                         <div className="row-value">{this.props.match.params.id.substring(0,6)}</div>
                     </div>
                     <div className="row">
-                        <div>token balance</div>
-                        <div className="row-value">todo</div>
-                    </div>
-                    <div className="row">
-                        <div>available votes</div>
-                        <div className="row-value">todo</div>
-                    </div>
-                    <div className="row">
-                        <div>submitted posts</div>
-                        <div className="row-value">todo</div>
-                    </div>
-                    <div className="row">
-                        <div>published posts</div>
-                        <div className="row-value">todo</div>
+                        <div>Posts published</div>
+                        <div className="row-value">{this.state.postsPublished}</div>
                     </div>
                     <Address>{this.props.match.params.id}</Address>
                 </UserContainer>
@@ -63,3 +81,13 @@ export class User extends Component {
         )
     }
 }
+
+// 
+// const mapDispatchToProps = dispatch => ({
+//     load: userId => dispatch(loadUser(userId))
+// })
+// 
+// export const User = connect(
+//     null,
+//     mapDispatchToProps
+// )(_User)

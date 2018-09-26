@@ -21,7 +21,7 @@ const SubmittedOuterContainer = styled.div`
     width: 42%;
 `
 const Title = styled.div`
-    border-bottom: 2px solid var(--secondary);
+    border-bottom: 1px solid var(--secondary);
     padding-bottom: 10px;
     font-size: 2em;
     /*font-weight:700;*/

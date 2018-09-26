@@ -5,9 +5,8 @@ import contract from 'truffle-contract'
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
 import HigherFreq from '../build/contracts/HigherFreq.json'
 import Freq3 from '../build/contracts/Freq3.json'
-import Freq4 from '../build/contracts/Freq4.json'
-import Freq5 from '../build/contracts/Freq5.json'
-
+// import Freq4 from '../build/contracts/Freq4.json'
+// import Freq5 from '../build/contracts/Freq5.json'
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
 import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
@@ -15,14 +14,14 @@ import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './uti
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
 const Freq3Contract = contract(Freq3)
-const Freq4Contract = contract(Freq4)
-const Freq5Contract = contract(Freq5)
+// const Freq4Contract = contract(Freq4)
+// const Freq5Contract = contract(Freq5)
 
 const freq1Instance = getContract(doxaHubContract);
 const freq2Instance = getContract(HigherFreqContract);
 const freq3Instance = getContract(Freq3Contract);
-const freq4Instance = getContract(Freq4Contract);
-const freq5Instance = getContract(Freq5Contract);
+// const freq4Instance = getContract(Freq4Contract);
+// const freq5Instance = getContract(Freq5Contract);
 
 
 function getEventsByType(events, type) {
@@ -58,6 +57,22 @@ function* updateAvailableToTransfer(action) {
         yield put({type: "AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS", availableVotes})
     }
 }
+
+// function* loadUser(action) {
+//     const doxaHub = yield getContract(doxaHubContract);
+//     const filter = doxaHub.Published({poster: action.userId}, {fromBlock: 0})
+// 
+//     const filterPromise = (poster) => {
+//         return new Promise((resolve, reject) => {
+//             filter.get( (e, r) => {
+//                 resolve(r)
+//             })
+//         })
+//     }
+// 
+//     const results = yield filterPromise();
+//     yield put({type: "LOAD_USER_SUCCESS", postsPublished: results.length})
+// }
 
 function* initAccount(action) {
     const doxaHub = yield getContract(doxaHubContract);
@@ -96,10 +111,10 @@ async function _getContract(action) {
             return freq2Instance;
         case 'freq3':
             return freq3Instance;
-        case 'freq4':
-            return freq4Instance;
-        case 'freq5':
-            return freq5Instance;
+        // case 'freq4':
+        //     return freq4Instance;
+        // case 'freq5':
+        //     return freq5Instance;
         default:
             return freq1Instance;
     }
@@ -155,6 +170,7 @@ export default function* rootSaga() {
     yield takeEvery('LOAD_BALANCE', updateTokenBalance)
     yield takeEvery('LOAD_AVAILABLE_BALANCE', updateAvailableToTransfer)
     yield takeEvery('LOAD_ACCOUNT', initAccount)
+    // yield takeEvery('LOAD_USER', loadUser)
 
     yield takeEvery('SUBMIT_CONTENT', submitPost),
     yield takeEvery('SUBMIT_VOTE', persistVote)
