@@ -35,10 +35,6 @@ const submissions = (state = [], action) => {
 
 const user = (state = {}, action) => {
     switch (action.type) {
-        // case 'LOAD_USER_SUCCESS':
-        //     return Object.assign({}, state, {
-        //         postsPublished: action.postsPublished
-        //     })
         case 'TOKEN_BALANCE_UPDATE_SUCCESS':
             return Object.assign({}, state, {
                 balance: action.tokenBalance

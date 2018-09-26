@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 
-import { loadUser } from './actions'
-
 import contract from 'truffle-contract'
 
 import DoxaHubContract from '../build/contracts/DoxaHub.json'
@@ -46,9 +44,7 @@ export class User extends Component {
     }
 
     async componentDidMount() {
-        // this.props.load(this.props.match.params.id)
         const doxaHub = await getContract(doxaHubContract);
-
         const filter = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
 
         const filterPromise = () => {
@@ -81,13 +77,3 @@ export class User extends Component {
         )
     }
 }
-
-// 
-// const mapDispatchToProps = dispatch => ({
-//     load: userId => dispatch(loadUser(userId))
-// })
-// 
-// export const User = connect(
-//     null,
-//     mapDispatchToProps
-// )(_User)
