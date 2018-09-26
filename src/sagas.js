@@ -42,17 +42,21 @@ function mapPost(post) {
 function* updateTokenBalance(action) {
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
-    const tokenBalanceBN = yield doxaHub.balanceOf(currentAccount);
-    const tokenBalance = tokenBalanceBN.toNumber();
-    yield put({type: "TOKEN_BALANCE_UPDATE_SUCCESS", tokenBalance})
+    if (currentAccount != undefined) {
+        const tokenBalanceBN = yield doxaHub.balanceOf(currentAccount);
+        const tokenBalance = tokenBalanceBN.toNumber();
+        yield put({type: "TOKEN_BALANCE_UPDATE_SUCCESS", tokenBalance})
+    }
 }
 
 function* updateAvailableToTransfer(action) {
     const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
-    const availableVotesBN = yield doxaHub.availableToTransfer(currentAccount, '0x0');
-    const availableVotes = availableVotesBN.toNumber();
-    yield put({type: "AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS", availableVotes})
+    if (currentAccount != undefined) {
+        const availableVotesBN = yield doxaHub.availableToTransfer(currentAccount, '0x0');
+        const availableVotes = availableVotesBN.toNumber();
+        yield put({type: "AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS", availableVotes})
+    }
 }
 
 function* initAccount(action) {
