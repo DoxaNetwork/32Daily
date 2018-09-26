@@ -39,27 +39,19 @@ class ThirtytwoDaily extends Component {
                 <Header/>
                 <FreqSelector/>
                 <Route
-                    exact path={'/freq1'}
+                    exact path={'/one'}
                     render={(props) => <Freq submit={true} timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
                 />
                 <Route
-                    exact path={'/freq2'}
+                    exact path={'/ten'}
                     render={(props) => <Freq timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
                 />
                 <Route
-                    exact path={'/freq3'}
+                    exact path={'/hundred'}
                     render={(props) => <Freq timer={<Timer3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
                 />
                 <Route
-                    exact path={'/freq4'}
-                    render={(props) => <Freq timer={<Timer4/>} submittedWords={<SubmittedWords4/>} publishedWords={<PublishedWords4/>}/>}
-                />
-                <Route
-                    exact path={'/freq5'}
-                    render={(props) => <Freq timer={<Timer5/>} submittedWords={<SubmittedWords5/>} publishedWords={<PublishedWords5/>}/>}
-                />
-                <Route
-                    exact path={'/freq1/create'}
+                    exact path={'/one/create'}
                     render={ContentForm}
                 />
                 <Route

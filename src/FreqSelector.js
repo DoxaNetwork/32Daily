@@ -35,16 +35,16 @@ export class FreqSelector extends Component {
     render() {
         return (
             <_FreqSelector>
-                <NavLink activeClassName="navLink-active" to="/freq1/create">
+                <NavLink activeClassName="navLink-active" to="/one/create">
                     <div className="first">Create Post</div>
                 </NavLink>
-                <NavLink activeClassName="navLink-active" to="/freq1/">
+                <NavLink activeClassName="navLink-active" to="/one/">
                     <div>1 hour</div>
                 </NavLink>
-                <NavLink activeClassName="navLink-active" to="/freq2/">
+                <NavLink activeClassName="navLink-active" to="/ten/">
                     <div>10 hours</div>
                 </NavLink>
-                <NavLink activeClassName="navLink-active" to="/freq3/">
+                <NavLink activeClassName="navLink-active" to="/hundred/">
                     <div>100 hours</div>
                 </NavLink>
             </_FreqSelector>
