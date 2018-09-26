@@ -43,7 +43,7 @@ contract HigherFreq is TransferGate {
         lowerPublishedIndex = 0;
         upperPublishedIndex = 0;
         period = _period;
-        nextPublishTime = now + _period * 1 seconds;
+        nextPublishTime = now + _period * 1 hours;
 
         // if (lowerFreq.currentPublishedIndex() > )
         // higherFreqPublishedHistory = PublishedHistory(_publishedHistory)
@@ -163,7 +163,7 @@ contract HigherFreq is TransferGate {
         }
         upperPublishedIndex = lowerFreq.publishedIndex();
         currentCycle += 1;
-        nextPublishTime = now + period * 1 seconds;
+        nextPublishTime = now + period * 1 hours;
     }
 
     function getPublishedItem(uint32 publishedIndex) 
