@@ -4,17 +4,10 @@ import styled from 'styled-components';
 
 import { Button } from './styledComponents'
 
-const Submit = styled.div`
-    button {
-        border-radius:5px;
-    }
-`
 const SubmittedContainer = styled.div`
     padding: 40px 40px;
     max-width:420px;
     margin-left:auto;
-    /*width:42%;*/
-    /*background-color:#fafafa;*/
 `
 const SubmittedOuterContainer = styled.div`
     background-color: #fafafa;
@@ -24,14 +17,11 @@ const Title = styled.div`
     border-bottom: 1px solid var(--secondary);
     padding-bottom: 10px;
     font-size: 2em;
-    /*font-weight:700;*/
 `
 const PublishedContainer = styled.div`
-    /*background-color: white;*/
     padding: 40px 40px;
     max-width:580px;
     margin-right:auto;
-    /*width:58%;*/
 `
 const PublishedOuterContainer = styled.div`
     width:58%;
@@ -43,6 +33,13 @@ const FreqContainer = styled.div`
     min-height:100vh;
 `
 
+const TimerAndCreate = styled.div`
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 20px 0;
+`
+
 export class Freq extends Component {
     render() {
         return (
@@ -52,7 +49,12 @@ export class Freq extends Component {
                     <Title>
                         Submitted
                     </Title>
-                    {this.props.timer}
+                    <TimerAndCreate>
+                        {this.props.timer}
+                        <NavLink activeClassName="navLink-active" to={`/${this.props.freq}/create`}>
+                            <Button>Create Post</Button>
+                        </NavLink>
+                    </TimerAndCreate>
                     {this.props.submittedWords}
                 </SubmittedContainer>
                 </SubmittedOuterContainer>

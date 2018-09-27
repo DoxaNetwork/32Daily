@@ -10,10 +10,6 @@ const ContentContainer = styled.div`
     margin-top: 30px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-
-    /*&:hover {
-        box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
-    }*/
 `
 const ContentHeader = styled.div`
     display:flex;
@@ -132,7 +128,7 @@ export class ContentCard extends Component {
                 <ContentHeader>
                     <UserContainer>
                         <Identicon poster={this.props.poster}/>
-                        <LinkToUser to={'/u/' + this.props.poster}> {this.props.poster.substring(0,6)}</LinkToUser>
+                        <LinkToUser to={'/u/' + this.props.poster}>{this.props.poster.substring(0,6)}</LinkToUser>
                     </UserContainer>
                     <div>{publishDate}</div>
                 </ContentHeader>

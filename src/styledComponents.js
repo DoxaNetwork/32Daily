@@ -10,14 +10,10 @@ export const Button = styled.button`
     transition: all 200ms ease-in-out;
     cursor: pointer;
     font-size: 1em;
-
-    &.unsaved {
-        border: 1px solid var(--secondary);
-        background-color: var(--secondary);
-    }
+    border-radius: 5px;
 
     &:hover {
-        background-color: var(--primary);
-        border: 1px solid var(--primary);
+        background-color:var(--bright);
+        border-color:var(--bright);
     }
 `

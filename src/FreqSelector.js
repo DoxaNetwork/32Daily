@@ -35,11 +35,8 @@ export class FreqSelector extends Component {
     render() {
         return (
             <_FreqSelector>
-                <NavLink activeClassName="navLink-active" to="/one/create">
-                    <div className="first">Create Post</div>
-                </NavLink>
                 <NavLink activeClassName="navLink-active" to="/one/">
-                    <div>1 hour</div>
+                    <div className="first">1 hour</div>
                 </NavLink>
                 <NavLink activeClassName="navLink-active" to="/ten/">
                     <div>10 hours</div>

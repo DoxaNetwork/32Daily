@@ -51,14 +51,6 @@ const CreateFooter = styled.div`
     text-align: center;
     padding: 20px;
     border-top: 1px solid gray;
-
-    button {
-        border-radius: 5px;
-        &:hover {
-            background-color:var(--bright);
-            border-color:var(--bright);
-        }
-    }
 `
 
 class Create extends Component {
@@ -116,11 +108,23 @@ class Create extends Component {
     }
 }
 
-const mapDispatchToProps = dispatch => ({
-    onSubmit: text => dispatch(submitContent(text, 'freq1'))
-})
+const mapFreqtoDispatchtoProps = freq => (
+    dispatch => ({
+        onSubmit: text => dispatch(submitContent(text, freq))
+    })
+)
 
-export const ContentForm = withRouter(connect(
+export const ContentForm1 = withRouter(connect(
     null,
-    mapDispatchToProps
+    mapFreqtoDispatchtoProps('freq1')
+)(Create))
+
+export const ContentForm2 = withRouter(connect(
+    null,
+    mapFreqtoDispatchtoProps('freq2')
+)(Create))
+
+export const ContentForm3 = withRouter(connect(
+    null,
+    mapFreqtoDispatchtoProps('freq3')
 )(Create))

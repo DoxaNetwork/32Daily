@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { Header } from './Header'
 import { User } from './User'
 import { FreqSelector } from './FreqSelector.js'
-import { ContentForm } from './Create.js'
+import { ContentForm1, ContentForm2, ContentForm3 } from './Create.js'
 import { Freq } from './Freq.js'
 import { PublishedWords1, PublishedWords2, PublishedWords3, PublishedWords4, PublishedWords5 } from './Published'
 import { SubmittedWords1, SubmittedWords2, SubmittedWords3, SubmittedWords4, SubmittedWords5 } from './Submitted'
@@ -40,19 +40,27 @@ class ThirtytwoDaily extends Component {
                 <FreqSelector/>
                 <Route
                     exact path={'/one'}
-                    render={(props) => <Freq submit={true} timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
+                    render={(props) => <Freq freq="one" timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
                 />
                 <Route
                     exact path={'/ten'}
-                    render={(props) => <Freq timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
+                    render={(props) => <Freq freq="ten" timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
                 />
                 <Route
                     exact path={'/hundred'}
-                    render={(props) => <Freq timer={<Timer3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
+                    render={(props) => <Freq freq="hundred" timer={<Timer3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
                 />
                 <Route
                     exact path={'/one/create'}
-                    render={ContentForm}
+                    render={ContentForm1}
+                />
+                <Route
+                    exact path={'/ten/create'}
+                    render={ContentForm2}
+                />
+                <Route
+                    exact path={'/hundred/create'}
+                    render={ContentForm3}
                 />
                 <Route
                     path={'/u/:id'}
