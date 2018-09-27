@@ -68,7 +68,7 @@ class Create extends Component {
     submit(event) {
         this.props.onSubmit(this.state.content);
         event.preventDefault();
-        setTimeout(() => this.props.history.push('/freq1'),1000);
+        setTimeout(() => this.props.history.push('/one'),1000);
     }
 
     render() {
