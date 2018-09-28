@@ -14,14 +14,10 @@ const _FreqSelector = styled.div`
     }
     .navLink-active div {
         background-color: #fff !important;
-        /*color: #000;*/
         color:var(--secondary) !important;
     }
     div:hover {
-        /*background-color:var(--primary) !important;
-        color: white;*/
         background-color: #fff !important;
-        /*color:#000;*/
         color:var(--secondary) !important;
     }
     a {
