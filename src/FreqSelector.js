@@ -5,29 +5,30 @@ import styled from 'styled-components';
 const _FreqSelector = styled.div`
     display: flex;
     justify-content: center;
-    padding: 20px 50px;
     background-color: white;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
     position: relative;
 
     div {
-        border: 1px solid var(--primary);
-        border-left: none;
-        width: 150px;
         text-align:center;
         padding: 10px 0;
     }
-    .first {
-        border-left: 1px solid var(--primary);
-        
+    .navLink-active div {
+        background-color: #fff !important;
+        /*color: #000;*/
+        color:var(--secondary) !important;
     }
     div:hover {
-        background-color:var(--primary);
-        color: white;
+        /*background-color:var(--primary) !important;
+        color: white;*/
+        background-color: #fff !important;
+        /*color:#000;*/
+        color:var(--secondary) !important;
     }
     a {
         text-decoration: none;
-        color:var(--primary);
+        color:white;
+        width: 33.4%;
+        font-weight:800;
     }
 `
 
@@ -36,13 +37,13 @@ export class FreqSelector extends Component {
         return (
             <_FreqSelector>
                 <NavLink activeClassName="navLink-active" to="/one/">
-                    <div className="first">1 hour</div>
+                    <div style={{'background-color': '#1D5FB5'}} className="first">1 hour</div>
                 </NavLink>
                 <NavLink activeClassName="navLink-active" to="/ten/">
-                    <div>10 hours</div>
+                    <div style={{'background-color': '#135196'}}>10 hours</div>
                 </NavLink>
                 <NavLink activeClassName="navLink-active" to="/hundred/">
-                    <div>100 hours</div>
+                    <div style={{'background-color': '#0A4278'}}>100 hours</div>
                 </NavLink>
             </_FreqSelector>
             )

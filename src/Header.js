@@ -22,6 +22,32 @@ const StyledHeader = styled.div`
     text-align: center;
 `
 
+const Block1 = styled.div`
+    background-color:#266DD3;
+    height: 100%;
+    width: 20%;
+`
+const Block2 = styled.div`
+    background-color:#5C92DE;
+    width: 20%;
+`
+const Block3 = styled.div`
+    background-color:#93B6E9;
+    width: 20%;
+`
+const Block4 = styled.div`
+    background-color:#C9DBF4;
+    width: 20%;
+`
+const Block5 = styled.div`
+    background-color:#FFFFFF;
+    width: 20%;
+`
+const Header2 = styled.div`
+    display: flex;
+    height:15px;
+`
+
 export class Header extends Component {
     render() {
         return (
@@ -30,6 +56,13 @@ export class Header extends Component {
                     <Title>tempo</Title>
                     {/* <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle> */}
                 </StyledHeader>
+                {/* <Header2> */}
+                {/*     <Block1></Block1> */}
+                {/*     <Block2></Block2> */}
+                {/*     <Block3></Block3> */}
+                {/*     <Block4></Block4> */}
+                {/*     <Block5></Block5> */}
+                {/* </Header2> */}
             </div>
         )
     }
