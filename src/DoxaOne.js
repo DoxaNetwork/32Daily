@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Route } from 'react-router-dom'
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import styled from 'styled-components';
 
 import { Header } from './Header'
@@ -38,34 +38,25 @@ class ThirtytwoDaily extends Component {
             <div style={this.props.style}>
                 <Header/>
                 <FreqSelector/>
-                <Route
-                    exact path={'/one'}
-                    render={(props) => <Freq freq="one" timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
-                />
-                <Route
-                    exact path={'/ten'}
-                    render={(props) => <Freq freq="ten" timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
-                />
-                <Route
-                    exact path={'/hundred'}
-                    render={(props) => <Freq freq="hundred" timer={<Timer3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
-                />
-                <Route
-                    exact path={'/one/create'}
-                    render={ContentForm1}
-                />
-                <Route
-                    exact path={'/ten/create'}
-                    render={ContentForm2}
-                />
-                <Route
-                    exact path={'/hundred/create'}
-                    render={ContentForm3}
-                />
-                <Route
-                    path={'/u/:id'}
-                    component={User}
-                />
+                <Switch>
+                    <Route
+                        path={'/one'}
+                        render={() => <Freq timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
+                    />
+                    <Route
+                        path={'/ten'}
+                        render={() => <Freq timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
+                    />
+                    <Route
+                        path={'/hundred'}
+                        render={() => <Freq timer={<Timer3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
+                    />
+                    
+                    <Route
+                        path={'/u/:id'}
+                        component={User}
+                    />
+                </Switch>
                 <Footer>
                     Copyright Doxa
                 </Footer>

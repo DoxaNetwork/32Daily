@@ -1,17 +1,38 @@
 import React, { Component } from 'react'
-import { NavLink } from 'react-router-dom'
+import { NavLink, Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import styled from 'styled-components';
+import Media from 'react-media';
 
+import { ContentForm } from './Create.js'
 import { Button } from './styledComponents'
+
+
+const Back = styled.div`
+    margin-bottom:20px;
+    font-size:1.2em;
+    a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+`
 
 const SubmittedContainer = styled.div`
     padding: 40px 40px;
     max-width:420px;
     margin-left:auto;
+
+    @media only screen and (max-width: 749px) {
+        margin:auto;
+        max-width:unset;
+    }
 `
 const SubmittedOuterContainer = styled.div`
     background-color: #fafafa;
     width: 42%;
+
+    @media only screen and (max-width: 749px) {
+        width:100%;
+    }
 `
 const Title = styled.div`
     border-bottom: 1px solid var(--secondary);
@@ -22,10 +43,19 @@ const PublishedContainer = styled.div`
     padding: 40px 40px;
     max-width:580px;
     margin-right:auto;
+
+    @media only screen and (max-width: 749px) {
+        margin:auto;
+        max-width:unset;
+    }
 `
 const PublishedOuterContainer = styled.div`
     width:58%;
     background-color:var(--white);
+
+    @media only screen and (max-width: 749px) {
+        width:100%;
+    }
 `
 const FreqContainer = styled.div`
     display: flex;
@@ -40,27 +70,13 @@ const TimerAndCreate = styled.div`
     padding: 20px 0;
 `
 
-export class Freq extends Component {
+class Published extends Component {
     render() {
         return (
             <FreqContainer>
-                <SubmittedOuterContainer>
-                <SubmittedContainer>
-                    <Title>
-                        Submitted
-                    </Title>
-                    <TimerAndCreate>
-                        {this.props.timer}
-                        <NavLink activeClassName="navLink-active" to={`/${this.props.freq}/create`}>
-                            <Button>Create Post</Button>
-                        </NavLink>
-                    </TimerAndCreate>
-                    {this.props.submittedWords}
-                </SubmittedContainer>
-                </SubmittedOuterContainer>
-
                 <PublishedOuterContainer>
                     <PublishedContainer>
+                        <Back><NavLink to={this.props.match.path + "/submissions"}>{"◀ Submissions"}</NavLink></Back>
                         <Title>
                             Published
                         </Title>
@@ -68,6 +84,88 @@ export class Freq extends Component {
                     </PublishedContainer>
                 </PublishedOuterContainer>
             </FreqContainer>
+            )
+    }
+}
+
+class Submissions extends Component {
+    render() {
+        return (
+            <FreqContainer>
+                <SubmittedOuterContainer>
+                    <SubmittedContainer>
+                        <Back><NavLink to={this.props.match.url}>{"◀ Published"}</NavLink></Back>
+                        <Title>
+                            Submitted
+                        </Title>
+                        <TimerAndCreate>
+                            {this.props.timer}
+                            <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
+                                <Button>Create Post</Button>
+                            </NavLink>
+                        </TimerAndCreate>
+                        {this.props.submittedWords}
+                    </SubmittedContainer>
+                </SubmittedOuterContainer>
+            </FreqContainer>
+            )
+    }
+}
+
+class SubmissionsAndPublished extends Component {
+    render() {
+        return (
+             <FreqContainer>
+            <SubmittedOuterContainer>
+                <SubmittedContainer>
+                    <Title>
+                        Submitted
+                    </Title>
+                    <TimerAndCreate>
+                        {this.props.timer}
+                        <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
+                            <Button>Create Post</Button>
+                        </NavLink>
+                    </TimerAndCreate>
+                    {this.props.submittedWords}
+                </SubmittedContainer>
+            </SubmittedOuterContainer>
+
+            <PublishedOuterContainer>
+                <PublishedContainer>
+                    <Title>
+                        Published
+                    </Title>
+                    {this.props.publishedWords}
+                </PublishedContainer>
+            </PublishedOuterContainer>
+             </FreqContainer>
+            )
+    }
+}
+
+class _Freq extends Component {
+    render() {
+        return (
+                <Media query="(max-width: 749px)">
+                    {matches =>
+                        matches ? (
+                            <Switch>
+                                <Route exact path={this.props.match.path} render={() => <Published {...this.props}/>}/>
+                                <Route exact path={this.props.match.path + '/create'} component={ContentForm}/>
+                                <Route exact path={this.props.match.path +  "/submissions"} render={() => <Submissions {...this.props}/>} />
+                            </Switch>
+                        ) : (
+                            <Switch>
+                                <Redirect from={this.props.match.path + "/submissions"} to={this.props.match.path}/>
+                                <Route exact path={this.props.match.path} render={() => <SubmissionsAndPublished {...this.props}/>}/> 
+                                <Route exact path={this.props.match.path + '/create'} component={ContentForm}/>
+                            </Switch>
+                        )
+                    }
+                </Media>
         )
     }
 }
+
+export const Freq = withRouter(_Freq);

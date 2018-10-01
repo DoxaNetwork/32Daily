@@ -17,8 +17,12 @@ const Back = styled.div`
 `
 const CreateContainer = styled.div`
     background-color:#fafafa;
-    padding: 20px 25%;
+    padding: 40px 25%;
     min-height:70vh;
+
+    @media only screen and (max-width: 749px) {
+        padding: 40px;
+    }
 `
 const CreateHeader = styled.div`
     border-bottom: 1px solid black;
@@ -66,9 +70,9 @@ class Create extends Component {
     }
 
     submit(event) {
-        this.props.onSubmit(this.state.content);
+        this.props.onSubmit(this.state.content, this.props.match.path);
         event.preventDefault();
-        setTimeout(() => this.props.history.push('/one'),1000);
+        // setTimeout(() => this.props.history.push('/one'),1000);
     }
 
     render() {
@@ -78,7 +82,7 @@ class Create extends Component {
         return (
             <CreateContainer>
                 <Back>
-                    <NavLink to="/one">{"◀ Back"}</NavLink>
+                    <NavLink to={"/" + this.props.match.path.split("/")[1]}>{"◀ Back"}</NavLink>
                 </Back>
                 <CreateHeader>
                     Create
@@ -108,23 +112,23 @@ class Create extends Component {
     }
 }
 
-const mapFreqtoDispatchtoProps = freq => (
+const mapFreqtoDispatchtoProps = () => (
     dispatch => ({
-        onSubmit: text => dispatch(submitContent(text, freq))
+        onSubmit: (text, freq) => dispatch(submitContent(text, freq))
     })
 )
 
-export const ContentForm1 = withRouter(connect(
+export const ContentForm = withRouter(connect(
     null,
-    mapFreqtoDispatchtoProps('freq1')
+    mapFreqtoDispatchtoProps()
 )(Create))
 
-export const ContentForm2 = withRouter(connect(
-    null,
-    mapFreqtoDispatchtoProps('freq2')
-)(Create))
-
-export const ContentForm3 = withRouter(connect(
-    null,
-    mapFreqtoDispatchtoProps('freq3')
-)(Create))
+// export const ContentForm2 = withRouter(connect(
+//     null,
+//     mapFreqtoDispatchtoProps('freq2')
+// )(Create))
+// 
+// export const ContentForm3 = withRouter(connect(
+//     null,
+//     mapFreqtoDispatchtoProps('freq3')
+// )(Create))
