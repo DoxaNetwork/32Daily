@@ -21,7 +21,7 @@ const SubmittedContainer = styled.div`
     max-width:420px;
     margin-left:auto;
 
-    @media only screen and (max-width: 749px) {
+    @media only screen and (max-width: 649px) {
         margin:auto;
         max-width:unset;
     }
@@ -30,7 +30,7 @@ const SubmittedOuterContainer = styled.div`
     background-color: #fafafa;
     width: 42%;
 
-    @media only screen and (max-width: 749px) {
+    @media only screen and (max-width: 649px) {
         width:100%;
     }
 `
@@ -44,7 +44,7 @@ const PublishedContainer = styled.div`
     max-width:580px;
     margin-right:auto;
 
-    @media only screen and (max-width: 749px) {
+    @media only screen and (max-width: 649px) {
         margin:auto;
         max-width:unset;
     }
@@ -53,7 +53,7 @@ const PublishedOuterContainer = styled.div`
     width:58%;
     background-color:var(--white);
 
-    @media only screen and (max-width: 749px) {
+    @media only screen and (max-width: 649px) {
         width:100%;
     }
 `
@@ -147,7 +147,7 @@ class SubmissionsAndPublished extends Component {
 class _Freq extends Component {
     render() {
         return (
-                <Media query="(max-width: 749px)">
+                <Media query="(max-width: 649px)">
                     {matches =>
                         matches ? (
                             <Switch>
