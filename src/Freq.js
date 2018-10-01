@@ -65,9 +65,14 @@ const FreqContainer = styled.div`
 
 const TimerAndCreate = styled.div`
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-around;
     padding: 20px 0;
+
+    button {
+        margin-top: 10px;
+    }
 `
 
 class Published extends Component {
