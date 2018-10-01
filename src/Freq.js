@@ -25,7 +25,7 @@ const PublishedContainer = styled.div`
 `
 const PublishedOuterContainer = styled.div`
     width:58%;
-    background-color:white;
+    background-color:var(--white);
 `
 const FreqContainer = styled.div`
     display: flex;

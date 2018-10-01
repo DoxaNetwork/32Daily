@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import identicon from 'identicon.js'
 
 const ContentContainer = styled.div`
-    background-color:white;
+    background-color:var(--white);
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,.14);
     margin-top: 30px;

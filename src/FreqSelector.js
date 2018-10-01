@@ -5,7 +5,7 @@ import styled from 'styled-components';
 const _FreqSelector = styled.div`
     display: flex;
     justify-content: center;
-    background-color: white;
+    background-color: var(--white);
     position: relative;
 
     div {
@@ -13,11 +13,11 @@ const _FreqSelector = styled.div`
         padding: 10px 0;
     }
     .navLink-active div {
-        background-color: #fff !important;
+        background-color: var(--white) !important;
         color:var(--secondary) !important;
     }
     div:hover {
-        background-color: #fff !important;
+        background-color: var(--white) !important;
         color:var(--secondary) !important;
     }
     a {

@@ -14,7 +14,7 @@ const Identity = styled.img`
     width:75px;
     height:75px;
     border-radius:75px;
-    border: 5px solid white;
+    border: 5px solid var(--white);
     top: 25px;
     position: relative;
 `
@@ -38,7 +38,7 @@ class Identicon extends Component {
 }
 
 const UserContainer = styled.div`
-    background-color: white;
+    background-color: var(--white);
     width: 450px;
     margin: auto;
     overflow:hidden;

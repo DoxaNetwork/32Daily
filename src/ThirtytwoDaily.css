@@ -19,7 +19,7 @@ body {
 
 .navLink-active {
     background-color: var(--primary) !important;
-    color:white !important;
+    color:var(--white) !important;
 }
 
 .red {
