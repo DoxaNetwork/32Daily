@@ -1,10 +1,22 @@
 import bs58 from 'bs58';
 import IPFS from 'ipfs-api';
 
-const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+let ipfs;
+
+async function getIPFSNode() {
+  try {
+    ipfs = new IPFS();
+    await ipfs.id()
+    console.log('connected to local ipfs node')
+  } catch {
+    ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
+    console.log('could not find local node, connecting to infura node')
+  }
+}
+getIPFSNode();
 
 function getBytes32FromIpfsHash(ipfsListing) {
-    return "0x" + bs58.decode(ipfsListing).slice(2).map(i => ("00" + i.toString(16)).slice(-2)).join('')
+    return "0x" + bs58.decode(ipfsListing).slice(2).toString('hex');
 }
 
 function getIpfsHashFromBytes32(bytes32Hex) {
