@@ -23,7 +23,7 @@ contract DoxaHub is TransferGate, Ownable {
     uint public SUBMISSION_MINT = 1;
     uint public nextPublishTime;
 
-    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32[8] link);
+    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32 ipfsHash);
     event PostBacked(address indexed backer, uint32 indexed version, uint postIndex);
     event Published(address indexed poster, uint publishedTime, uint currentVersion, uint indexToPublish);
 
@@ -44,13 +44,13 @@ contract DoxaHub is TransferGate, Ownable {
         nextPublishTime = now + 1 minutes;
     }
 
-    function postLink(bytes32[8] link)
+    function postLink(bytes32 _ipfsHash)
     public 
     {
-        require(postingAvailable(msg.sender));
-        contentPool.newContent(msg.sender, link);
+        // require(postingAvailable(msg.sender));
+        contentPool.newContent(msg.sender, _ipfsHash);
         token.mint(msg.sender, SUBMISSION_MINT);
-        LinkPosted(msg.sender, 0, contentPool.poolLength() - 1, link);
+        LinkPosted(msg.sender, 0, contentPool.poolLength() - 1, _ipfsHash);
     }
 
     function postingAvailable(address _owner)
@@ -61,11 +61,11 @@ contract DoxaHub is TransferGate, Ownable {
 
     function getLinkByIndex( uint256 index ) 
     public view 
-    returns( uint256, address owner, bytes32[8] link, uint256 backing )
+    returns( uint256, address owner, bytes32 ipfsHash_, uint256 backing )
     {
-        var (poster, content) = contentPool.getItem(index);
+        var (poster, ipfsHash) = contentPool.getItem(index);
         bytes32 postKey = keccak256(contentPool.currentVersion(), index);
-        return (index, poster, content, votes.incomingVotes(postKey));
+        return (index, poster, ipfsHash, votes.incomingVotes(postKey));
     }
     
     function getLinkCount() 
@@ -171,7 +171,7 @@ contract DoxaHub is TransferGate, Ownable {
 
     function getPublishedItem(uint32 publishedIndex) 
     public view
-    returns (address poster_, bytes32[8] content_, uint publishedTime_)
+    returns (address poster_, bytes32 ipfsHash_, uint publishedTime_)
     {
         var (version, poolIndex, publishedTime) = publishedHistory.getItem(publishedIndex);
         // now we need to convert publishedIndex to version

@@ -27,7 +27,7 @@ const Footer = styled.div`
     display: flex;
     background-color:var(--secondary);
     padding:40px 50px 70px;
-    color:var(--lightgray);
+    color:var(--white);
 ` 
 const FooterCol = styled.div`
     width:150px;

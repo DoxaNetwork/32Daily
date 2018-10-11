@@ -15,7 +15,7 @@ contract HigherFreq is TransferGate {
 
     // Votes freq2Votes;
     // PublishedHistory higherFreqPublishedHistory;
-    event Published(uint indexed version, address indexed owner, bytes32[8] content);
+    event Published(uint indexed version, address indexed owner, bytes32 ipfsHash);
     
 
     // public uint nextCycleChange;
@@ -87,13 +87,13 @@ contract HigherFreq is TransferGate {
     // call this for every item in (lower, upper)
     function getItem(uint32 publishedIndex) 
     public view
-    returns (address poster_, bytes32[8] content_, uint votes_)
+    returns (address poster_, bytes32 ipfsHash_, uint votes_)
     {
         // error: there may be nothing in some publishedIndexs
         bytes32 postKey = keccak256(currentCycle, publishedIndex);
         var (version, index, publishedTime) = lowerFreq.getPublishedCoords(publishedIndex);
-        var (poster, content) = contentPool.getPastItem(version, index);
-        return (poster, content, votes.incomingVotes(postKey));
+        var (poster, ipfsHash) = contentPool.getPastItem(version, index);
+        return (poster, ipfsHash, votes.incomingVotes(postKey));
     }
 
     function getPublishedCoords(uint32 publishedIndex) 
@@ -124,10 +124,10 @@ contract HigherFreq is TransferGate {
         if(somethingSelected) {
             // don't like how we call two different methods here
             var (version, index, publishedTime) = lowerFreq.getPublishedCoords(indexToPublish);
-            var (poster, content) = contentPool.getPastItem(version, index);
+            var (poster, ipfsHash) = contentPool.getPastItem(version, index);
             promotedContent.publish(version, index);
             doxaToken.mint(poster, 1);
-            Published(currentCycle, poster, content);
+            Published(currentCycle, poster, ipfsHash);
         }
 
         cycle();
@@ -168,12 +168,12 @@ contract HigherFreq is TransferGate {
 
     function getPublishedItem(uint32 publishedIndex) 
     public view
-    returns (address poster_, bytes32[8] content_, uint publishedTime_)
+    returns (address poster_, bytes32 ipfsHash_, uint publishedTime_)
     {
         var (version, poolIndex, publishedTime) = promotedContent.getItem(publishedIndex);
         // now we need to convert publishedIndex to version
-        var (poster, content) = contentPool.getPastItem(version, poolIndex);
-        return (poster, content, publishedTime);
+        var (poster, ipfsHash) = contentPool.getPastItem(version, poolIndex);
+        return (poster, ipfsHash, publishedTime);
         // return (contentPool.getPastItem(version, poolIndex), publishedTime);
     }
 }
