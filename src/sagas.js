@@ -7,7 +7,8 @@ import HigherFreq from '../build/contracts/HigherFreq.json'
 import Freq3 from '../build/contracts/Freq3.json'
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
-import { ByteArrayToString, stringToChunkedArray, dayOfWeek, month } from './utils/helpers'
+import { dayOfWeek, month } from './utils/helpers'
+import { contentFromIPFS32, postToIPFS } from './utils/ipfs'
 
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
@@ -16,11 +17,7 @@ const Freq3Contract = contract(Freq3)
 const freq1Instance = getContract(doxaHubContract);
 const freq2Instance = getContract(HigherFreqContract);
 const freq3Instance = getContract(Freq3Contract);
-import bs58 from 'bs58'
 
-import IPFS from 'ipfs-api';
-
-const ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
 
 function getEventsByType(events, type) {
     let matchedEvents = []
@@ -32,26 +29,9 @@ function getEventsByType(events, type) {
     return matchedEvents;
 }
 
-function getIpfsHashFromBytes32(bytes32Hex) {
-  // Add our default ipfs values for first 2 bytes:
-  // function:0x12=sha2, size:0x20=256 bits
-  // and cut off leading "0x"
-  const hashHex = "1220" + bytes32Hex.slice(2)
-  const hashBytes = Buffer.from(hashHex, 'hex');
-  const hashStr = bs58.encode(hashBytes)
-  return hashStr
-}
-
 function* mapPost(post) {
-    const ipfsPath = getIpfsHashFromBytes32(post.ipfsHash)
-    console.log(ipfsPath, post.ipfsHash)
-    const fetched = yield ipfs.files.cat(ipfsPath);
-    const response = fetched.toString('utf8');
-    // const fetched = yield fetch(`http://localhost:5001/get/?ipfsPath=${ipfsPath}`)
-    // const response = yield fetched.json();
-    console.log(response);
-    return {'poster': post.owner, 'word': response, 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
-    // return {'poster': post.owner, 'word': response.data, 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
+    const word = yield contentFromIPFS32(post.ipfsHash);
+    return {'poster': post.owner, word, 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
 }
 
 function* updateTokenBalance(action) {
@@ -80,29 +60,10 @@ function* initAccount(action) {
     yield put({type: "INIT_ACCOUNT_SUCCESS", currentAccount})
 }
 
-function getBytes32FromIpfsHash(ipfsListing) {
-    return "0x" + bs58.decode(ipfsListing).slice(2).map(i => ("00" + i.toString(16)).slice(-2)).join('')
-    // return "0x" + bs58.decode(ipfsListing).slice(2).map((i) => i.toString(16)).join('');
-  // return "0x"+bs58.decode(ipfsListing).slice(2).join('')
-}
-
 function* submitPost(action) {
     // need to init doxaHub
     const doxaHub = yield getContract(doxaHubContract);
-
-    // const fetched = yield fetch(`http://localhost:5001/save/`, {
-    //     method: "POST",
-    //     headers: {
-    //         "Content-Type": "application/json; charset=utf-8",
-    //     },
-    //     body: JSON.stringify({text: action.text})
-    // })
-    const response = yield ipfs.files.add(new Buffer(action.text));
-    // const response = yield fetched.json();
-    const ipfsPath = response[0]['path'];
-
-    const ipfsPathShort = getBytes32FromIpfsHash(ipfsPath)
-    console.log(ipfsPath, ipfsPathShort)
+    const ipfsPathShort = yield postToIPFS(action.text);
 
     const currentAccount = yield getCurrentAccount();
     const result = yield doxaHub.postLink(ipfsPathShort, { from: currentAccount})

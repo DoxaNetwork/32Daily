@@ -1,23 +1,12 @@
-const Web3 = require('web3');
-const fs = require('fs')
+import Web3 from 'web3';
+import fs from 'fs'
+
 const web3 = new Web3();
+
 
 function toAscii(hex) {
     let zeroPaddedString = web3.toAscii(hex);
     return zeroPaddedString.split("\u0000")[0];
-}
-
-function stringToChunkedArray(string) {
-    return string.match(/.{1,32}/g);
-}
-
-function ByteArrayToString(array) {
-    // should use reduce here instead
-    let output = '';
-    for (let i = 0; i < array.length; i++) {
-        output += toAscii(array[i]);
-    }
-    return output;
 }
 
 function dayOfWeek(date) {
@@ -64,11 +53,9 @@ function readFactory(freq, factoryName) {
 }
 
 module.exports = { 
-    ByteArrayToString,
-    stringToChunkedArray,
     dayOfWeek,
     month,
     recordFactory,
     getEventsByType,
-    readFactory
+    readFactory,
 };
