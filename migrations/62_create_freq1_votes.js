@@ -1,5 +1,5 @@
 const VotesFactory = artifacts.require("./VotesFactory.sol");
-const helpers = require('../src/utils/helpers')
+const helpers = require('../client/src/utils/helpers')
 
 module.exports = function(deployer) {
   deployer.then(function(){

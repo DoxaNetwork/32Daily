@@ -4,7 +4,7 @@ const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
 const HigherFreq = artifacts.require("./HigherFreq.sol")
 
-const helpers = require('../src/utils/helpers')
+const helpers = require('../client/src/utils/helpers')
 
 module.exports = function(deployer) {
   const historyAddress = helpers.readFactory('freq2', 'HistoryFactory');
