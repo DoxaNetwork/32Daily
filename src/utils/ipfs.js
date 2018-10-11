@@ -30,7 +30,7 @@ async function postToIPFS(text) {
     return ipfsPathShort;
 }
 
-module.exports = {
+export {
     contentFromIPFS32,
     postToIPFS,
 };

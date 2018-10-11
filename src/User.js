@@ -5,10 +5,11 @@ import identicon from 'identicon.js'
 
 import contract from 'truffle-contract'
 
-import DoxaHubContract from '../build/contracts/DoxaHub.json'
+import DoxaHubContract from './contracts/DoxaHub.json'
+import { getContract } from './DappFunctions'
+
 const doxaHubContract = contract(DoxaHubContract)
 
-import { getContract } from './DappFunctions'
 
 const Identity = styled.img`
     width:75px;

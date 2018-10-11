@@ -1,11 +1,11 @@
-import DoxaHubContract from '../build/contracts/DoxaHub.json'
-import HigherFreq from '../build/contracts/HigherFreq.json'
+import DoxaHubContract from './contracts/DoxaHub.json'
+import HigherFreq from './contracts/HigherFreq.json'
 import getWeb3 from './utils/getWeb3'
+import { contentFromIPFS32 } from './utils/ipfs.js'
 
 const contract = require('truffle-contract')
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
-import { contentFromIPFS32 } from './utils/ipfs'
 
 
 const simpleCache = {};  // This can be used for simple objects, like the current user's account address

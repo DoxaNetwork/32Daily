@@ -2,13 +2,13 @@ import { delay } from 'redux-saga'
 import { put, takeEvery, all } from 'redux-saga/effects'
 
 import contract from 'truffle-contract'
-import DoxaHubContract from '../build/contracts/DoxaHub.json'
-import HigherFreq from '../build/contracts/HigherFreq.json'
-import Freq3 from '../build/contracts/Freq3.json'
+import DoxaHubContract from './contracts/DoxaHub.json'
+import HigherFreq from './contracts/HigherFreq.json'
+import Freq3 from './contracts/Freq3.json'
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
 import { dayOfWeek, month } from './utils/helpers'
-import { contentFromIPFS32, postToIPFS } from './utils/ipfs'
+import { contentFromIPFS32, postToIPFS } from './utils/ipfs.js'
 
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
@@ -149,7 +149,7 @@ export default function* rootSaga() {
     yield takeEvery('LOAD_AVAILABLE_BALANCE', updateAvailableToTransfer)
     yield takeEvery('LOAD_ACCOUNT', initAccount)
 
-    yield takeEvery('SUBMIT_CONTENT', submitPost),
+    yield takeEvery('SUBMIT_CONTENT', submitPost)
     yield takeEvery('SUBMIT_VOTE', persistVote)
 
     yield takeEvery('LOAD_PUBLISH_TIME', loadPublishTime)
