@@ -23,6 +23,16 @@ function readFactory(freq, factoryName) {
     return address;
 }
 
+function getEventsByType(events, type) {
+    let matchedEvents = []
+    for (let i = 0; i < events.length; i++) {
+        if (events[i].event === type) {
+            matchedEvents.push(events[i])
+        }
+    }
+    return matchedEvents;
+}
+
 module.exports = { 
     recordFactory,
     readFactory,
