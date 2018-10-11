@@ -2,7 +2,7 @@ const ContentPool = artifacts.require("./ContentPool.sol");
 const Freq3 = artifacts.require("./Freq3.sol");
 const HigherFreq = artifacts.require("./HigherFreq.sol");
 
-const helpers = require('../client/src/utils/helpers')
+const helpers = require('../src/helpers')
 
 module.exports = function(deployer) {
     const historyAddress = helpers.readFactory('freq3', 'HistoryFactory');

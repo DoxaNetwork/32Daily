@@ -1,8 +1,5 @@
 const Web3 = require('web3')
-const fs = require('fs');
-
 const web3 = new Web3();
-
 
 function toAscii(hex) {
     let zeroPaddedString = web3.toAscii(hex);
@@ -29,33 +26,8 @@ function getEventsByType(events, type) {
     return matchedEvents;
 }
 
-function recordFactory(result, freq, factoryName) {
-  const events = getEventsByType(result.logs, "Deployed");
-  const address = events[0].args['newContract'] 
-
-  const dstPath = __dirname + '/../../build/factories/' + factoryName + '.json';
-
-  let data;
-  if (fs.existsSync(dstPath)) {
-    data = require(dstPath);  
-  } else {
-    data = {}
-  }
-  data[freq] = address;
-  fs.writeFileSync(dstPath, JSON.stringify(data, null, 2), {flag: 'w'});
-}
-
-function readFactory(freq, factoryName) {
-    const path = __dirname + '/../../build/factories/' + factoryName + '.json';
-    const data = require(path)
-    const address = data[freq];
-    return address;
-}
-
 module.exports = { 
     dayOfWeek,
     month,
-    recordFactory,
     getEventsByType,
-    readFactory,
 };

@@ -1,5 +1,5 @@
 const HistoryFactory = artifacts.require("./HistoryFactory.sol");
-const helpers = require('../client/src/utils/helpers')
+const helpers = require('../src/helpers')
 
 module.exports = function(deployer) {
   deployer.then(function(){

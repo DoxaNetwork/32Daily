@@ -1,5 +1,5 @@
 const TokenFactory = artifacts.require("./TokenFactory.sol");
-const helpers = require('../client/src/utils/helpers')
+const helpers = require('../src/helpers')
 
 module.exports = function(deployer) {
   deployer.then(function(){
