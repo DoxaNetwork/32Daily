@@ -4,7 +4,7 @@ function recordFactory(result, freq, factoryName) {
   const events = getEventsByType(result.logs, "Deployed");
   const address = events[0].args['newContract'] 
 
-  const dstPath = __dirname + '/../../build/factories/' + factoryName + '.json';
+  const dstPath = __dirname + '/../build/factories/' + factoryName + '.json';
 
   let data;
   if (fs.existsSync(dstPath)) {
