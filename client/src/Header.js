@@ -1,5 +1,9 @@
 import React, { Component } from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
+import { Link } from 'react-router-dom'
+import { connect } from 'react-redux'
+
+
 
 import styled from 'styled-components';
 
@@ -22,15 +26,24 @@ const StyledHeader = styled.div`
     text-align: center;
 `
 
-export class Header extends Component {
+class _Header extends Component {
     render() {
         return (
             <div>
                 <StyledHeader>
                     <Title>temporank</Title>
+                    <Link to={'/u/' + this.props.account}>Your profile</Link>
                     {/* <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle> */}
                 </StyledHeader>
             </div>
         )
     }
 }
+
+const mapStateToProps = state => ({
+    account: state.user.account,
+})
+
+export const Header = connect(
+    mapStateToProps,
+)(_Header)

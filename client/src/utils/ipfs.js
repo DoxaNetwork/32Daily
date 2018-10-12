@@ -2,18 +2,23 @@ import bs58 from 'bs58';
 import IPFS from 'ipfs-api';
 
 let ipfs;
+let ipfsLoaded;
 
 async function getIPFSNode() {
+  if (ipfsLoaded) {
+    return ipfs;
+  }
   try {
     ipfs = new IPFS();
-    await ipfs.id()
+    await ipfs.id();
     console.log('connected to local ipfs node')
   } catch {
     ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
-    console.log('could not find local node, connecting to infura node')
+    console.log('could not find local node, connecting to infura node');
   }
+  ipfsLoaded = true;
+  return ipfs;
 }
-getIPFSNode();
 
 function getBytes32FromIpfsHash(ipfsListing) {
     return "0x" + bs58.decode(ipfsListing).slice(2).toString('hex');
@@ -29,14 +34,31 @@ function getIpfsHashFromBytes32(bytes32Hex) {
   return hashStr
 }
 
+async function fileFromIPFS(ipfsHash) {
+  const ipfs = await getIPFSNode();
+  // const ipfsHash = getIpfsHashFromBytes32(ipfs32);
+  const fetched = await ipfs.files.cat(ipfsHash);
+  return fetched;
+}
+
+async function fileToIPFS(readerResult) {
+  const ipfs = await getIPFSNode();
+  const buffer = Buffer.from(readerResult)
+  const response = await ipfs.add(buffer);
+  const ipfsPath = response[0]['path'];
+  return ipfsPath;
+}
+
 async function contentFromIPFS32(ipfs32) {
+    const ipfs = await getIPFSNode();
     const ipfsHash = getIpfsHashFromBytes32(ipfs32);
     const fetched = await ipfs.files.cat(ipfsHash);
     return fetched.toString('utf8');
 }
 
 async function postToIPFS(text) {
-    const response = await ipfs.files.add(new Buffer(text));
+    const ipfs = await getIPFSNode();
+    const response = await ipfs.files.add(Buffer.from(text));
     const ipfsPath = response[0]['path'];
     const ipfsPathShort = getBytes32FromIpfsHash(ipfsPath)
     return ipfsPathShort;
@@ -45,4 +67,6 @@ async function postToIPFS(text) {
 export {
     contentFromIPFS32,
     postToIPFS,
+    fileFromIPFS,
+    fileToIPFS
 };

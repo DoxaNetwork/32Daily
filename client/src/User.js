@@ -2,22 +2,29 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 import identicon from 'identicon.js'
+import Img from 'react-image'
+
 
 import contract from 'truffle-contract'
 
 import DoxaHubContract from './contracts/DoxaHub.json'
 import { getContract } from './DappFunctions'
+import {fileFromIPFS, fileToIPFS} from './utils/ipfs' 
 
 const doxaHubContract = contract(DoxaHubContract)
 
 
-const Identity = styled.img`
+const Identity = styled(Img)`
     width:75px;
     height:75px;
     border-radius:75px;
     border: 5px solid var(--white);
     top: 25px;
     position: relative;
+
+    &:hover {
+        cursor: pointer;
+    }
 `
 
 class Identicon extends Component {
@@ -31,7 +38,9 @@ class Identicon extends Component {
 
     render() {
         const data = new identicon(this.props.poster, this.options);
-        const src = "data:image/png;base64," + data.toString();
+
+        const src = this.props.imageUrl ? this.props.imageUrl : "data:image/png;base64," + data.toString();
+
         return (
             <Identity width="75" height="75" src={src}/>
         )
@@ -66,11 +75,17 @@ const IdenticonContainer = styled.div`
     text-align:center;
     background-color:var(--primary);
     height:75px;
+
+    input {
+        display:none;
+    }
 `
 
-export class User extends Component {
+export class _User extends Component {
     state = {
-        postsPublished: '...'
+        postsPublished: '...',
+        userLoggedIn: false,
+        imageUrl: null
     }
 
     async componentDidMount() {
@@ -87,14 +102,44 @@ export class User extends Component {
 
         const results = await filterPromise();
         this.setState({postsPublished: results.length});
+        this.setState({userLoggedIn: this.props.match.params.id === this.props.account})
+
+        // need to either 
+        // - get this from ethereum and reset it everytime we change (worse)
+        // - get this from ethereum as an IPNS hash and update without posting to ethereum
+        const pictureHash = 'QmYBhMmzYvZRhtUL4dE1Vs6iwMusBWhL8nmRYbKvg2e1cY';
+        const imageUrl = await this.urlFromHash(pictureHash);
+        this.setState({imageUrl})   
     }
+
+    async urlFromHash(hash) {
+        const picture = await fileFromIPFS(hash);
+        const blob = new Blob( [ picture ], { type: "image/jpeg" } );
+        const urlCreator = window.URL || window.webkitURL;
+        const imageUrl = urlCreator.createObjectURL( blob );
+        return imageUrl;
+    }
+
+    imageUpload (event) {
+        const file = event.target.files[0]
+        let reader = new window.FileReader()
+        reader.onloadend = async () => {
+            const pictureHash = await fileToIPFS(reader.result);
+            const imageUrl = await this.urlFromHash(pictureHash);
+            this.setState({imageUrl})
+        }
+        reader.readAsArrayBuffer(file)
+      }
 
     render() {
         return (
             <UserOuterContainer>
                 <UserContainer>
                     <IdenticonContainer>
-                        <Identicon poster={this.props.match.params.id}/>
+                        <label htmlFor="imageUpload">
+                            <Identicon poster={this.props.match.params.id} imageUrl={this.state.imageUrl}/>
+                        </label>
+                        <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
                     </IdenticonContainer>
                     <Container1>
                         <div>
@@ -111,3 +156,11 @@ export class User extends Component {
         )
     }
 }
+
+const mapStateToProps = state => ({
+    account: state.user.account, // have got to initialize this somewhere
+})
+
+export const User = connect(
+    mapStateToProps,
+)(_User)
