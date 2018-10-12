@@ -8,7 +8,8 @@ const ContentContainer = styled.div`
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0,0,0,.14);
     margin-top: 30px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
+    /*box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 `
 const ContentHeader = styled.div`

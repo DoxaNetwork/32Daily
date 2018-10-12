@@ -1,60 +1,78 @@
 pragma solidity ^0.4.18;
 
-import './Spoke.sol';
+import './Ownable.sol';
 
-contract MemberRegistry is Spoke {
+contract MemberRegistry is Ownable {
 
     struct Member {
-        bytes32 name;
         address owner;
+        bytes16 name; // up to 16 characters, guaranteed unique
+        bytes32 profileIPFS; // this will point to image, blurb, profile, etc
+        bool exiled;
     }
 
-    // with the mapping, we can have multiple distinct member pools (roles)
-    // ( a separate community should have a separate token. each token should have its own membership contract)
-    // #0 -> member
-    // #1 -> citizen
-    // #2 -> senator
-    // #3 -> king
-    // mapping(uint => Member[]) public memberList;
+    mapping (address => Member) public addressMap;
+    mapping (bytes32 => address) public usernameMap;
+    mapping (address => address) public proxyMap;
 
-    Member[] public memberList;
-
-    mapping(address => uint) public addressMap;
-
-
-    function memberCount() 
-    public view
-    returns (uint count)
+    function create(bytes16 _name, bytes32 _profileIPFS) 
+    public
     {
-        return memberList.length;
-    }
-
-    function createMember(address _owner, bytes32 _name) 
-    public onlyHub
-    {
+        // make sure this name isn't already taken
+        require (usernameMap[_name] == 0); 
+        
         Member memory newMember = Member(
         {
+            owner: msg.sender,
             name: _name,
-            owner: _owner
+            profileIPFS: _profileIPFS,
+            exiled: false
         });
 
-        memberList.push(newMember);
-
-        addressMap[_owner] = memberList.length-1;
+        usernameMap[_name] = msg.sender;
+        addressMap[msg.sender] = newMember;
     }
 
-    function getMember(uint _index) 
-    public view
-    returns (bytes32 name_, address owner_)
+    function setProxy(address _newOwner) 
+    public 
     {
-        return (memberList[_index].name, memberList[_index].owner);
+        require(addressMap[msg.sender].owner > 0);
+        proxyMap[_newOwner] = msg.sender;
     }
 
-    function getMemberByAddress(address _owner) 
-    public view
-    returns (bytes32 name_, address owner_) 
+    function setProfile(bytes32 _profileIPFS)
+    public 
     {
-        uint index = addressMap[_owner];
-        return getMember(index);
+        if (proxyMap[msg.sender] > 0) {
+            address proxied = proxyMap[msg.sender];
+            addressMap[proxied].profileIPFS = _profileIPFS;
+        } else {
+            addressMap[msg.sender].profileIPFS = _profileIPFS;
+        }
+    }
+
+    function exile(address _owner)
+    public onlyOwner
+    {
+        if (proxyMap[_owner] > 0) {
+            address proxied = proxyMap[_owner];
+            addressMap[proxied].exiled = true;
+        } else {
+            addressMap[_owner].exiled = true;
+        }
+    }
+
+    function get(address _owner) 
+    public view
+    returns (address owner_, bytes16 name_, bytes32 profileIPFS_, bool exiled_) 
+    {
+        if (proxyMap[_owner] > 0) {
+            address proxied = proxyMap[_owner];
+            return (addressMap[proxied].owner, addressMap[proxied].name, addressMap[proxied].profileIPFS, addressMap[proxied].exiled);
+        } else {
+            return (addressMap[_owner].owner, addressMap[_owner].name, addressMap[_owner].profileIPFS, addressMap[_owner].exiled);
+        }
     }
 }
+
+// ability to upgrade without losing data
