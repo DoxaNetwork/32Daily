@@ -1,17 +1,25 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
+
 import identicon from 'identicon.js'
 import Img from 'react-image'
 
 
 import contract from 'truffle-contract'
 
+import { Button } from './styledComponents'
+import MemberRegistryContract from './contracts/MemberRegistry.json'
 import DoxaHubContract from './contracts/DoxaHub.json'
-import { getContract } from './DappFunctions'
-import {fileFromIPFS, fileToIPFS} from './utils/ipfs' 
+import { getContract, getCurrentAccount } from './DappFunctions'
+
+import {fileFromIPFS, fileToIPFS, postToIPFS, contentFromIPFS32} from './utils/ipfs' 
+
+import {toAscii} from './utils/helpers'
 
 const doxaHubContract = contract(DoxaHubContract)
+const memberRegistryContract = contract(MemberRegistryContract)
+
 
 
 const Identity = styled(Img)`
@@ -50,11 +58,11 @@ class Identicon extends Component {
 const UserContainer = styled.div`
     background-color: var(--white);
     width: 450px;
-    margin: auto;
+    margin: 50px auto;
     overflow:hidden;
     margin-top: 50px;
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
     font-size: 1.2em;
 `
 
@@ -62,10 +70,37 @@ const UserOuterContainer = styled.div`
     min-height:70vh;
 `
 
-const Container1 = styled.div`
+const ChainMetadata = styled.div`
     display: flex;
     justify-content: space-around;
     padding: 50px 20px;
+`
+
+const EditableMetadata = styled.div`
+    border-bottom: 1px solid var(--lightgray);
+    padding: 50px 20px;
+
+    textarea {
+        width: 100%;
+        height: 100px;
+        resize: none;
+        border: 1px solid var(--lightgray);
+        border-radius: 3px;
+        margin: 20px 0;
+        box-sizing: border-box;
+        font-size: 1em;
+        padding: 10px;
+    }
+
+    input {
+        border-radius: 3px;
+        border: 1px solid var(--lightgray);
+        margin: 20px 0;
+        font-size: 1em;
+        padding: 10px;
+        width: 100%;
+        box-sizing: border-box;
+    }
 `
 const Bold = styled.div`
     font-weight:800;
@@ -80,17 +115,49 @@ const IdenticonContainer = styled.div`
         display:none;
     }
 `
+const ButtonContainer = styled.div`
+    text-align:center;
+`
 
 export class _User extends Component {
     state = {
         postsPublished: '...',
         userLoggedIn: false,
-        imageUrl: null
+        imageUrl: null,
+        username: '',
+        profile: '',
+        imageIPFS: null,
+        registered: false,
     }
 
     async componentDidMount() {
         const doxaHub = await getContract(doxaHubContract);
         const filter = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
+
+        const registry = await getContract(memberRegistryContract);
+        const currentAccount = await getCurrentAccount();
+
+        let [owner, name, profileIPFS, exiled] = await registry.get(currentAccount);
+        name = toAscii(name)
+
+        if (name !== '') {
+            console.log('user already registered, pulling from ipfs')
+            let profile = await contentFromIPFS32(profileIPFS);
+            profile = JSON.parse(profile)
+            console.log(profile)
+
+            const pictureHash = profile['image'];
+
+            if (pictureHash !== null) {
+                const imageUrl = await this.urlFromHash(pictureHash);
+                this.setState({imageUrl, imageIPFS: pictureHash})
+            }
+
+            this.setState({registered: true, username:name, profile: profile['profile']})
+            
+        } else {
+            console.log('user not yet registered')
+        }
 
         const filterPromise = () => {
             return new Promise((resolve, reject) => {
@@ -103,13 +170,6 @@ export class _User extends Component {
         const results = await filterPromise();
         this.setState({postsPublished: results.length});
         this.setState({userLoggedIn: this.props.match.params.id === this.props.account})
-
-        // need to either 
-        // - get this from ethereum and reset it everytime we change (worse)
-        // - get this from ethereum as an IPNS hash and update without posting to ethereum
-        const pictureHash = 'QmYBhMmzYvZRhtUL4dE1Vs6iwMusBWhL8nmRYbKvg2e1cY';
-        const imageUrl = await this.urlFromHash(pictureHash);
-        this.setState({imageUrl})   
     }
 
     async urlFromHash(hash) {
@@ -126,10 +186,33 @@ export class _User extends Component {
         reader.onloadend = async () => {
             const pictureHash = await fileToIPFS(reader.result);
             const imageUrl = await this.urlFromHash(pictureHash);
-            this.setState({imageUrl})
+            this.setState({imageUrl, imageIPFS: pictureHash})
         }
         reader.readAsArrayBuffer(file)
       }
+
+    async submit() {
+        const registry = await getContract(memberRegistryContract);
+        const currentAccount = await getCurrentAccount();
+
+        const {username, profile, imageIPFS} = this.state;
+        const ipfsblob = {profile, image: imageIPFS}
+        const ipfsPathShort = await postToIPFS(JSON.stringify(ipfsblob));
+
+        if (this.state.registered) {
+            console.debug('updating user')
+            await registry.setProfile(ipfsPathShort, { from: currentAccount})
+        } else {
+            console.debug('registering user')
+            await registry.create(username, ipfsPathShort, { from: currentAccount})
+        }
+    }
+
+    handleContentChange(e) {
+        const id = e.target.id;
+        const value = e.target.value;
+        this.setState({ [id]: value });
+    }
 
     render() {
         return (
@@ -141,7 +224,27 @@ export class _User extends Component {
                         </label>
                         <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
                     </IdenticonContainer>
-                    <Container1>
+                    <EditableMetadata>
+                        <div>
+                            <input 
+                                value={this.state.username} 
+                                placeholder="what should we call you?" 
+                                type="text" 
+                                id="username"
+                                onChange={(e) => this.handleContentChange(e)}></input>
+                        </div>
+                        <div>
+                            <textarea 
+                                value={this.state.profile} 
+                                placeholder="what should we know about you?" 
+                                id="profile"
+                                onChange={(e) => this.handleContentChange(e)}></textarea>
+                        </div>
+                        <ButtonContainer>
+                            <Button onClick={() => this.submit()}>Save</Button>
+                        </ButtonContainer>
+                    </EditableMetadata>
+                     <ChainMetadata>
                         <div>
                             <Bold>User id</Bold>
                             <div>{this.props.match.params.id.substring(0,6)}</div>
@@ -150,7 +253,7 @@ export class _User extends Component {
                             <Bold>Karma</Bold>
                             <div>{this.state.postsPublished}</div>
                         </div>
-                    </Container1>
+                    </ChainMetadata>
                 </UserContainer>
             </UserOuterContainer>
         )
