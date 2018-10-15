@@ -57,7 +57,7 @@ class Identicon extends Component {
 
 const UserContainer = styled.div`
     background-color: var(--white);
-    width: 450px;
+    max-width: 450px;
     margin: 50px auto;
     overflow:hidden;
     margin-top: 50px;
