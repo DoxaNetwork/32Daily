@@ -11,6 +11,8 @@ import contract from 'truffle-contract'
 import { Button } from './styledComponents'
 import MemberRegistryContract from './contracts/MemberRegistry.json'
 import DoxaHubContract from './contracts/DoxaHub.json'
+import HigherFreqContract from './contracts/HigherFreq.json'
+import Freq3Contract from './contracts/Freq3.json'
 import { getContract, getCurrentAccount } from './DappFunctions'
 
 import {fileFromIPFS, fileToIPFS, postToIPFS, contentFromIPFS32} from './utils/ipfs' 
@@ -19,7 +21,8 @@ import {toAscii} from './utils/helpers'
 
 const doxaHubContract = contract(DoxaHubContract)
 const memberRegistryContract = contract(MemberRegistryContract)
-
+const higherFreqContract = contract(HigherFreqContract)
+const freq3Contract = contract(Freq3Contract)
 
 
 const Identity = styled(Img)`
@@ -125,7 +128,9 @@ const ButtonContainer = styled.div`
 
 export class _User extends Component {
     state = {
-        postsPublished: '...',
+        postsPublished1: '...',
+        postsPublished2: '...',
+        postsPublished3: '...',
         userLoggedIn: false,
         imageUrl: null,
         username: '...',
@@ -136,10 +141,12 @@ export class _User extends Component {
 
     async componentDidMount() {
         const doxaHub = await getContract(doxaHubContract);
-        const filter = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
+        const freq3 = await getContract(freq3Contract);
+        const higherFreq = await getContract(higherFreqContract);
 
         const registry = await getContract(memberRegistryContract);
         const currentAccount = await getCurrentAccount();
+        this.setState({userLoggedIn: this.props.match.params.id === currentAccount})
 
         let [owner, name, profileIPFS, exiled] = await registry.get(this.props.match.params.id);
         name = toAscii(name)
@@ -163,17 +170,39 @@ export class _User extends Component {
             console.log('user not yet registered')
         }
 
-        const filterPromise = () => {
+
+        // get karma
+        const filter1 = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
+        const filterPromise1 = () => {
             return new Promise((resolve, reject) => {
-                filter.get( (e, r) => {
+                filter1.get( (e, r) => {
+                    resolve(r)
+                })
+            })
+        }
+        const filter2 = higherFreq.Published({poster: this.props.match.params.id}, {fromBlock: 0})
+        const filterPromise2 = () => {
+            return new Promise((resolve, reject) => {
+                filter2.get( (e, r) => {
+                    resolve(r)
+                })
+            })
+        }
+        const filter3 = freq3.Published({poster: this.props.match.params.id}, {fromBlock: 0})
+        const filterPromise3 = () => {
+            return new Promise((resolve, reject) => {
+                filter3.get( (e, r) => {
                     resolve(r)
                 })
             })
         }
 
-        const results = await filterPromise();
-        this.setState({postsPublished: results.length});
-        this.setState({userLoggedIn: this.props.match.params.id === currentAccount})
+        const results1 = await filterPromise1();
+        const results2 = await filterPromise2();
+        const results3 = await filterPromise3();
+        this.setState({postsPublished1: results1.length});
+        this.setState({postsPublished2: results2.length});
+        this.setState({postsPublished3: results3.length});
     }
 
     async urlFromHash(hash) {
@@ -263,8 +292,16 @@ export class _User extends Component {
                             <div>{this.props.match.params.id.substring(0,6)}</div>
                         </div>
                         <div>
-                            <Bold>Karma</Bold>
-                            <div>{this.state.postsPublished}</div>
+                            <Bold>Karma1</Bold>
+                            <div>{this.state.postsPublished1}</div>
+                        </div>
+                         <div>
+                            <Bold>Karma2</Bold>
+                            <div>{this.state.postsPublished2}</div>
+                        </div>
+                         <div>
+                            <Bold>Karma3</Bold>
+                            <div>{this.state.postsPublished3}</div>
                         </div>
                     </ChainMetadata>
                 </UserContainer>
