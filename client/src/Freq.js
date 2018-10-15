@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { NavLink, Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import styled from 'styled-components';
 import Media from 'react-media';
+import { FaAngleLeft } from "react-icons/fa";
 
 import { ContentForm } from './Create.js'
 import { Button } from './styledComponents'
@@ -13,6 +14,8 @@ const Back = styled.div`
     a {
         color: var(--primary);
         text-decoration: none;
+        display: flex;
+        align-items: center;
     }
 `
 
@@ -81,7 +84,7 @@ class Published extends Component {
             <FreqContainer>
                 <PublishedOuterContainer>
                     <PublishedContainer>
-                        <Back><NavLink to={this.props.match.path + "/submissions"}>{"◀ Submissions"}</NavLink></Back>
+                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaAngleLeft/> Submissions</NavLink></Back>
                         <Title>
                             Published
                         </Title>
