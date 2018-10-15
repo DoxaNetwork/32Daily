@@ -80,28 +80,32 @@ const EditableMetadata = styled.div`
     border-bottom: 1px solid var(--lightgray);
     padding: 50px 20px;
 
+    div {
+        margin: 20px 0;
+        font-size: 1em;
+    }
+
     textarea {
         width: 100%;
         height: 100px;
         resize: none;
         border: 1px solid var(--lightgray);
         border-radius: 3px;
-        margin: 20px 0;
         box-sizing: border-box;
-        font-size: 1em;
         padding: 10px;
+        font-size: 1em;
     }
 
     input {
         border-radius: 3px;
         border: 1px solid var(--lightgray);
-        margin: 20px 0;
-        font-size: 1em;
         padding: 10px;
         width: 100%;
         box-sizing: border-box;
+        font-size: 1em;
     }
 `
+
 const Bold = styled.div`
     font-weight:800;
 `
@@ -124,8 +128,8 @@ export class _User extends Component {
         postsPublished: '...',
         userLoggedIn: false,
         imageUrl: null,
-        username: '',
-        profile: '',
+        username: '...',
+        profile: '...',
         imageIPFS: null,
         registered: false,
     }
@@ -137,7 +141,7 @@ export class _User extends Component {
         const registry = await getContract(memberRegistryContract);
         const currentAccount = await getCurrentAccount();
 
-        let [owner, name, profileIPFS, exiled] = await registry.get(currentAccount);
+        let [owner, name, profileIPFS, exiled] = await registry.get(this.props.match.params.id);
         name = toAscii(name)
 
         if (name !== '') {
@@ -169,7 +173,7 @@ export class _User extends Component {
 
         const results = await filterPromise();
         this.setState({postsPublished: results.length});
-        this.setState({userLoggedIn: this.props.match.params.id === this.props.account})
+        this.setState({userLoggedIn: this.props.match.params.id === currentAccount})
     }
 
     async urlFromHash(hash) {
@@ -215,6 +219,34 @@ export class _User extends Component {
     }
 
     render() {
+        const editableMetadata = this.state.userLoggedIn ? (
+            <EditableMetadata>
+                <div>
+                    <input 
+                        value={this.state.username} 
+                        placeholder="what should we call you?" 
+                        type="text" 
+                        id="username"
+                        onChange={(e) => this.handleContentChange(e)}></input>
+                </div>
+                <div>
+                    <textarea 
+                        value={this.state.profile} 
+                        placeholder="what should we know about you?" 
+                        id="profile"
+                        onChange={(e) => this.handleContentChange(e)}></textarea>
+                </div>
+                <ButtonContainer>
+                    <Button onClick={() => this.submit()}>Save</Button>
+                </ButtonContainer>
+            </EditableMetadata>
+            ) : (
+            <EditableMetadata>
+                <Bold>{this.state.username}</Bold>
+                <div>{this.state.profile}</div>
+            </EditableMetadata>
+
+            );
         return (
             <UserOuterContainer>
                 <UserContainer>
@@ -224,26 +256,7 @@ export class _User extends Component {
                         </label>
                         <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
                     </IdenticonContainer>
-                    <EditableMetadata>
-                        <div>
-                            <input 
-                                value={this.state.username} 
-                                placeholder="what should we call you?" 
-                                type="text" 
-                                id="username"
-                                onChange={(e) => this.handleContentChange(e)}></input>
-                        </div>
-                        <div>
-                            <textarea 
-                                value={this.state.profile} 
-                                placeholder="what should we know about you?" 
-                                id="profile"
-                                onChange={(e) => this.handleContentChange(e)}></textarea>
-                        </div>
-                        <ButtonContainer>
-                            <Button onClick={() => this.submit()}>Save</Button>
-                        </ButtonContainer>
-                    </EditableMetadata>
+                    {editableMetadata}
                      <ChainMetadata>
                         <div>
                             <Bold>User id</Bold>
