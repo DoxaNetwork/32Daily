@@ -4,17 +4,10 @@ import { connect } from 'react-redux'
 import styled from 'styled-components';
 
 import { submitContent } from './actions'
-import { Button } from './styledComponents'
+import { Button, Back } from './styledComponents'
+import { FaAngleLeft } from "react-icons/fa";
 
 
-const Back = styled.div`
-    margin-bottom:20px;
-    font-size:1.2em;
-    a {
-        color: var(--primary);
-        text-decoration: none;
-    }
-`
 const CreateContainer = styled.div`
     background-color:#fafafa;
     padding: 40px 25%;
@@ -82,7 +75,7 @@ class Create extends Component {
         return (
             <CreateContainer>
                 <Back>
-                    <NavLink to={"/" + this.props.match.path.split("/")[1]}>{"◀ Back"}</NavLink>
+                    <NavLink to={"/" + this.props.match.path.split("/")[1]}><FaAngleLeft/> Back</NavLink>
                 </Back>
                 <CreateHeader>
                     Create

@@ -5,19 +5,8 @@ import Media from 'react-media';
 import { FaAngleLeft } from "react-icons/fa";
 
 import { ContentForm } from './Create.js'
-import { Button } from './styledComponents'
+import { Button, Back } from './styledComponents'
 
-
-const Back = styled.div`
-    margin-bottom:20px;
-    font-size:1.2em;
-    a {
-        color: var(--primary);
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-    }
-`
 
 const SubmittedContainer = styled.div`
     padding: 40px 40px;

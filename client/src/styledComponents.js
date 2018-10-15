@@ -17,3 +17,14 @@ export const Button = styled.button`
         border-color:var(--bright);
     }
 `
+
+export const Back = styled.div`
+    margin-bottom:20px;
+    font-size:1.2em;
+    a {
+        color: var(--primary);
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+    }
+`
