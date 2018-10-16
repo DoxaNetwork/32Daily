@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
 import { connect } from 'react-redux'
-import contract from 'truffle-contract'
 
 import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVote, loadPublishTime } from './actions'
 import { ContentCard } from './ContentCard.js'
@@ -70,14 +69,4 @@ export const SubmittedWords2 = connect(
 export const SubmittedWords3 = connect(
     mapFreqToStateToProps('freq3'),
     mapFreqToDispatchToProps('freq3')
-)(_SubmittedWords)
-
-export const SubmittedWords4 = connect(
-    mapFreqToStateToProps('freq4'),
-    mapFreqToDispatchToProps('freq4')
-)(_SubmittedWords)
-
-export const SubmittedWords5 = connect(
-    mapFreqToStateToProps('freq5'),
-    mapFreqToDispatchToProps('freq5')
 )(_SubmittedWords)

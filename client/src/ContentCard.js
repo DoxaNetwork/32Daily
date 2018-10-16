@@ -12,6 +12,10 @@ const ContentContainer = styled.div`
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
     /*box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+    &:hover {
+        background-color:#f5f8fa;
+    }
 `
 const ContentHeader = styled.div`
     display:flex;
@@ -21,7 +25,6 @@ const ContentHeader = styled.div`
 const ContentBody = styled.div`
     padding: 15px 20px 30px;
     font-family: Open sans;
-    /*font-size: 14px;*/
     font-size: ${props => props.fontsize ? props.fontsize : "14"}px;
 `
 const ContentFooter = styled.div`
@@ -33,9 +36,9 @@ const ContentFooter = styled.div`
 const LinkToUser = styled(Link)`
     color: black;
     text-decoration: none;
-    float: right;
-    padding: 0 10px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
 
     &:hover {
         text-decoration: underline;
@@ -57,9 +60,10 @@ const VoteCount = styled.div`
 `
 
 const Identity = styled.img`
-    width:25px;
-    height:25px;
+    width:35px;
+    height:35px;
     border-radius:25px;
+    margin-right: 10px;
 `
 
 const UserContainer = styled.div`
@@ -81,7 +85,7 @@ class Identicon extends Component {
         const src = this.props.src ? this.props.src : "data:image/png;base64," + data.toString();
 
         return (
-            <Identity width="25" height="25" src={src}/>
+            <Identity width="35" height="35" src={src}/>
         )
     }
 }
@@ -126,7 +130,7 @@ export class ContentCard extends Component {
     render() {
         const {user, index, onClick, date, poster, fontsize, word, backing} = this.props;
 
-        const username = user ? user.username : poster.substring(0,6);
+        const username = user && user.username !== ''? user.username : poster.slice(0,6)
         const imageUrl = user ? user.picture : null;
 
         const publishDate = date ? displayPublishDate(date) : '';
@@ -134,10 +138,10 @@ export class ContentCard extends Component {
         return (
             <ContentContainer>
                 <ContentHeader>
-                    <UserContainer>
+                    <LinkToUser to={'/u/' + poster}>
                         <Identicon poster={poster} src={imageUrl}/>
-                        <LinkToUser to={'/u/' + poster}>{username}</LinkToUser>
-                    </UserContainer>
+                        {username}
+                    </LinkToUser>
                     <div>{publishDate}</div>
                 </ContentHeader>
                 <ContentBody fontsize={fontsize}>
