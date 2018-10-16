@@ -32,10 +32,6 @@ const Identity = styled(Img)`
     border: 5px solid var(--white);
     top: 25px;
     position: relative;
-
-    &:hover {
-        cursor: pointer;
-    }
 `
 
 class Identicon extends Component {
@@ -120,6 +116,10 @@ const IdenticonContainer = styled.div`
 
     input {
         display:none;
+    }
+
+    label:hover {
+        cursor: pointer;
     }
 `
 const ButtonContainer = styled.div`
@@ -249,6 +249,13 @@ export class _User extends Component {
 
     render() {
         const editableMetadata = this.state.userLoggedIn ? (
+            <>
+            <IdenticonContainer>
+                <label htmlFor="imageUpload">
+                    <Identicon poster={this.props.match.params.id} imageUrl={this.state.imageUrl}/>
+                </label>
+                <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
+            </IdenticonContainer>
             <EditableMetadata>
                 <div>
                     <input 
@@ -269,22 +276,21 @@ export class _User extends Component {
                     <Button onClick={() => this.submit()}>Save</Button>
                 </ButtonContainer>
             </EditableMetadata>
-            ) : (
+            </>
+        ) : (
+            <>
+            <IdenticonContainer>
+                    <Identicon poster={this.props.match.params.id} imageUrl={this.state.imageUrl}/>
+            </IdenticonContainer>
             <EditableMetadata>
                 <Bold>{this.state.username}</Bold>
                 <div>{this.state.profile}</div>
             </EditableMetadata>
-
-            );
+            </>
+        );
         return (
             <UserOuterContainer>
                 <UserContainer>
-                    <IdenticonContainer>
-                        <label htmlFor="imageUpload">
-                            <Identicon poster={this.props.match.params.id} imageUrl={this.state.imageUrl}/>
-                        </label>
-                        <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
-                    </IdenticonContainer>
                     {editableMetadata}
                      <ChainMetadata>
                         <div>
