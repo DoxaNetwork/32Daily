@@ -33,6 +33,9 @@ const TextInputCount = styled.span`
 `
 const CountedTextForm = styled.form`
     padding: 40px 40px 20px;
+    @media only screen and (max-width: 649px) {
+        padding: 40px 10px 20px;
+    }
     textarea {
         outline: none;
         padding:20px;
@@ -86,8 +89,8 @@ class Create extends Component {
                             autoComplete="off" 
                             autoFocus
                             required 
-                            pattern=".{1,160}" 
-                            title="No longer than 160 characters" 
+                            pattern=".{1,256}" 
+                            title="No longer than 256 characters" 
                             placeholder="What do you want to tell the world?" 
                             name="content" 
                             value={this.state.content} 
