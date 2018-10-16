@@ -27,4 +27,7 @@ export const Back = styled.div`
         display: flex;
         align-items: center;
     }
+    a:hover {
+        color: var(--bright);
+    }
 `
