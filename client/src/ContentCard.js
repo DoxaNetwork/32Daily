@@ -2,6 +2,9 @@ import React, { Component } from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import identicon from 'identicon.js'
+import { connect } from 'react-redux'
+import { loadUser } from './actions'
+
 
 const ContentContainer = styled.div`
     background-color:var(--white);
@@ -77,7 +80,8 @@ class Identicon extends Component {
 
     render() {
         const data = new identicon(this.props.poster, this.options);
-        const src = "data:image/png;base64," + data.toString();
+        const src = this.props.src ? this.props.src : "data:image/png;base64," + data.toString();
+
         return (
             <Identity width="25" height="25" src={src}/>
         )
@@ -118,8 +122,24 @@ function displayPublishDate(then) {
     return dateDisplay;
 }
 
-export class ContentCard extends Component {
+export class _ContentCard extends Component {
     dateOptions = {month: 'short', day: 'numeric'};
+    state = {
+        username:'',
+        imageUrl: null
+    }
+
+    componentDidMount() {
+        this.props.loadUser(this.props.poster)
+    }
+
+    componentWillReceiveProps() {
+        const username = this.props.users[this.props.poster] ? this.props.users[this.props.poster].username : this.props.poster.substring(0,6);
+        this.setState({username})
+
+        const imageUrl = this.props.users[this.props.poster] ? this.props.users[this.props.poster].picture : null;
+        this.setState({imageUrl})
+    }
 
     render() {
         const publishDate = this.props.date ? displayPublishDate(this.props.date) : '';
@@ -128,8 +148,8 @@ export class ContentCard extends Component {
             <ContentContainer>
                 <ContentHeader>
                     <UserContainer>
-                        <Identicon poster={this.props.poster}/>
-                        <LinkToUser to={'/u/' + this.props.poster}>{this.props.poster.substring(0,6)}</LinkToUser>
+                        <Identicon poster={this.props.poster} src={this.state.imageUrl}/>
+                        <LinkToUser to={'/u/' + this.props.poster}>{this.state.username}</LinkToUser>
                     </UserContainer>
                     <div>{publishDate}</div>
                 </ContentHeader>
@@ -145,3 +165,16 @@ export class ContentCard extends Component {
     }
 }
 
+const mapStateToProps = state => ({
+    users: state.users, // have got to initialize this somewhere
+})
+
+
+const mapDispatchToProps = dispatch => ({
+    loadUser: (address) => dispatch(loadUser(address))
+})
+
+export const ContentCard = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(_ContentCard)

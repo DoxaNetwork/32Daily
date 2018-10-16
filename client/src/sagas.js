@@ -5,18 +5,16 @@ import contract from 'truffle-contract'
 import DoxaHubContract from './contracts/DoxaHub.json'
 import HigherFreq from './contracts/HigherFreq.json'
 import Freq3 from './contracts/Freq3.json'
+import MemberRegistryContract from './contracts/MemberRegistry.json'
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
-import { dayOfWeek, month } from './utils/helpers'
-import { contentFromIPFS32, postToIPFS } from './utils/ipfs.js'
+import { dayOfWeek, month, toAscii } from './utils/helpers'
+import { contentFromIPFS32, postToIPFS, fileFromIPFS } from './utils/ipfs.js'
 
 const doxaHubContract = contract(DoxaHubContract)
 const HigherFreqContract = contract(HigherFreq)
 const Freq3Contract = contract(Freq3)
-
-const freq1Instance = getContract(doxaHubContract);
-const freq2Instance = getContract(HigherFreqContract);
-const freq3Instance = getContract(Freq3Contract);
+const memberRegistryContract = contract(MemberRegistryContract)
 
 
 function getEventsByType(events, type) {
@@ -35,38 +33,37 @@ function* mapPost(post) {
 }
 
 function* updateTokenBalance(action) {
-    const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
     if (currentAccount != undefined) {
-        const tokenBalanceBN = yield doxaHub.balanceOf(currentAccount);
+        const freq1Instance = yield getContract(doxaHubContract);
+        const tokenBalanceBN = yield freq1Instance.balanceOf(currentAccount);
         const tokenBalance = tokenBalanceBN.toNumber();
         yield put({type: "TOKEN_BALANCE_UPDATE_SUCCESS", tokenBalance})
     }
 }
 
 function* updateAvailableToTransfer(action) {
-    const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
     if (currentAccount != undefined) {
-        const availableVotesBN = yield doxaHub.availableToTransfer(currentAccount, '0x0');
+        const freq1Instance = yield getContract(doxaHubContract);
+        const availableVotesBN = yield freq1Instance.availableToTransfer(currentAccount, '0x0');
         const availableVotes = availableVotesBN.toNumber();
         yield put({type: "AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS", availableVotes})
     }
 }
 
 function* initAccount(action) {
-    const doxaHub = yield getContract(doxaHubContract);
     const currentAccount = yield getCurrentAccount();
     yield put({type: "INIT_ACCOUNT_SUCCESS", currentAccount})
 }
 
 function* submitPost(action) {
     // need to init doxaHub
-    const doxaHub = yield getContract(doxaHubContract);
     const ipfsPathShort = yield postToIPFS(action.text);
 
     const currentAccount = yield getCurrentAccount();
-    const result = yield doxaHub.postLink(ipfsPathShort, { from: currentAccount})
+    const freq1Instance = yield getContract(doxaHubContract);
+    const result = yield freq1Instance.postLink(ipfsPathShort, { from: currentAccount})
 
     const filteredEvents = getEventsByType(result.logs, "LinkPosted")
     const newPost = yield mapPost(filteredEvents[0].args);
@@ -87,14 +84,15 @@ function* submitPost(action) {
 async function _getContract(action) {
     let contract;
     switch (action.freq) {
+        // need to not load these multiple times
         case 'freq1':
-            return freq1Instance;
+            return await getContract(doxaHubContract);
         case 'freq2':
-            return freq2Instance;
+            return await getContract(HigherFreqContract);
         case 'freq3':
-            return freq3Instance;
+            return await getContract(Freq3Contract);
         default:
-            return freq1Instance;
+            return await getContract(doxaHubContract);
     }
 }
 
@@ -139,6 +137,36 @@ function* persistVote(action) {
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
 }
 
+function* loadUser(action) {
+    const currentAccount = yield getCurrentAccount();
+    const registry = yield getContract(memberRegistryContract)
+    let [owner, name, profileIPFS, exiled] = yield registry.get(action.address);
+    let profile, imageUrl;
+    name = toAscii(name)
+    yield put({type: "USERNAME_UPDATE_SUCCESS", address: action.address, username:name})
+
+    if (name !== '') {
+        profile = yield contentFromIPFS32(profileIPFS);
+        profile = JSON.parse(profile)
+        yield put({type: "PROFILE_UPDATE_SUCCESS", address: action.address, profile:profile['profile']})
+
+        const pictureHash = profile['image'];
+
+        if (pictureHash !== null) {
+            imageUrl = yield urlFromHash(pictureHash);
+            yield put({type: "PICTURE_UPDATE_SUCCESS", address: action.address, picture:imageUrl})
+        }        
+    }
+}
+
+async function urlFromHash(hash) {
+    const picture = await fileFromIPFS(hash);
+    const blob = new Blob( [ picture ], { type: "image/jpeg" } );
+    const urlCreator = window.URL || window.webkitURL;
+    const imageUrl = urlCreator.createObjectURL( blob );
+    return imageUrl;
+}
+
 export default function* rootSaga() {
     yield takeEvery('LOAD_LATEST_HISTORY', loadInitHistory)
     yield takeEvery('LOAD_ALL_HISTORY', loadFullHistory)
@@ -153,4 +181,6 @@ export default function* rootSaga() {
     yield takeEvery('SUBMIT_VOTE', persistVote)
 
     yield takeEvery('LOAD_PUBLISH_TIME', loadPublishTime)
+
+    yield takeEvery('LOAD_USER', loadUser)
 }

@@ -52,6 +52,19 @@ const user = (state = {}, action) => {
     }
 }
 
+const users = (state = {}, action) => {
+    switch (action.type) {
+        case 'USERNAME_UPDATE_SUCCESS':
+            return {...state, ...{[action.address]: {...state[action.address], ...{username: action.username}}}}
+        case 'PROFILE_UPDATE_SUCCESS':
+            return {...state, ...{[action.address]: {...state[action.address], ...{profile: action.profile}}}}
+        case 'PICTURE_UPDATE_SUCCESS':
+            return {...state, ...{[action.address]: {...state[action.address], ...{picture: action.picture}}}}
+        default:
+            return state
+    }
+}
+
 const nextPublishTime = (state = 0, action) => {
     switch (action.type) {
         case 'LOAD_PUBLISH_TIME_SUCCESS':
@@ -80,7 +93,8 @@ const rootReducer = combineReducers({
     freq1: createFilteredReducer(freqReducer, action => action.freq === 'freq1'),
     freq2: createFilteredReducer(freqReducer, action => action.freq === 'freq2'),
     freq3: createFilteredReducer(freqReducer, action => action.freq === 'freq3'),
-    user
+    user,
+    users
 })
 
 export default rootReducer;

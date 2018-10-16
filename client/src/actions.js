@@ -41,6 +41,11 @@ export const loadAccount = () => ({
     type: 'LOAD_ACCOUNT'
 })
 
+export const loadUser = (address) => ({
+    type: 'LOAD_USER',
+    address: address
+})
+
 // ========== votes ========================
 export const submitVote = (index, freq) => ({
     type: 'SUBMIT_VOTE',
