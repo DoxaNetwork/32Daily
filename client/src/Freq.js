@@ -63,7 +63,9 @@ const TimerAndCreate = styled.div`
     padding: 20px 0;
 
     button {
-        margin-top: 10px;
+        @media only screen and (max-width: 649px) {
+            margin-top: 20px;
+        }
     }
 `
 
