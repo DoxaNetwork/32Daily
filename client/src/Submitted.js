@@ -19,6 +19,7 @@ class _SubmittedWords extends Component {
                 index={obj.index} 
                 word={obj.word} 
                 poster={obj.poster}
+                user={this.props.users[obj.poster]}
                 backing={obj.backing} 
                 onClick={this.props.onClick} />
         );
@@ -39,7 +40,8 @@ const mapFreqToStateToProps = freq => (
         tokenBalance: state.user.balance,
         availableVotes: state.user.available,
         account: state.user.account,
-        submittedWords: state[freq].submissions
+        submittedWords: state[freq].submissions,
+        users: state.users,
     })
 )
 

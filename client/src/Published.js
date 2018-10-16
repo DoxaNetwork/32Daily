@@ -24,7 +24,7 @@ const LinkToUser = styled(Link)`
 `
 
 class _PublishedWords extends Component {
-    async componentDidMount() {
+    componentDidMount() {
         this.props.loadLatestHistory()
     }
 
@@ -36,6 +36,7 @@ class _PublishedWords extends Component {
                 index={word.index} 
                 word={word.content} 
                 poster={word.poster}
+                user={this.props.users[word.poster]}
                 date={word.date}
                 backing={0}
                 onClick={false} />
@@ -60,7 +61,8 @@ class _PublishedWords extends Component {
 const mapFreqToStateToProps = freq => (
     state => ({
         publishedWords: state[freq].history,
-        allPreLoaded: state[freq].historyLoaded
+        allPreLoaded: state[freq].historyLoaded,
+        users: state.users,
     })
 )
 
@@ -84,14 +86,4 @@ export const PublishedWords2 = connect(
 export const PublishedWords3 = connect(
     mapFreqToStateToProps('freq3'),
     mapFreqToDispatchToProps('freq3')
-)(_PublishedWords)
-
-export const PublishedWords4 = connect(
-    mapFreqToStateToProps('freq4'),
-    mapFreqToDispatchToProps('freq4')
-)(_PublishedWords)
-
-export const PublishedWords5 = connect(
-    mapFreqToStateToProps('freq5'),
-    mapFreqToDispatchToProps('freq5')
 )(_PublishedWords)

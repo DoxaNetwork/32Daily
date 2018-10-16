@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import identicon from 'identicon.js'
-import { connect } from 'react-redux'
-import { loadUser } from './actions'
 
 
 const ContentContainer = styled.div`
@@ -122,59 +120,34 @@ function displayPublishDate(then) {
     return dateDisplay;
 }
 
-export class _ContentCard extends Component {
+export class ContentCard extends Component {
     dateOptions = {month: 'short', day: 'numeric'};
-    state = {
-        username:'',
-        imageUrl: null
-    }
-
-    componentDidMount() {
-        this.props.loadUser(this.props.poster)
-    }
-
-    componentWillReceiveProps() {
-        const username = this.props.users[this.props.poster] ? this.props.users[this.props.poster].username : this.props.poster.substring(0,6);
-        this.setState({username})
-
-        const imageUrl = this.props.users[this.props.poster] ? this.props.users[this.props.poster].picture : null;
-        this.setState({imageUrl})
-    }
 
     render() {
-        const publishDate = this.props.date ? displayPublishDate(this.props.date) : '';
-        const voteLink = this.props.onClick ? <VoteLink onClick={() => this.props.onClick(this.props.index)}>+ Vote</VoteLink> : <div></div>;
+        const {user, index, onClick, date, poster, fontsize, word, backing} = this.props;
+
+        const username = user ? user.username : poster.substring(0,6);
+        const imageUrl = user ? user.picture : null;
+
+        const publishDate = date ? displayPublishDate(date) : '';
+        const voteLink = onClick ? <VoteLink onClick={() => onClick(index)}>+ Vote</VoteLink> : <div></div>;
         return (
             <ContentContainer>
                 <ContentHeader>
                     <UserContainer>
-                        <Identicon poster={this.props.poster} src={this.state.imageUrl}/>
-                        <LinkToUser to={'/u/' + this.props.poster}>{this.state.username}</LinkToUser>
+                        <Identicon poster={poster} src={imageUrl}/>
+                        <LinkToUser to={'/u/' + poster}>{username}</LinkToUser>
                     </UserContainer>
                     <div>{publishDate}</div>
                 </ContentHeader>
-                <ContentBody fontsize={this.props.fontsize}>
-                    {this.props.word}
+                <ContentBody fontsize={fontsize}>
+                    {word}
                 </ContentBody>
                 <ContentFooter>
                     {voteLink}
-                    <VoteCount>{this.props.backing + 1}</VoteCount>
+                    <VoteCount>{backing + 1}</VoteCount>
                 </ContentFooter>
             </ContentContainer>
         )
     }
 }
-
-const mapStateToProps = state => ({
-    users: state.users, // have got to initialize this somewhere
-})
-
-
-const mapDispatchToProps = dispatch => ({
-    loadUser: (address) => dispatch(loadUser(address))
-})
-
-export const ContentCard = connect(
-    mapStateToProps,
-    mapDispatchToProps
-)(_ContentCard)

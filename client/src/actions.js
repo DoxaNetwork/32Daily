@@ -46,6 +46,11 @@ export const loadUser = (address) => ({
     address: address
 })
 
+export const loadUserIfNeeeded = (address) => ({
+    type: 'LOAD_USER_IF_NEEDED',
+    address: address
+})
+
 // ========== votes ========================
 export const submitVote = (index, freq) => ({
     type: 'SUBMIT_VOTE',

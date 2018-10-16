@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { put, takeEvery, all } from 'redux-saga/effects'
+import { put, takeEvery, all, select } from 'redux-saga/effects'
 
 import contract from 'truffle-contract'
 import DoxaHubContract from './contracts/DoxaHub.json'
@@ -106,7 +106,22 @@ function* loadSubmissions(action) {
         submittedWords = yield getAllLinks();
     }
     submittedWords.sort((a,b) => {return b.backing - a.backing})
+
     yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
+
+    yield put({type: "LOAD_USERS_IF_NEEDED", words: submittedWords})
+}
+
+function* loadUsersIfNeeded(action) {
+    const accountsToLoad = {}
+
+    action.words.map(word => {
+        accountsToLoad[word.poster] = 1
+    })
+
+    for (const address in accountsToLoad) {
+        yield put({type: "LOAD_USER_IF_NEEDED", address: address})
+    } 
 }
 
 function* loadPublishTime(action) {
@@ -120,7 +135,10 @@ function* loadInitHistory(action) {
     const contract = yield _getContract(action)
     const [publishedWords, allPreLoaded] = yield preLoadHistory(contract);
     publishedWords.reverse();
+
     yield put({type: "INIT_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: allPreLoaded})
+
+    yield put({type: "LOAD_USERS_IF_NEEDED", words: publishedWords})
 }
 
 function* loadFullHistory(action) {
@@ -128,6 +146,7 @@ function* loadFullHistory(action) {
     const publishedWords = yield getPreHistory(contract);
     publishedWords.reverse();
     yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedWords, allPreLoaded: true})
+    yield put({type: "LOAD_USERS_IF_NEEDED", words: publishedWords})
 }
 
 function* persistVote(action) {
@@ -159,6 +178,16 @@ function* loadUser(action) {
     }
 }
 
+function* loadUserIfNeeded(action) {
+    const getItems = state => state.users;
+    const state = yield select(getItems);
+
+    const userLoaded = Boolean(state[action.address]);
+    if (!userLoaded) {
+        yield put({type: "LOAD_USER", address: action.address})
+    }
+}
+
 async function urlFromHash(hash) {
     const picture = await fileFromIPFS(hash);
     const blob = new Blob( [ picture ], { type: "image/jpeg" } );
@@ -183,4 +212,6 @@ export default function* rootSaga() {
     yield takeEvery('LOAD_PUBLISH_TIME', loadPublishTime)
 
     yield takeEvery('LOAD_USER', loadUser)
+    yield takeEvery('LOAD_USER_IF_NEEDED', loadUserIfNeeded)
+    yield takeEvery('LOAD_USERS_IF_NEEDED', loadUsersIfNeeded)
 }
