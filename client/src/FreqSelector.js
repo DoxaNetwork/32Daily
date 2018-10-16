@@ -33,13 +33,13 @@ export class FreqSelector extends Component {
         return (
             <_FreqSelector>
                 <NavLink activeClassName="navLink-active" to="/one/">
-                    <div style={{'background-color': '#1D5FB5'}} className="first">hourly</div>
+                    <div style={{'backgroundColor': '#1D5FB5'}} className="first">hourly</div>
                 </NavLink>
                 <NavLink activeClassName="navLink-active" to="/ten/">
-                    <div style={{'background-color': '#135196'}}>semidaily</div>
+                    <div style={{'backgroundColor': '#135196'}}>semidaily</div>
                 </NavLink>
                 <NavLink activeClassName="navLink-active" to="/hundred/">
-                    <div style={{'background-color': '#0A4278'}}>weekly</div>
+                    <div style={{'backgroundColor': '#0A4278'}}>weekly</div>
                 </NavLink>
             </_FreqSelector>
             )

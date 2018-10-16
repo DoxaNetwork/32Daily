@@ -32,7 +32,7 @@ class _PublishedWords extends Component {
         const publishedWords = this.props.publishedWords.map((word,index) =>
             <ContentCard 
                 fontsize={20}
-                key={word.index} 
+                key={word.poster + word.date + word.content} 
                 index={word.index} 
                 word={word.content} 
                 poster={word.poster}

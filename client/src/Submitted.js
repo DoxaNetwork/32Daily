@@ -15,7 +15,7 @@ class _SubmittedWords extends Component {
     render() {
         const submittedWords = this.props.submittedWords.map(obj =>
             <ContentCard 
-                key={obj.index} 
+                key={obj.poster + obj.word} 
                 index={obj.index} 
                 word={obj.word} 
                 poster={obj.poster}
