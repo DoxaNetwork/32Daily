@@ -28,7 +28,6 @@ class _SubmittedWords extends Component {
     }
 
     render() {
-        // let submittedWords
         const submittedWords = this.props.submittedWords.length ? (
             this.props.submittedWords.map(obj =>
                 <ContentCard 

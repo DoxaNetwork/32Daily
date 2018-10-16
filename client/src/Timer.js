@@ -83,13 +83,3 @@ export const Timer3 = connect(
     mapFreqtoMapStateToProps('freq3'),
     mapFreqtoMapDispatchToProps('freq3')
 )(Timer)
-
-export const Timer4 = connect(
-    mapFreqtoMapStateToProps('freq4'),
-    mapFreqtoMapDispatchToProps('freq4')
-)(Timer)
-
-export const Timer5 = connect(
-    mapFreqtoMapStateToProps('freq5'),
-    mapFreqtoMapDispatchToProps('freq5')
-)(Timer)

@@ -74,11 +74,23 @@ const nextPublishTime = (state = 0, action) => {
     }
 }
 
+const notifications = (state = [], action) => {
+    switch (action.type) {
+        case 'NEW_NOTIFICATION':
+            const { message, timeStamp } = action;
+            return [...state, {message, timeStamp}]
+        case 'CLEAR_NOTIFICATION':
+            return state.slice(1)
+        default:
+            return state
+    }
+}
+
 const freqReducer = combineReducers({
     history,
     historyLoaded,
     submissions,
-    nextPublishTime
+    nextPublishTime,
 })
 
 function createFilteredReducer(reducerFunction, reducerPredicate) {
@@ -94,7 +106,8 @@ const rootReducer = combineReducers({
     freq2: createFilteredReducer(freqReducer, action => action.freq === 'freq2'),
     freq3: createFilteredReducer(freqReducer, action => action.freq === 'freq3'),
     user,
-    users
+    users,
+    notifications
 })
 
 export default rootReducer;

@@ -72,6 +72,15 @@ function* submitPost(action) {
     yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
     yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
     yield put({type: "TOKEN_BALANCE_UPDATE"})
+
+    yield newNotification()
+
+}
+
+function* newNotification() {
+    yield put({type: "NEW_NOTIFICATION", message: "submitted to blockchain", timeStamp: new Date().getTime()})
+    yield delay(10000)
+    yield put({type: "CLEAR_NOTIFICATION"})
 }
 
 
@@ -154,6 +163,8 @@ function* persistVote(action) {
     const currentAccount = yield getCurrentAccount();
     const result = yield contract.backPost(action.index, { from: currentAccount })
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
+
+    yield newNotification()
 }
 
 function* loadUser(action) {
