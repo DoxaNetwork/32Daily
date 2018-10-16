@@ -47,16 +47,9 @@ contract DoxaHub is TransferGate, Ownable {
     function postLink(bytes32 _ipfsHash)
     public 
     {
-        // require(postingAvailable(msg.sender));
         contentPool.newContent(msg.sender, _ipfsHash);
         token.mint(msg.sender, SUBMISSION_MINT);
         LinkPosted(msg.sender, 0, contentPool.poolLength() - 1, _ipfsHash);
-    }
-
-    function postingAvailable(address _owner)
-    view public
-    returns (bool) {
-        return (contentPool.outgoingPosts(_owner) < 1);
     }
 
     function getLinkByIndex( uint256 index ) 
