@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { NavLink } from 'react-router-dom'
 import styled from 'styled-components';
 
-const _FreqSelector = styled.div`
+const FreqSelectorContainer = styled.div`
     display: flex;
     justify-content: center;
     background-color: var(--white);
@@ -31,7 +31,7 @@ const _FreqSelector = styled.div`
 export class FreqSelector extends Component {
     render() {
         return (
-            <_FreqSelector>
+            <FreqSelectorContainer>
                 <NavLink activeClassName="navLink-active" to="/one/">
                     <div style={{'backgroundColor': '#1D5FB5'}} className="first">hourly</div>
                 </NavLink>
@@ -41,7 +41,7 @@ export class FreqSelector extends Component {
                 <NavLink activeClassName="navLink-active" to="/hundred/">
                     <div style={{'backgroundColor': '#0A4278'}}>weekly</div>
                 </NavLink>
-            </_FreqSelector>
+            </FreqSelectorContainer>
             )
     }
 }
