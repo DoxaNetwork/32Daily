@@ -66,11 +66,6 @@ const Identity = styled.img`
     margin-right: 10px;
 `
 
-const UserContainer = styled.div`
-    display: flex;
-    align-items: center;
-`
-
 class Identicon extends Component {
     options = {
       // foreground: [0, 0, 0, 255],               // rgba black

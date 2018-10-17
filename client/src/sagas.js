@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { put, takeEvery, all, select } from 'redux-saga/effects'
+import { put, takeEvery, select } from 'redux-saga/effects'
 
 import contract from 'truffle-contract'
 import DoxaHubContract from './contracts/DoxaHub.json'
@@ -8,7 +8,7 @@ import Freq3 from './contracts/Freq3.json'
 import MemberRegistryContract from './contracts/MemberRegistry.json'
 
 import { getContract, getCurrentAccount, preLoadHistory, getPreHistory, getAllLinks, getHigherFreqSubmissions } from './DappFunctions'
-import { dayOfWeek, month, toAscii } from './utils/helpers'
+import { toAscii } from './utils/helpers'
 import { contentFromIPFS32, postToIPFS, fileFromIPFS } from './utils/ipfs.js'
 
 const doxaHubContract = contract(DoxaHubContract)
@@ -34,7 +34,7 @@ function* mapPost(post) {
 
 function* updateTokenBalance(action) {
     const currentAccount = yield getCurrentAccount();
-    if (currentAccount != undefined) {
+    if (currentAccount !== undefined) {
         const freq1Instance = yield getContract(doxaHubContract);
         const tokenBalanceBN = yield freq1Instance.balanceOf(currentAccount);
         const tokenBalance = tokenBalanceBN.toNumber();
@@ -44,7 +44,7 @@ function* updateTokenBalance(action) {
 
 function* updateAvailableToTransfer(action) {
     const currentAccount = yield getCurrentAccount();
-    if (currentAccount != undefined) {
+    if (currentAccount !== undefined) {
         const freq1Instance = yield getContract(doxaHubContract);
         const availableVotesBN = yield freq1Instance.availableToTransfer(currentAccount, '0x0');
         const availableVotes = availableVotesBN.toNumber();
@@ -91,7 +91,6 @@ function* newNotification() {
 // ===========================================================================================================================================
 
 async function _getContract(action) {
-    let contract;
     switch (action.freq) {
         // need to not load these multiple times
         case 'freq1':
@@ -107,11 +106,11 @@ async function _getContract(action) {
 
 function* loadSubmissions(action) {
     let submittedWords;
-    if(['freq2', 'freq3', 'freq4', 'freq5'].includes(action.freq)) {
+    if(['freq2', 'freq3'].includes(action.freq)) {
         const contract = yield _getContract(action)
         submittedWords = yield getHigherFreqSubmissions(contract);
     }
-    else if (action.freq == 'freq1') {
+    else if (action.freq === 'freq1') {
         submittedWords = yield getAllLinks();
     }
     submittedWords.sort((a,b) => {return b.backing - a.backing})
@@ -161,14 +160,13 @@ function* loadFullHistory(action) {
 function* persistVote(action) {
     const contract = yield _getContract(action);
     const currentAccount = yield getCurrentAccount();
-    const result = yield contract.backPost(action.index, { from: currentAccount })
+    yield contract.backPost(action.index, { from: currentAccount })
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
 
     yield newNotification()
 }
 
 function* loadUser(action) {
-    const currentAccount = yield getCurrentAccount();
     const registry = yield getContract(memberRegistryContract)
     let [owner, name, profileIPFS, exiled] = yield registry.get(action.address);
     let profile, imageUrl;

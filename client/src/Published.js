@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { CSSTransitionGroup } from 'react-transition-group'
-import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 
@@ -17,10 +16,6 @@ const SecondaryActionLink = styled.div`
     &:hover {
         color: var(--primary);
     }
-`
-const LinkToUser = styled(Link)`
-    margin-right: 20px;
-    color: var(--gray);
 `
 
 class _PublishedWords extends Component {

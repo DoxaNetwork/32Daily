@@ -75,9 +75,9 @@ class Published extends Component {
             <FreqContainer>
                 <PublishedOuterContainer>
                     <PublishedContainer>
-                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaAngleLeft/> Submissions</NavLink></Back>
+                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaAngleLeft/> New</NavLink></Back>
                         <Title>
-                            Published
+                            Top
                         </Title>
                         {this.props.publishedWords}
                     </PublishedContainer>
@@ -93,9 +93,9 @@ class Submissions extends Component {
             <FreqContainer>
                 <SubmittedOuterContainer>
                     <SubmittedContainer>
-                        <Back><NavLink to={this.props.match.url}>{"◀ Published"}</NavLink></Back>
+                        <Back><NavLink to={this.props.match.url + "/published"}><FaAngleLeft/> Top</NavLink></Back>
                         <Title>
-                            Submitted
+                            New
                         </Title>
                         <TimerAndCreate>
                             {this.props.timer}
@@ -118,7 +118,7 @@ class SubmissionsAndPublished extends Component {
             <SubmittedOuterContainer>
                 <SubmittedContainer>
                     <Title>
-                        Submitted
+                        New
                     </Title>
                     <TimerAndCreate>
                         {this.props.timer}
@@ -133,7 +133,7 @@ class SubmissionsAndPublished extends Component {
             <PublishedOuterContainer>
                 <PublishedContainer>
                     <Title>
-                        Published
+                        Top
                     </Title>
                     {this.props.publishedWords}
                 </PublishedContainer>
@@ -150,13 +150,15 @@ class _Freq extends Component {
                     {matches =>
                         matches ? (
                             <Switch>
-                                <Route exact path={this.props.match.path} render={() => <Published {...this.props}/>}/>
-                                <Route exact path={this.props.match.path + '/create'} component={ContentForm}/>
+                                <Redirect exact from={this.props.match.path} to={this.props.match.path + "/published"}/>
+                                <Route exact path={this.props.match.path + "/published"} render={() => <Published {...this.props}/>}/>
+                                <Route exact path={this.props.match.path + "/create"} component={ContentForm}/>
                                 <Route exact path={this.props.match.path +  "/submissions"} render={() => <Submissions {...this.props}/>} />
                             </Switch>
                         ) : (
                             <Switch>
                                 <Redirect from={this.props.match.path + "/submissions"} to={this.props.match.path}/>
+                                <Redirect from={this.props.match.path + "/published"} to={this.props.match.path}/>
                                 <Route exact path={this.props.match.path} render={() => <SubmissionsAndPublished {...this.props}/>}/> 
                                 <Route exact path={this.props.match.path + '/create'} component={ContentForm}/>
                             </Switch>

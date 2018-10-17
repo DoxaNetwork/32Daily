@@ -73,12 +73,11 @@ class Create extends Component {
 
     render() {
         const tooManyCharacters = this.state.charactersRemaining < 0 ? 'red' : '';
-        const unsavedState = this.state.charactersRemaining < this.maxCharacters ? 'unsaved' : '';
 
         return (
             <CreateContainer>
                 <Back>
-                    <NavLink to={"/" + this.props.match.path.split("/")[1]}><FaAngleLeft/> Back</NavLink>
+                    <NavLink to={"/" + this.props.match.path.split("/")[1] + "/submissions"}><FaAngleLeft/> Back</NavLink>
                 </Back>
                 <CreateHeader>
                     Create

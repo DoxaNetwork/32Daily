@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { CSSTransitionGroup } from 'react-transition-group'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
 
@@ -9,11 +8,6 @@ import styled from 'styled-components';
 
 const Title = styled.div`
     font-family: 'Comfortaa', serif;
-`
-
-const SubTitle = styled.div`
-    margin-top: 20px;
-    font-size: 0.3em;
 `
 
 const StyledHeader = styled.div`
@@ -42,7 +36,6 @@ class _Header extends Component {
                     <div></div>
                     <Title>temporank</Title>
                     <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
-                    {/* <SubTitle>Tiny curated message selected every {this.props.period}</SubTitle> */}
                 </StyledHeader>
             </div>
         )
