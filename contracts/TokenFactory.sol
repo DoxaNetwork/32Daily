@@ -1,3 +1,5 @@
+pragma solidity ^0.4.18;
+
 import './DoxaToken.sol';
 
 contract TokenFactory {
@@ -7,7 +9,7 @@ contract TokenFactory {
     public
     returns (address newToken) {
         DoxaToken c = new DoxaToken();
-        Deployed(c);
+        emit Deployed(c);
         return address(c);
     }
 }

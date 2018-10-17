@@ -4,100 +4,112 @@ import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
 
 import './Ownable.sol';
-import './ContentPool.sol';
+import './PostChain.sol';
 import './PublishedHistory.sol';
 import './Votes.sol';
 import './DoxaToken.sol';
 import './TransferGate.sol';
 
-// switch tests and app to use ethjS
 
 contract DoxaHub is TransferGate, Ownable {
-  using SafeMath for uint256;
+  using SafeMath for uint;
 
-    ContentPool contentPool;
+    PostChain postChain;
     PublishedHistory publishedHistory;
     Votes votes;
     DoxaToken token;
 
-    uint public SUBMISSION_MINT = 1;
-    uint public nextPublishTime;
+    uint8 public SUBMISSION_MINT = 1;
+    uint96 public nextPublishTime;
+    uint152 public nextPublishStartIndex;
 
-    event LinkPosted(address indexed owner, uint256 backing, uint256 index, bytes32 ipfsHash);
-    event PostBacked(address indexed backer, uint32 indexed version, uint postIndex);
-    event Published(address indexed poster, uint publishedTime, uint currentVersion, uint indexToPublish);
+    // event LinkPosted(address indexed owner, uint backing, uint index, bytes32 ipfsHash);
+    // event PostBacked(address indexed backer, uint indexed version, uint postIndex);
+    // event Published(address indexed poster, uint publishedTime, uint currentVersion, uint indexToPublish);
 
-    function DoxaHub(
-        address _contentPool, 
+    constructor(
+        address _postChain, 
         address _token, 
         address _publishedHistory, 
         address _votes)
     public 
     {
-        contentPool = ContentPool(_contentPool);
+        postChain = PostChain(_postChain);
         token = DoxaToken(_token);
         publishedHistory = PublishedHistory(_publishedHistory);
         votes = Votes(_votes);
 
         owner = msg.sender;
         // nextPublishTime = nextUTCMidnight(now);
-        nextPublishTime = now + 1 hours;
+        nextPublishTime = uint96(now + 1 hours);
+        nextPublishStartIndex = 0;
     }
 
-    function postLink(bytes32 _ipfsHash)
+    function newPost(bytes32 _ipfsHash)
     public 
     {
-        contentPool.newContent(msg.sender, _ipfsHash);
-        token.mint(msg.sender, SUBMISSION_MINT);
-        LinkPosted(msg.sender, 0, contentPool.poolLength() - 1, _ipfsHash);
+        postChain.newPost(msg.sender, _ipfsHash);
+        token.mint(msg.sender, uint(SUBMISSION_MINT));
+        // LinkPosted(msg.sender, 0, postChain.poolLength() - 1, _ipfsHash);
     }
 
-    function getLinkByIndex( uint256 index ) 
+    function getSubmittedItem(uint _index) 
     public view 
-    returns( uint256, address owner, bytes32 ipfsHash_, uint256 backing )
+    returns (uint index_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_)
     {
-        var (poster, ipfsHash) = contentPool.getItem(index);
-        bytes32 postKey = keccak256(contentPool.currentVersion(), index);
-        return (index, poster, ipfsHash, votes.incomingVotes(postKey));
-    }
-    
-    function getLinkCount() 
-    public view
-    returns (uint)
-    {
-        return contentPool.poolLength();
+        address poster;
+        bytes32 ipfsHash;
+        uint publishedTime;
+        (poster, ipfsHash, publishedTime) = postChain.getPost(_index);
+        uint votesReceived = totalPostBacking(_index);
+        return (_index, poster, ipfsHash, votesReceived, publishedTime);
     }
 
-    function backPost(uint256 _postIndex)
+    function getPublishedItem(uint _publishedIndex) 
+    public view
+    returns (uint index_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_)
+    {
+        // postChainIndex can be used to find who voted for this
+        uint postChainIndex;
+        uint publishedTime;
+        address poster;
+        bytes32 ipfsHash;
+        uint postedTime;
+        (postChainIndex, publishedTime) = publishedHistory.getPost(_publishedIndex);
+        (poster, ipfsHash, postedTime) = postChain.getPost(postChainIndex);
+        uint votesReceived = totalPostBacking(postChainIndex);
+        return (postChainIndex, poster, ipfsHash, votesReceived, publishedTime);
+    }
+
+    function backPost(uint _postIndex)
     public
     {
-        require(_postIndex >= 0 && _postIndex < contentPool.poolLength() );
-        require(votingAvailable(msg.sender));
+        // can't vote on items that don't exist
+        // PROBLEM: you can currently vote on items in the next block 
+        require( _postIndex >= 0 && _postIndex < postChain.length() );
+        require( votingAvailable(msg.sender) );
 
-        bytes32 ownerKey = keccak256(contentPool.currentVersion(), msg.sender);
-        bytes32 postKey = keccak256(contentPool.currentVersion(), _postIndex);
-
-        votes.addVote(ownerKey, postKey);
-        PostBacked(msg.sender, contentPool.currentVersion(), _postIndex);
+        bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
+        votes.addVote(_postIndex, voterCycleKey);
+        // PostBacked(msg.sender, _postIndex, nextPublishTime);
     }
 
-    function totalPostBacking(uint256 _index)
-    view public 
-    returns (uint256) {
-        bytes32 postKey = keccak256(contentPool.currentVersion(), _index);
-        return votes.incomingVotes(postKey);
+    function totalPostBacking(uint _index)
+    public view 
+    returns (uint) {
+        return votes.incomingVotes(_index);
     }
 
-    function votingAvailable(address _owner)
-    view public
+    function votingAvailable(address _voter)
+    public view
     returns (bool) {
-        bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
-        return (votes.outgoingVotes(ownerKey) < 1);
+        bytes32 voterCycleKey = keccak256(abi.encodePacked(_voter, nextPublishTime));
+        return (votes.outgoingVotesThisCycle(voterCycleKey) < 1);
     }
 
     function availableToTransfer(address _owner, address _receiver)
-    view public 
-    returns (uint256) {
+    public view
+    returns (uint) {
         // token cannot be transferred yet
         // later, we will add the ability to sell token back to the contract
         // later, we will add the ability to transfer token to staked accounts
@@ -107,77 +119,34 @@ contract DoxaHub is TransferGate, Ownable {
         // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
     }
 
-    function balanceOf(address _owner)
-    view public
-    returns (uint256) {
-        return token.balanceOf(_owner);
-    }
-
     function publish() 
     public 
     {
-        // require(now > nextPublishTime);
+        require(now > uint(nextPublishTime));
         uint maxVotes = 0;
         uint indexToPublish = 0;
         bool somethingSelected = false;
-        uint32 currentVersion = contentPool.currentVersion();
+        uint endIndex = postChain.length();
 
-        for (uint i = 0; i < contentPool.poolLength(); i++) {
-            bytes32 postKey = keccak256(currentVersion, i);
-            if (!somethingSelected || votes.incomingVotes(postKey) > maxVotes) {
-                maxVotes = votes.incomingVotes(postKey);
-                indexToPublish = i;
+        for (uint postIndex = uint(nextPublishStartIndex); postIndex < endIndex; postIndex++) {
+            uint votesForThisIndex = votes.incomingVotes(postIndex);
+            if (!somethingSelected || votesForThisIndex > maxVotes) {
+                maxVotes = votesForThisIndex;
+                indexToPublish = postIndex;
                 somethingSelected = true;
             }
         }
-        if(somethingSelected) {
-            publishedHistory.publish(currentVersion, indexToPublish);
-            var (poster, content) = contentPool.getPastItem(currentVersion, indexToPublish);
+        if (somethingSelected) {
+            uint publishedIndex = publishedHistory.publishPost(indexToPublish);
+            address poster;
+            bytes32 ipfsHash;
+            uint postedTime;
+            (poster, ipfsHash, postedTime) = postChain.getPost(postIndex); // need this to know where to send the token
             token.mint(poster, 1);
-            Published(poster, now, currentVersion, indexToPublish);
+            // Published(publishedIndex); // this is enough for clients to grab the rest
         }
-        contentPool.clear();
-        nextPublishTime = now + 1 hours;
-        // nextPublishTime = nextUTCMidnight(now);
-    }
-
-    function currentVersion() 
-    public view
-    returns (uint32)
-    {
-        return contentPool.currentVersion();
-    }
-
-    function publishedIndex()
-    public view
-    returns (uint32)
-    {
-        return publishedHistory.publishedIndex();
-    }
-
-    function getVersion(uint32 version)
-    public view
-    returns (uint)
-    {
-        return publishedHistory.blockLength(version);
-    }
-
-    function getPublishedItem(uint32 publishedIndex) 
-    public view
-    returns (address poster_, bytes32 ipfsHash_, uint publishedTime_)
-    {
-        var (version, poolIndex, publishedTime) = publishedHistory.getItem(publishedIndex);
-        // now we need to convert publishedIndex to version
-        var (poster, content) = contentPool.getPastItem(version, poolIndex);
-        return (poster, content, publishedTime);
-        // return (contentPool.getPastItem(version, poolIndex), publishedTime);
-    }
-
-    function getPublishedCoords(uint32 publishedIndex) 
-    public view
-    returns (uint32 version, uint index, uint publishedTime_)
-    {
-        return publishedHistory.getItem(publishedIndex);
+        nextPublishTime = uint96(now + 1 hours);
+        nextPublishStartIndex = uint152(endIndex);
     }
 
     // ========================= Helpers =================================

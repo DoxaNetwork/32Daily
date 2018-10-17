@@ -6,32 +6,37 @@ import './Spoke.sol';
 
 
 contract Votes is Spoke {
-  using SafeMath for uint256;
+  using SafeMath for uint;
 
-    // sha3(version,backer) -> total amount this person is backing
-    mapping (bytes32 => uint256) internal outgoingPostBackings;
+    // sha3(voter, timeStampNextPublishing) -> total amount this voter-cycle backed
+    mapping (bytes32 => uint) internal outgoingPostBackings;
     
-    // sha3(version,postIndex) -> total amount backing this post
-    mapping (bytes32 => uint256) internal incomingPostBackings;
+    mapping (uint => uint) internal incomingPostBackings;
 
-    function outgoingVotes(bytes32 _ownerKey)
+
+    function outgoingVotesThisCycle(bytes32 _voterCycleKey)
     view public
     returns (uint) 
     {
-        return outgoingPostBackings[_ownerKey];
+        // how many votes this address has sent out this cycle
+        return outgoingPostBackings[_voterCycleKey];
     }
 
-    function incomingVotes(bytes32 _contentKey)
+    function incomingVotes(uint _postIndex)
     view public
     returns (uint)
     {
-        return incomingPostBackings[_contentKey];
+        // how many votes this item received
+        return incomingPostBackings[_postIndex];
     }
 
-    function addVote(bytes32 _ownerKey, bytes32 _contentKey)
+    function addVote(uint _postIndex, bytes32 _voterCycleKey)
     public onlyHub
     {
-        outgoingPostBackings[_ownerKey] = outgoingPostBackings[_ownerKey].add(1);
-        incomingPostBackings[_contentKey] = incomingPostBackings[_contentKey].add(1);
+        // make sure voting is open for this item
+        // or maybe we don't care if they vote for a past item? it wont affect publishing 
+        outgoingPostBackings[_voterCycleKey] = outgoingPostBackings[_voterCycleKey].add(1);
+
+        incomingPostBackings[_postIndex] = incomingPostBackings[_postIndex].add(1);
     }
 }

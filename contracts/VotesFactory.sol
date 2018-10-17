@@ -1,3 +1,5 @@
+pragma solidity ^0.4.18;
+
 import './Votes.sol';
 
 contract VotesFactory {
@@ -7,7 +9,7 @@ contract VotesFactory {
     public
     returns (address newVotesDB) {
         Votes v = new Votes();
-        Deployed(v);
+        emit Deployed(v);
         return address(v);
     }
 }

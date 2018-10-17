@@ -16,7 +16,7 @@ contract Spoke is Ownable {
     public onlyOwner
     {
       require(newHub != address(0));
-      HubTransferred(hub, newHub);
+      emit HubTransferred(hub, newHub);
       hub = newHub;
     }
 }

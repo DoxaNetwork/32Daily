@@ -5,51 +5,37 @@ import './Spoke.sol';
 
 contract PublishedHistory is Spoke {
 
-    struct PublishedBlock
+    struct PublishedPost
     {
-        uint32 contentPoolVersion;
-        uint contentIndex;
-        uint publishedTime;
+        // neither of these need to be this big, but we should keep the total struct to 32 bytes
+        uint160 contentChainIndex; // pointer to the item in the ContentChain
+        uint96 publishedTime; // this can be used to pull in the votes
     } 
 
-    uint32 public publishedIndex = 0; // this is equal to publishedBlocks.length
-    mapping (uint32 => PublishedBlock) private publishedBlocks;
+    PublishedPost[] public publishedHistory;
 
-    // mapping (uint32 => uint32) private poolVersionToIndex;
-
-    function blockLength(uint32 _blockIndex) 
+    function getPost(uint _publishedIndex)
     public view
-    returns (uint)
+    returns (uint contentChainIndex_, uint publishedTime_)
     {
-        return 1;
-    }
-
-    function getItem(uint32 _blockIndex)
-    public view
-    returns (uint32 _version, uint _index, uint publishedTime)
-    {
-        require(_blockIndex < publishedIndex);
         return (
-            publishedBlocks[_blockIndex].contentPoolVersion, 
-            publishedBlocks[_blockIndex].contentIndex,
-            publishedBlocks[_blockIndex].publishedTime
+            uint(publishedHistory[_publishedIndex].contentChainIndex), 
+            uint(publishedHistory[_publishedIndex].publishedTime)
         );
     }
 
-    function publish(uint32 version, uint index)
+    function publishPost(uint index)
     public onlyHub
+    returns (uint publishedIndex_)
     {
-        // uint[] content;
-        // content.push(index);
-        PublishedBlock memory newBlock = PublishedBlock(
+        PublishedPost memory newPublishedPost = PublishedPost(
         {
-            contentPoolVersion: version,
-            contentIndex: index,
-            publishedTime: now
+            contentChainIndex: uint160(index),
+            publishedTime: uint96(now) 
         });
-        // newBlock.content.push(index);
-        publishedBlocks[publishedIndex] = newBlock;
-        publishedIndex += 1;
-        // publishedContent[version].push(index);
+
+        publishedHistory.push(newPublishedPost);
+
+        return publishedHistory.length - 1;
     }
 }

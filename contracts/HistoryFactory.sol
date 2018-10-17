@@ -1,3 +1,5 @@
+pragma solidity ^0.4.18;
+
 import './PublishedHistory.sol';
 
 contract HistoryFactory {
@@ -7,7 +9,7 @@ contract HistoryFactory {
     public
     returns (address newHistory) {
         PublishedHistory c = new PublishedHistory();
-        Deployed(c);
+        emit Deployed(c);
         return address(c);
     }
 }
