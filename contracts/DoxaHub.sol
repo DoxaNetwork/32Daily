@@ -1,4 +1,4 @@
-pragma solidity ^0.4.18;
+pragma solidity ^0.4.24;
 
 import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
@@ -57,10 +57,7 @@ contract DoxaHub is TransferGate, Ownable {
     public view 
     returns (uint index_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_)
     {
-        address poster;
-        bytes32 ipfsHash;
-        uint publishedTime;
-        (poster, ipfsHash, publishedTime) = postChain.getPost(_index);
+        (address poster, bytes32 ipfsHash, uint publishedTime) = postChain.getPost(_index);
         uint votesReceived = totalPostBacking(_index);
         return (_index, poster, ipfsHash, votesReceived, publishedTime);
     }
@@ -70,13 +67,8 @@ contract DoxaHub is TransferGate, Ownable {
     returns (uint index_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_)
     {
         // postChainIndex can be used to find who voted for this
-        uint postChainIndex;
-        uint publishedTime;
-        address poster;
-        bytes32 ipfsHash;
-        uint postedTime;
-        (postChainIndex, publishedTime) = publishedHistory.getPost(_publishedIndex);
-        (poster, ipfsHash, postedTime) = postChain.getPost(postChainIndex);
+        (uint postChainIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
+        (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(postChainIndex);
         uint votesReceived = totalPostBacking(postChainIndex);
         return (postChainIndex, poster, ipfsHash, votesReceived, publishedTime);
     }
