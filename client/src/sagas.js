@@ -31,7 +31,7 @@ function getEventsByType(events, type) {
 
 function* mapPost(post) {
     const word = yield contentFromIPFS32(post.ipfsHash);
-    return {'poster': post.owner, word, 'backing': post.backing.toNumber(), 'index': post.index.toNumber()}
+    return {'poster': post.owner, word, 'backing': 0, 'index': 0}
 }
 
 function* updateTokenBalance(action) {
@@ -67,11 +67,11 @@ function* submitPost(action) {
     const freq1Instance = yield getContract(doxaHubContract);
     const result = yield freq1Instance.newPost(ipfsPathShort, { from: currentAccount})
 
-//     const filteredEvents = getEventsByType(result.logs, "LinkPosted")
-//     const newPost = yield mapPost(filteredEvents[0].args);
-// 
-//     // also need to update tokenBalance and availableVotes
-//     yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
+    const filteredEvents = getEventsByType(result.logs, "NewPost")
+    const newPost = yield mapPost(filteredEvents[0].args);
+
+    // also need to update tokenBalance and availableVotes
+    yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
     yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 

@@ -15,7 +15,8 @@ contract HigherFreq is TransferGate {
     PostChain public postChain;
     DoxaToken public doxaToken; 
 
-    event Published(uint indexed version, address indexed owner, bytes32 ipfsHash);
+    event PostBacked(address indexed backer, uint postIndex);
+    event Published(address indexed owner, uint index);
     
 
     uint public nextPublishTime;
@@ -56,6 +57,7 @@ contract HigherFreq is TransferGate {
 
         bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
         votes.addVote(_postIndex, voterCycleKey);
+        emit PostBacked(msg.sender, _postIndex);
     }
 
     // exact same as DoxaHub
@@ -127,7 +129,7 @@ contract HigherFreq is TransferGate {
             uint publishedIndex = publishedHistory.publishPost(postChainIndex, indexToPublish);
             (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(postChainIndex);
             doxaToken.mint(poster, 1);
-            // Published(currentCycle, poster, ipfsHash);            
+            emit Published(publishedIndex, poster)
         }
 
         nextPublishStartIndex = lowerFreq.publishedLength();

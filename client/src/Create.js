@@ -66,7 +66,10 @@ class Create extends Component {
     }
 
     submit(event) {
-        this.props.onSubmit(this.state.content, this.props.match.path);
+        const freqName = this.props.match.path.split("/")[1];
+        if (freqName === 'one') {
+            this.props.onSubmit(this.state.content, 'freq1');
+        }
         event.preventDefault();
         // setTimeout(() => this.props.history.push('/one'),1000);
     }

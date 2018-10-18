@@ -24,9 +24,9 @@ contract DoxaHub is TransferGate, Ownable {
     uint152 public nextPublishStartIndex;
     // could store top for free
 
-    // event LinkPosted(address indexed owner, uint backing, uint index, bytes32 ipfsHash);
-    // event PostBacked(address indexed backer, uint indexed version, uint postIndex);
-    // event Published(address indexed poster, uint publishedTime, uint currentVersion, uint indexToPublish);
+    event NewPost(address indexed owner, bytes32 ipfsHash);
+    event PostBacked(address indexed backer, uint postIndex);
+    event Published(address indexed owner, uint index);
 
     constructor(
         address _postChain, 
@@ -51,7 +51,7 @@ contract DoxaHub is TransferGate, Ownable {
     {
         postChain.newPost(msg.sender, _ipfsHash);
         token.mint(msg.sender, uint(SUBMISSION_MINT));
-        // LinkPosted(msg.sender, 0, postChain.poolLength() - 1, _ipfsHash);
+        emit NewPost(msg.sender, _ipfsHash);
     }
 
     function getSubmittedItem(uint _index) 
@@ -87,12 +87,13 @@ contract DoxaHub is TransferGate, Ownable {
     {
         // can't vote on items that don't exist
         // PROBLEM: you can currently vote on items in the next block 
-        require( _postIndex >= 0 && _postIndex < postChain.length() );
+        (uint lower, uint upper) = range();
+        require(_postIndex >= lower && _postIndex < upper );
         require( votingAvailable(msg.sender) );
 
         bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
         votes.addVote(_postIndex, voterCycleKey);
-        // PostBacked(msg.sender, _postIndex, nextPublishTime);
+        emit PostBacked(msg.sender, _postIndex);
     }
 
     function votingAvailable(address _voter)
@@ -149,6 +150,7 @@ contract DoxaHub is TransferGate, Ownable {
             uint publishedIndex = publishedHistory.publishPost(indexToPublish, indexToPublish);
             (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(indexToPublish); // need this to know where to send the token
             token.mint(poster, 1);
+            emit Published(publishedIndex, poster);
             // Published(publishedIndex); // this is enough for clients to grab the rest
         }
         nextPublishTime = uint96(now + 30 seconds);
