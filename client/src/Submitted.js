@@ -33,10 +33,10 @@ class _SubmittedWords extends Component {
                 <ContentCard 
                     key={obj.poster + obj.word} 
                     index={obj.index} 
-                    word={obj.word} 
+                    word={obj.content} 
                     poster={obj.poster}
                     user={this.props.users[obj.poster]}
-                    backing={obj.backing} 
+                    backing={obj.votes} 
                     onClick={this.props.onClick} />
             )
         ) : (
