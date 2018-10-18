@@ -32,8 +32,8 @@ class _PublishedWords extends Component {
                 word={word.content} 
                 poster={word.poster}
                 user={this.props.users[word.poster]}
+                backing={word.votes}
                 date={word.date}
-                backing={0}
                 onClick={false} />
         );
 

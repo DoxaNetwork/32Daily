@@ -119,8 +119,8 @@ async function getHistory(_contract, start, end, dateType) {
     let results = await Promise.all(functions)
     for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
-        const word = await contentFromIPFS32(ipfsHash32);
-        words.push({content:word, poster, date:date})
+        const content = await contentFromIPFS32(ipfsHash32);
+        words.push({content, poster, date, votes:votes.toNumber()})
     }
     return words;
 }
