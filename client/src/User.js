@@ -4,25 +4,9 @@ import styled from 'styled-components';
 
 import identicon from 'identicon.js'
 import Img from 'react-image'
-
-
-import contract from 'truffle-contract'
-
 import { Button } from './styledComponents'
-import MemberRegistryContract from './contracts/MemberRegistry.json'
-import DoxaHubContract from './contracts/DoxaHub.json'
-import HigherFreqContract from './contracts/HigherFreq.json'
-import Freq3Contract from './contracts/Freq3.json'
-import { getContract, getCurrentAccount } from './DappFunctions'
 
-import {fileFromIPFS, fileToIPFS, postToIPFS, contentFromIPFS32} from './utils/ipfs' 
-
-import {toAscii} from './utils/helpers'
-
-const doxaHubContract = contract(DoxaHubContract)
-const memberRegistryContract = contract(MemberRegistryContract)
-const higherFreqContract = contract(HigherFreqContract)
-const freq3Contract = contract(Freq3Contract)
+import {fileFromIPFS, fileToIPFS } from './utils/ipfs' 
 
 
 const Identity = styled(Img)`
@@ -128,9 +112,6 @@ const ButtonContainer = styled.div`
 
 export class _User extends Component {
     state = {
-        postsPublished1: '...',
-        postsPublished2: '...',
-        postsPublished3: '...',
         userLoggedIn: false,
         registered: false,
         newUsername: '',
@@ -140,47 +121,10 @@ export class _User extends Component {
     }
 
     async componentDidMount() {
-        this.props.dispatch({type: "LOAD_USER_IF_NEEDED", address: this.props.match.params.id})
+        const {dispatch, match, account} = this.props;
+        dispatch({type: "LOAD_USER_IF_NEEDED", address: match.params.id})
 
-        const doxaHub = await getContract(doxaHubContract);
-        const freq3 = await getContract(freq3Contract);
-        const higherFreq = await getContract(higherFreqContract);
-
-        const currentAccount = await getCurrentAccount();
-        this.setState({userLoggedIn: this.props.match.params.id === currentAccount})
-
-        // get karma
-        const filter1 = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
-        const filterPromise1 = () => {
-            return new Promise((resolve, reject) => {
-                filter1.get( (e, r) => {
-                    resolve(r)
-                })
-            })
-        }
-        const filter2 = higherFreq.Published({poster: this.props.match.params.id}, {fromBlock: 0})
-        const filterPromise2 = () => {
-            return new Promise((resolve, reject) => {
-                filter2.get( (e, r) => {
-                    resolve(r)
-                })
-            })
-        }
-        const filter3 = freq3.Published({poster: this.props.match.params.id}, {fromBlock: 0})
-        const filterPromise3 = () => {
-            return new Promise((resolve, reject) => {
-                filter3.get( (e, r) => {
-                    resolve(r)
-                })
-            })
-        }
-
-        const results1 = await filterPromise1();
-        const results2 = await filterPromise2();
-        const results3 = await filterPromise3();
-        this.setState({postsPublished1: results1.length});
-        this.setState({postsPublished2: results2.length});
-        this.setState({postsPublished3: results3.length});
+        this.setState({userLoggedIn: match.params.id === account})
     }
 
     async urlFromHash(hash) {
@@ -220,18 +164,18 @@ export class _User extends Component {
     }
 
     render() {
-        const {account, users} = this.props;
+        const {account, users, match} = this.props;
 
         if (!users) {
             return ("loading")
         }
-        const user = users[account] || {};
+        const user = users[match.params.id] || {};
 
         const editableMetadata = this.state.userLoggedIn ? (
             <>
             <IdenticonContainer>
                 <label htmlFor="imageUpload">
-                    <Identicon poster={this.props.match.params.id} imageUrl={user.picture || this.state.imageUrl}/>
+                    <Identicon poster={match.params.id} imageUrl={user.picture || this.state.imageUrl}/>
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
             </IdenticonContainer>
@@ -259,7 +203,7 @@ export class _User extends Component {
         ) : (
             <>
             <IdenticonContainer>
-                    <Identicon poster={this.props.match.params.id} imageUrl={user.picture}/>
+                    <Identicon poster={match.params.id} imageUrl={user.picture}/>
             </IdenticonContainer>
             <EditableMetadata>
                 <Bold>{user.username || "nothing here yet"}</Bold>
@@ -274,19 +218,19 @@ export class _User extends Component {
                      <ChainMetadata>
                         <div>
                             <Bold>User id</Bold>
-                            <div>{this.props.match.params.id.substring(0,6)}</div>
+                            <div>{match.params.id.substring(0,6)}</div>
                         </div>
                         <div>
                             <Bold>Karma1</Bold>
-                            <div>{this.state.postsPublished1}</div>
+                            <div>{user.token1Balance}</div>
                         </div>
                          <div>
                             <Bold>Karma2</Bold>
-                            <div>{this.state.postsPublished2}</div>
+                            <div>{user.token2Balance}</div>
                         </div>
                          <div>
                             <Bold>Karma3</Bold>
-                            <div>{this.state.postsPublished3}</div>
+                            <div>{user.token3Balance}</div>
                         </div>
                     </ChainMetadata>
                 </UserContainer>

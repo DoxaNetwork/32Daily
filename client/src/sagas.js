@@ -187,6 +187,22 @@ function* loadUser(action) {
             yield put({type: "PICTURE_UPDATE_SUCCESS", address: action.address, picture:imageUrl})
         }        
     }
+    yield loadUserBalance(action)
+}
+
+function* loadUserBalance(action) {
+    const token1instance = yield getContract(doxaTokenContract, '0x81a06c0374039d8f6c6f8df1eda95f6615fcef9a');
+    const token2instance = yield getContract(doxaTokenContract, '0x071a9d36cf55929cb258449a4ea5dceee0338901');
+    const token3instance = yield getContract(doxaTokenContract, '0x6844930e0e26d842dbc8ef0efc905dcae59883a2');
+
+    const token1BalanceBN = yield token1instance.balanceOf(action.address);
+    const token2BalanceBN = yield token2instance.balanceOf(action.address);
+    const token3BalanceBN = yield token3instance.balanceOf(action.address);
+    const token1Balance = token1BalanceBN.toNumber();
+    const token2Balance = token2BalanceBN.toNumber();
+    const token3Balance = token3BalanceBN.toNumber();
+
+    yield put({type: "USER_BALANCE_UPDATE", address: action.address, token1Balance, token2Balance, token3Balance})
 }
 
 function* registerUser(action) {
