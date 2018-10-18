@@ -240,7 +240,7 @@ export class _User extends Component {
 }
 
 const mapStateToProps = state => ({
-    account: state.user.account, // have got to initialize this somewhere
+    account: state.account.account,
     users: state.users
 })
 

@@ -57,30 +57,6 @@ function* mapPost(post) {
     return {'poster': post.owner, word, 'backing': 0, 'index': 0}
 }
 
-function* updateTokenBalance(action) {
-    const getItems = state => state.user.currentAccount;
-    const currentAccount = yield select(getItems);
-
-    if (currentAccount !== undefined) {
-        const token1instance = yield getContract(DoxaToken, '0xa4178ef71ce5d2541d84b09a776864715dfcc57d');
-        const tokenBalanceBN = yield token1instance.balanceOf(currentAccount);
-        const tokenBalance = tokenBalanceBN.toNumber();
-        yield put({type: "TOKEN_BALANCE_UPDATE_SUCCESS", tokenBalance})
-    }
-}
-
-function* updateAvailableToTransfer(action) {
-    const getItems = state => state.user.currentAccount;
-    const currentAccount = yield select(getItems);
-
-    if (currentAccount !== undefined) {
-        const freq1Instance = yield getContract(DoxaHub);
-        const availableVotesBN = yield freq1Instance.availableToTransfer(currentAccount, '0x0');
-        const availableVotes = availableVotesBN.toNumber();
-        yield put({type: "AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS", availableVotes})
-    }
-}
-
 function* initAccount(action) {
     const currentAccount = yield getCurrentAccount();
     yield put({type: "INIT_ACCOUNT_SUCCESS", currentAccount})
@@ -300,8 +276,6 @@ export default function* rootSaga() {
 
     yield takeEvery('LOAD_SUBMISSIONS', loadSubmissions)
 
-    yield takeEvery('LOAD_BALANCE', updateTokenBalance)
-    yield takeEvery('LOAD_AVAILABLE_BALANCE', updateAvailableToTransfer)
     yield takeEvery('LOAD_ACCOUNT', initAccount)
 
     yield takeEvery('SUBMIT_CONTENT', submitPost)

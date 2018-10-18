@@ -33,20 +33,10 @@ const submissions = (state = [], action) => {
     }
 }
 
-const user = (state = {}, action) => {
+const account = (state = {}, action) => {
     switch (action.type) {
-        case 'TOKEN_BALANCE_UPDATE_SUCCESS':
-            return Object.assign({}, state, {
-                balance: action.tokenBalance
-            })
-        case 'AVAILABLE_TO_TRANSFER_UPDATE_SUCCESS':
-            return Object.assign({}, state, {
-                available: action.availableVotes
-            })
         case 'INIT_ACCOUNT_SUCCESS':
-            return Object.assign({}, state, {
-                account: action.currentAccount
-            })
+            return {...state, ...{account: action.currentAccount}}
         default:
             return state
     }
@@ -107,7 +97,7 @@ const rootReducer = combineReducers({
     freq1: createFilteredReducer(freqReducer, action => action.freq === 'freq1'),
     freq2: createFilteredReducer(freqReducer, action => action.freq === 'freq2'),
     freq3: createFilteredReducer(freqReducer, action => action.freq === 'freq3'),
-    user,
+    account,
     users,
     notifications
 })

@@ -43,7 +43,7 @@ class _Header extends Component {
 }
 
 const mapStateToProps = state => ({
-    account: state.user.account,
+    account: state.account.account,
 })
 
 export const Header = connect(

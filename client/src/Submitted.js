@@ -4,7 +4,7 @@ import { CSSTransitionGroup } from 'react-transition-group'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 
-import { loadSubmissions, loadBalance, loadAvailableBalance, loadAccount, submitVote, loadPublishTime } from './actions'
+import { loadSubmissions, submitVote, loadPublishTime } from './actions'
 import { ContentCard } from './ContentCard.js'
 
 
@@ -61,9 +61,6 @@ class _SubmittedWords extends Component {
 
 const mapFreqToStateToProps = freq => (
     state => ({
-        tokenBalance: state.user.balance,
-        availableVotes: state.user.available,
-        account: state.user.account,
         submittedWords: state[freq].submissions,
         users: state.users,
     })
@@ -74,9 +71,6 @@ const mapFreqToDispatchToProps = freq => (
         onClick: index => dispatch(submitVote(index, freq)),
         load: () => {
             dispatch(loadSubmissions(freq))
-            dispatch(loadBalance())
-            dispatch(loadAvailableBalance())
-            dispatch(loadAccount())
             dispatch(loadPublishTime(freq))
         }
     })

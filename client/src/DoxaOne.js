@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import { BrowserRouter, Route, Switch, withRouter } from 'react-router-dom'
+import { connect } from 'react-redux'
 
 import { Header } from './Header'
 import { User } from './User'
@@ -12,6 +13,8 @@ import { Notifications } from './Notifications.js'
 import { Footer } from './Footer.js'
 import './ThirtytwoDaily.css'
 
+import { loadBalance, loadAvailableBalance, loadAccount } from './actions'
+
 class DoxaOne extends Component {
     render() {
         return (
@@ -22,7 +25,12 @@ class DoxaOne extends Component {
     }
 }
 
-class ThirtytwoDaily extends Component {
+class _ThirtytwoDaily extends Component {
+
+    componentDidMount() {
+        const {dispatch} = this.props;
+        dispatch(loadAccount());
+    }
 
     render() {
         return (
@@ -55,5 +63,6 @@ class ThirtytwoDaily extends Component {
     }
 }
 
+const ThirtytwoDaily = withRouter(connect()(_ThirtytwoDaily))
 
 export default DoxaOne

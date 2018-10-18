@@ -29,14 +29,6 @@ export const loadPublishTime = (freq) => ({
 
 
 // ========== user info ====================
-export const loadBalance = () => ({
-    type: 'LOAD_BALANCE'
-})
-
-export const loadAvailableBalance = () => ({
-    type: 'LOAD_AVAILABLE_BALANCE'
-})
-
 export const loadAccount = () => ({
     type: 'LOAD_ACCOUNT'
 })
