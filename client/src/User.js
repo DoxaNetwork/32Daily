@@ -132,44 +132,22 @@ export class _User extends Component {
         postsPublished2: '...',
         postsPublished3: '...',
         userLoggedIn: false,
-        imageUrl: null,
-        username: '...',
-        profile: '...',
-        imageIPFS: null,
         registered: false,
+        newUsername: '',
+        newProfile: '',
+        newImageUrl: null,
+        newImageIPFS: null,
     }
 
     async componentDidMount() {
+        this.props.dispatch({type: "LOAD_USER_IF_NEEDED", address: this.props.match.params.id})
+
         const doxaHub = await getContract(doxaHubContract);
         const freq3 = await getContract(freq3Contract);
         const higherFreq = await getContract(higherFreqContract);
 
-        const registry = await getContract(memberRegistryContract);
         const currentAccount = await getCurrentAccount();
         this.setState({userLoggedIn: this.props.match.params.id === currentAccount})
-
-        let [owner, name, profileIPFS, exiled] = await registry.get(this.props.match.params.id);
-        name = toAscii(name)
-
-        if (name !== '') {
-            console.log('user already registered, pulling from ipfs')
-            let profile = await contentFromIPFS32(profileIPFS);
-            profile = JSON.parse(profile)
-            console.log(profile)
-
-            const pictureHash = profile['image'];
-
-            if (pictureHash !== null) {
-                const imageUrl = await this.urlFromHash(pictureHash);
-                this.setState({imageUrl, imageIPFS: pictureHash})
-            }
-
-            this.setState({registered: true, username:name, profile: profile['profile']})
-            
-        } else {
-            console.log('user not yet registered')
-        }
-
 
         // get karma
         const filter1 = doxaHub.Published({poster: this.props.match.params.id}, {fromBlock: 0})
@@ -218,26 +196,20 @@ export class _User extends Component {
         let reader = new window.FileReader()
         reader.onloadend = async () => {
             const pictureHash = await fileToIPFS(reader.result);
-            const imageUrl = await this.urlFromHash(pictureHash);
-            this.setState({imageUrl, imageIPFS: pictureHash})
+            const newImageUrl = await this.urlFromHash(pictureHash);
+            this.setState({newImageUrl, newImageIPFS: pictureHash})
         }
         reader.readAsArrayBuffer(file)
       }
 
     async submit() {
-        const registry = await getContract(memberRegistryContract);
-        const currentAccount = await getCurrentAccount();
+        const {registered, newUsername, newProfile, newImageIPFS} = this.state;
+        const {dispatch} = this.props;
 
-        const {username, profile, imageIPFS} = this.state;
-        const ipfsblob = {profile, image: imageIPFS}
-        const ipfsPathShort = await postToIPFS(JSON.stringify(ipfsblob));
-
-        if (this.state.registered) {
-            console.debug('updating user')
-            await registry.setProfile(ipfsPathShort, { from: currentAccount})
+        if (registered) {
+            dispatch({type: "UPDATE_USER", profile: newProfile, imageIPFS: newImageIPFS})
         } else {
-            console.debug('registering user')
-            await registry.create(username, ipfsPathShort, { from: currentAccount})
+            dispatch({type: "REGISTER_USER", username: newUsername, profile: newProfile, imageIPFS: newImageIPFS})
         }
     }
 
@@ -248,28 +220,35 @@ export class _User extends Component {
     }
 
     render() {
+        const {account, users} = this.props;
+
+        if (!users) {
+            return ("loading")
+        }
+        const user = users[account] || {};
+
         const editableMetadata = this.state.userLoggedIn ? (
             <>
             <IdenticonContainer>
                 <label htmlFor="imageUpload">
-                    <Identicon poster={this.props.match.params.id} imageUrl={this.state.imageUrl}/>
+                    <Identicon poster={this.props.match.params.id} imageUrl={user.picture || this.state.imageUrl}/>
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
             </IdenticonContainer>
             <EditableMetadata>
                 <div>
                     <input 
-                        value={this.state.username} 
+                        value={this.state.newUsername} 
                         placeholder="what should we call you?" 
                         type="text" 
-                        id="username"
+                        id="newUsername"
                         onChange={(e) => this.handleContentChange(e)}></input>
                 </div>
                 <div>
                     <textarea 
-                        value={this.state.profile} 
+                        value={this.state.newProfile} 
                         placeholder="what should we know about you?" 
-                        id="profile"
+                        id="newProfile"
                         onChange={(e) => this.handleContentChange(e)}></textarea>
                 </div>
                 <ButtonContainer>
@@ -280,11 +259,11 @@ export class _User extends Component {
         ) : (
             <>
             <IdenticonContainer>
-                    <Identicon poster={this.props.match.params.id} imageUrl={this.state.imageUrl}/>
+                    <Identicon poster={this.props.match.params.id} imageUrl={user.picture}/>
             </IdenticonContainer>
             <EditableMetadata>
-                <Bold>{this.state.username}</Bold>
-                <div>{this.state.profile}</div>
+                <Bold>{user.username || "nothing here yet"}</Bold>
+                <div>{user.profile || "nothing here yet"}</div>
             </EditableMetadata>
             </>
         );
@@ -318,6 +297,7 @@ export class _User extends Component {
 
 const mapStateToProps = state => ({
     account: state.user.account, // have got to initialize this somewhere
+    users: state.users
 })
 
 export const User = connect(

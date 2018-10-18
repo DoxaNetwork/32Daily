@@ -189,6 +189,29 @@ function* loadUser(action) {
     }
 }
 
+function* registerUser(action) {
+    const registry = yield getContract(memberRegistryContract);
+    const currentAccount = yield getCurrentAccount();
+
+    const {username, profile, imageIPFS} = action;
+    const ipfsblob = {profile, image: imageIPFS}
+    const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
+
+    yield registry.create(username, ipfsPathShort, { from: currentAccount})
+    yield newNotification()
+}
+
+function* updateUser(action) {
+    const registry = yield getContract(memberRegistryContract);
+    const currentAccount = yield getCurrentAccount();
+
+    const {profile, imageIPFS} = action;
+    const ipfsblob = {profile, image: imageIPFS}
+    const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
+    yield registry.setProfile(ipfsPathShort, { from: currentAccount})
+    yield newNotification()
+}
+
 function* loadUserIfNeeded(action) {
     const getItems = state => state.users;
     const state = yield select(getItems);
@@ -225,4 +248,7 @@ export default function* rootSaga() {
     yield takeEvery('LOAD_USER', loadUser)
     yield takeEvery('LOAD_USER_IF_NEEDED', loadUserIfNeeded)
     yield takeEvery('LOAD_USERS_IF_NEEDED', loadUsersIfNeeded)
+
+    yield takeEvery('REGISTER_USER', registerUser)
+    yield takeEvery('UPDATE_USER', updateUser)
 }
