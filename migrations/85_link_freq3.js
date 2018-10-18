@@ -1,4 +1,4 @@
-const ContentPool = artifacts.require("./ContentPool.sol");
+const PostChain = artifacts.require("./PostChain.sol");
 const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
@@ -11,7 +11,7 @@ module.exports = function(deployer) {
   const tokenAddress = helpers.readFactory('freq3', 'TokenFactory');
   const votesAddress = helpers.readFactory('freq3', 'VotesFactory');
 
-  let votes, publishedHistory, token, contentPool;
+  let votes, publishedHistory, token, postChain;
 
   deployer.then(function(){
     return Votes.at(votesAddress)
@@ -29,11 +29,11 @@ module.exports = function(deployer) {
   }).then(function(instance) {
 
     token = instance;
-    return ContentPool.deployed();
+    return PostChain.deployed();
 
   }).then(function(instance) {
 
-    contentPool = instance;
+    postChain = instance;
 
     votes.assignHub(Freq3.address);
     publishedHistory.assignHub(Freq3.address);

@@ -1,4 +1,4 @@
-const ContentPool = artifacts.require("./ContentPool.sol");
+const PostChain = artifacts.require("./PostChain.sol");
 const MemberRegistry = artifacts.require("./MemberRegistry.sol");
 const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
@@ -14,7 +14,7 @@ module.exports = function(deployer) {
 
     deployer.deploy(
         DoxaHub,
-        ContentPool.address,
+        PostChain.address,
         tokenAddress,
         historyAddress,
         votesAddress

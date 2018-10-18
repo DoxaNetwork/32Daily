@@ -1,4 +1,4 @@
-const ContentPool = artifacts.require("./ContentPool.sol");
+const PostChain = artifacts.require("./PostChain.sol");
 const Freq3 = artifacts.require("./Freq3.sol");
 const HigherFreq = artifacts.require("./HigherFreq.sol");
 
@@ -15,7 +15,7 @@ module.exports = function(deployer) {
         HigherFreq.address,
         votesAddress,
         historyAddress,
-        ContentPool.address,
+        PostChain.address,
         tokenAddress
     );
 };
