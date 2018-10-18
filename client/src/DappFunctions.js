@@ -9,11 +9,14 @@ const doxaHubContract = contract(DoxaHubContract)
 const simpleCache = {};  // This can be used for simple objects, like the current user's account address
 
 
-async function getContract(contract) {
+async function getContract(contract, address) {
     let results = await getWeb3
     contract.setProvider(results.web3.currentProvider)
 
     // this find the address from the ./build/contracts/.json file
+    if (address) {
+        return await contract.at(address)
+    }
     return await contract.deployed();
 }
 
@@ -54,12 +57,12 @@ async function setUpPostBackedListener() {
 async function getHigherFreqSubmissions(_contract) {
     const [lower, upper] = await _contract.range()
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
-    const functions = indexesToRetrieve.map(index => _contract.getItem(index))
+    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index))
     let results = await Promise.all(functions)
 
     let words = []
     let i = 0;
-    for (const [poster, ipfsHash32, votes] of results) {
+    for (const [index, poster, ipfsHash32, votes, publishdTime] of results) {
         const word = await contentFromIPFS32(ipfsHash32);
         words.push({'poster': poster, word, backing: votes.toNumber(), 'index':i })
         i += 1;
@@ -73,13 +76,15 @@ async function getHigherFreqSubmissions(_contract) {
 async function getAllLinks(){
     const doxaHub = await getContract(doxaHubContract);
 
-    const count = await doxaHub.getLinkCount()
-    const indexesToRetrieve = [...Array(count.toNumber()).keys()]
-    const functions = indexesToRetrieve.map(index => doxaHub.getLinkByIndex(index))
+    const [lower, upper] = await doxaHub.range()
+    // console.log(lower.toNumber(), upper.toNumber())
+    const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
+    // const indexesToRetrieve = [...Array(count.toNumber()).keys()]
+    const functions = indexesToRetrieve.map(index => doxaHub.getSubmittedItem(index))
     let results = await Promise.all(functions)
 
     let links = []
-    for (const [index, poster, ipfsHash32, backing] of results) {
+    for (const [index, poster, ipfsHash32, backing, publishedTime] of results) {
         const word = await contentFromIPFS32(ipfsHash32);
         links.push({poster, word, 'backing': backing.toNumber(), 'index': index.toNumber()})
     }
@@ -89,8 +94,8 @@ async function getAllLinks(){
 const numToPreLoad = 6;
 
 async function getPreHistory(_contract) {
-    const version = await _contract.publishedIndex();
-    const end = version.toNumber() - numToPreLoad;
+    const length = await _contract.publishedLength();
+    const end = length.toNumber() - numToPreLoad;
     const start = 0;
 
     const words = await getHistory(_contract, start, end);
@@ -98,8 +103,8 @@ async function getPreHistory(_contract) {
 }
 
 async function preLoadHistory(_contract) {
-    const version = await _contract.publishedIndex();
-    const end = version.toNumber();
+    const length = await _contract.publishedLength();
+    const end = length.toNumber();
     const start = Math.max(end - numToPreLoad, 0);
 
     const words = await getHistory(_contract, start, end, 'dayOfWeek')
@@ -112,7 +117,7 @@ async function getHistory(_contract, start, end, dateType) {
     const indexesToRetrieve = Array.from(new Array(end - start), (x,i) => i + start)
     const functions = indexesToRetrieve.map(i => _contract.getPublishedItem(i))
     let results = await Promise.all(functions)
-    for (const [poster, ipfsHash32, timeStamp] of results) {
+    for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
         const word = await contentFromIPFS32(ipfsHash32);
         words.push({content:word, poster, date:date})

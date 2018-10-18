@@ -3,6 +3,7 @@ import { put, takeEvery, select } from 'redux-saga/effects'
 
 import contract from 'truffle-contract'
 import DoxaHubContract from './contracts/DoxaHub.json'
+import DoxaTokenContract from './contracts/DoxaToken.json'
 import HigherFreq from './contracts/HigherFreq.json'
 import Freq3 from './contracts/Freq3.json'
 import MemberRegistryContract from './contracts/MemberRegistry.json'
@@ -12,6 +13,7 @@ import { toAscii } from './utils/helpers'
 import { contentFromIPFS32, postToIPFS, fileFromIPFS } from './utils/ipfs.js'
 
 const doxaHubContract = contract(DoxaHubContract)
+const doxaTokenContract = contract(DoxaTokenContract)
 const HigherFreqContract = contract(HigherFreq)
 const Freq3Contract = contract(Freq3)
 const memberRegistryContract = contract(MemberRegistryContract)
@@ -35,8 +37,8 @@ function* mapPost(post) {
 function* updateTokenBalance(action) {
     const currentAccount = yield getCurrentAccount();
     if (currentAccount !== undefined) {
-        const freq1Instance = yield getContract(doxaHubContract);
-        const tokenBalanceBN = yield freq1Instance.balanceOf(currentAccount);
+        const token1instance = yield getContract(doxaTokenContract, '0xa4178ef71ce5d2541d84b09a776864715dfcc57d');
+        const tokenBalanceBN = yield token1instance.balanceOf(currentAccount);
         const tokenBalance = tokenBalanceBN.toNumber();
         yield put({type: "TOKEN_BALANCE_UPDATE_SUCCESS", tokenBalance})
     }
@@ -63,13 +65,13 @@ function* submitPost(action) {
 
     const currentAccount = yield getCurrentAccount();
     const freq1Instance = yield getContract(doxaHubContract);
-    const result = yield freq1Instance.postLink(ipfsPathShort, { from: currentAccount})
+    const result = yield freq1Instance.newPost(ipfsPathShort, { from: currentAccount})
 
-    const filteredEvents = getEventsByType(result.logs, "LinkPosted")
-    const newPost = yield mapPost(filteredEvents[0].args);
-
-    // also need to update tokenBalance and availableVotes
-    yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
+//     const filteredEvents = getEventsByType(result.logs, "LinkPosted")
+//     const newPost = yield mapPost(filteredEvents[0].args);
+// 
+//     // also need to update tokenBalance and availableVotes
+//     yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
     yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 
