@@ -22,6 +22,7 @@ contract DoxaHub is TransferGate, Ownable {
     uint8 public SUBMISSION_MINT = 1;
     uint96 public nextPublishTime;
     uint152 public nextPublishStartIndex;
+    // could store top for free
 
     // event LinkPosted(address indexed owner, uint backing, uint index, bytes32 ipfsHash);
     // event PostBacked(address indexed backer, uint indexed version, uint postIndex);
@@ -41,7 +42,7 @@ contract DoxaHub is TransferGate, Ownable {
 
         owner = msg.sender;
         // nextPublishTime = nextUTCMidnight(now);
-        nextPublishTime = uint96(now + 1 hours);
+        nextPublishTime = uint96(now + 30 seconds);
         nextPublishStartIndex = 0;
     }
 
@@ -55,22 +56,30 @@ contract DoxaHub is TransferGate, Ownable {
 
     function getSubmittedItem(uint _index) 
     public view 
-    returns (uint index_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_)
+    returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeIn_)
     {
         (address poster, bytes32 ipfsHash, uint publishedTime) = postChain.getPost(_index);
-        uint votesReceived = totalPostBacking(_index);
+        uint votesReceived = votes.incomingVotes(_index);
         return (_index, poster, ipfsHash, votesReceived, publishedTime);
     }
 
     function getPublishedItem(uint _publishedIndex) 
     public view
-    returns (uint index_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_)
+    returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
     {
         // postChainIndex can be used to find who voted for this
-        (uint postChainIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
+        (uint postChainIndex, uint lowerPublishedIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
         (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(postChainIndex);
-        uint votesReceived = totalPostBacking(postChainIndex);
+        uint votesReceived = votes.incomingVotes(postChainIndex);
+        // which index should this return?
         return (postChainIndex, poster, ipfsHash, votesReceived, publishedTime);
+    }
+
+    function getPublishedPointer(uint _publishedIndex)
+    public view
+    returns (uint postChainIndex_, uint publishedTime_)
+    {
+        (uint postChainIndex, uint lowerChainIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
     }
 
     function backPost(uint _postIndex)
@@ -84,12 +93,6 @@ contract DoxaHub is TransferGate, Ownable {
         bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
         votes.addVote(_postIndex, voterCycleKey);
         // PostBacked(msg.sender, _postIndex, nextPublishTime);
-    }
-
-    function totalPostBacking(uint _index)
-    public view 
-    returns (uint) {
-        return votes.incomingVotes(_index);
     }
 
     function votingAvailable(address _voter)
@@ -111,6 +114,20 @@ contract DoxaHub is TransferGate, Ownable {
         // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
     }
 
+    function publishedLength()
+    public view
+    returns (uint)
+    {
+        return publishedHistory.length();
+    }
+
+    function range()
+    public view
+    returns (uint lower, uint upper)
+    {
+        return (nextPublishStartIndex, postChain.length());
+    }
+
     function publish() 
     public 
     {
@@ -129,15 +146,12 @@ contract DoxaHub is TransferGate, Ownable {
             }
         }
         if (somethingSelected) {
-            uint publishedIndex = publishedHistory.publishPost(indexToPublish);
-            address poster;
-            bytes32 ipfsHash;
-            uint postedTime;
-            (poster, ipfsHash, postedTime) = postChain.getPost(postIndex); // need this to know where to send the token
+            uint publishedIndex = publishedHistory.publishPost(indexToPublish, indexToPublish);
+            (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(indexToPublish); // need this to know where to send the token
             token.mint(poster, 1);
             // Published(publishedIndex); // this is enough for clients to grab the rest
         }
-        nextPublishTime = uint96(now + 1 hours);
+        nextPublishTime = uint96(now + 30 seconds);
         nextPublishStartIndex = uint152(endIndex);
     }
 

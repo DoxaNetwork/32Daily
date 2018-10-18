@@ -22,6 +22,7 @@ contract Votes is Spoke {
         return outgoingPostBackings[_voterCycleKey];
     }
 
+    // if we keyed this as (index, freq) then we could maybe get away with only one Votes contract
     function incomingVotes(uint _postIndex)
     view public
     returns (uint)

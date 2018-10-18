@@ -1,22 +1,22 @@
 pragma solidity ^0.4.24;
 
-// import './HigherFreq.sol';
+import './HigherFreq.sol';
 
-// contract Freq3 is HigherFreq {
+contract Freq3 is HigherFreq {
 
-//     function Freq3 (
-//         uint period, 
-//         address _lowerFreq, 
-//         address _votes, 
-//         address _promoted,
-//         address _contentPool,
-//         address _doxaToken)
-//     HigherFreq(
-//         period, 
-//         _lowerFreq, 
-//         _votes, 
-//         _promoted,
-//         _contentPool,
-//         _doxaToken)
-//     public {}
-// }
+    function Freq3 (
+        uint period, 
+        address _lowerFreq, 
+        address _votes, 
+        address _publishedHistory,
+        address _postChain,
+        address _doxaToken)
+    HigherFreq(
+        period, 
+        _lowerFreq, 
+        _votes, 
+        _publishedHistory,
+        _postChain,
+        _doxaToken)
+    public {}
+}
