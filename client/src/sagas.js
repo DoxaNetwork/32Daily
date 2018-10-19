@@ -54,7 +54,7 @@ function getEventsByType(events, type) {
 
 function* mapPost(post) {
     const word = yield contentFromIPFS32(post.ipfsHash);
-    return {'poster': post.owner, word, 'backing': 0, 'index': 0}
+    return {'poster': post.owner, word, votes: 0, chain: 0, index: 0}
 }
 
 function* initAccount(action) {
@@ -63,12 +63,13 @@ function* initAccount(action) {
 }
 
 function* submitPost(action) {
-    const getItems = state => state.user.currentAccount;
+    const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
-    const freq1Instance = yield getContract(DoxaHub);
+    const contract = yield getContract(freqToContractJSON[action.freq])
+    // const freq1Instance = yield getContract(DoxaHub);
 
     const ipfsPathShort = yield postToIPFS(action.text);
-    const result = yield freq1Instance.newPost(ipfsPathShort, { from: currentAccount})
+    const result = yield contract.newPost(ipfsPathShort, { from: currentAccount})
 
     const filteredEvents = getEventsByType(result.logs, "NewPost")
     const newPost = yield mapPost(filteredEvents[0].args);
@@ -95,24 +96,49 @@ function* newNotification() {
 // ============================== Functions shared between all freqs =========================================================================
 // ===========================================================================================================================================
 
-async function getSubmissions(_contract){
+async function getSubmissions(_contract) {
     const [lower, upper] = await _contract.range()
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
-    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index))
+    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 0))
     let results = await Promise.all(functions)
 
     let posts = []
     for (const [index, poster, ipfsHash32, votes, publishedTime] of results) {
         const content = await contentFromIPFS32(ipfsHash32);
-        posts.push({poster, content, 'votes': votes.toNumber(), 'index': index.toNumber()})
+        posts.push({chain: 0, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber()})
+    }
+    return posts
+}
+
+async function getSideChainSubmissions(_contract) {
+    const [lower, upper] = await _contract.sideRange()
+    console.log(lower.toNumber(), upper.toNumber());
+    const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
+    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 1))
+    let results = await Promise.all(functions)
+
+    let posts = []
+    for (const [index, poster, ipfsHash32, votes, publishedTime] of results) {
+        const content = await contentFromIPFS32(ipfsHash32);
+        posts.push({chain: 1, side:true, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber()})
     }
     return posts
 }
 
 function* loadSubmissions(action) {
     const contract = yield getContract(freqToContractJSON[action.freq])
-    const submittedWords = yield getSubmissions(contract);
-    submittedWords.sort((a,b) => {return b.backing - a.backing})
+    let submittedWords = yield getSubmissions(contract);
+
+    console.log(submittedWords)
+    let extraWords = []
+    if (['freq2', 'freq3'].includes(action.freq)) {
+        extraWords = yield getSideChainSubmissions(contract)
+    }
+
+    console.log(extraWords)
+    submittedWords = [...submittedWords, ...extraWords];
+    console.log(submittedWords)
+    submittedWords.sort((a,b) => {return b.votes - a.votes})
 
     yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
 
@@ -143,7 +169,7 @@ async function loadHistory(_contract, start, end) {
     const indexesToRetrieve = Array.from(new Array(end - start), (x,i) => i + start)
     const functions = indexesToRetrieve.map(i => _contract.getPublishedItem(i))
     let results = await Promise.all(functions)
-    for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
+    for (const [index, chainIndex, poster, ipfsHash32, votes, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
         const content = await contentFromIPFS32(ipfsHash32);
         history.push({content, poster, date, votes:votes.toNumber()})
@@ -182,10 +208,10 @@ function* loadHistoryRemainingPages(action) {
 
 function* persistVote(action) {
     const contract = yield getContract(freqToContractJSON[action.freq])
-    const getItems = state => state.user.currentAccount;
+    const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
 
-    yield contract.backPost(action.index, { from: currentAccount })
+    yield contract.backPost(action.index, action.chain, { from: currentAccount })
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
 
     yield newNotification()

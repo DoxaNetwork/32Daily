@@ -12,6 +12,7 @@ const ContentContainer = styled.div`
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
     /*box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    border: ${props => props.side ? "2px solid red" : "none"};
 
     &:hover {
         background-color:#f5f8fa;
@@ -123,15 +124,15 @@ export class ContentCard extends Component {
     dateOptions = {month: 'short', day: 'numeric'};
 
     render() {
-        const {user, index, onClick, date, poster, fontsize, word, backing} = this.props;
+        const {user, index, onClick, date, poster, fontsize, word, backing, side, chain} = this.props;
 
         const username = user && user.username !== ''? user.username : poster.slice(0,6)
         const imageUrl = user ? user.picture : null;
 
         const publishDate = date ? displayPublishDate(date) : '';
-        const voteLink = onClick ? <VoteLink onClick={() => onClick(index)}>+ Vote</VoteLink> : <div></div>;
+        const voteLink = onClick ? <VoteLink onClick={() => onClick(index, chain)}>+ Vote</VoteLink> : <div></div>;
         return (
-            <ContentContainer>
+            <ContentContainer side={side}>
                 <ContentHeader>
                     <LinkToUser to={'/u/' + poster}>
                         <Identicon poster={poster} src={imageUrl}/>

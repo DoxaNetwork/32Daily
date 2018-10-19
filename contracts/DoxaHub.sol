@@ -54,35 +54,38 @@ contract DoxaHub is TransferGate, Ownable {
         emit NewPost(msg.sender, _ipfsHash);
     }
 
-    function getSubmittedItem(uint _index) 
+    function getSubmittedItem(uint _index, uint _chainIndex) 
     public view 
     returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeIn_)
     {
         (address poster, bytes32 ipfsHash, uint publishedTime) = postChain.getPost(_index);
-        uint votesReceived = votes.incomingVotes(_index);
+        uint votesReceived = votes.incomingVotes(_index, 0);
         return (_index, poster, ipfsHash, votesReceived, publishedTime);
     }
 
     function getPublishedItem(uint _publishedIndex) 
     public view
-    returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
+    returns (uint postChainIndex_, uint chainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
     {
         // postChainIndex can be used to find who voted for this
-        (uint postChainIndex, uint lowerPublishedIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
-        (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(postChainIndex);
-        uint votesReceived = votes.incomingVotes(postChainIndex);
+        uint lowerPublishedIndex;
+        uint postedTime;
+        (postChainIndex_, chainIndex_, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        (poster_, ipfsHash_, postedTime) = postChain.getPost(postChainIndex_);
+        votesReceived_ = votes.incomingVotes(postChainIndex_, 0);
         // which index should this return?
-        return (postChainIndex, poster, ipfsHash, votesReceived, publishedTime);
+        return (postChainIndex_, chainIndex_, poster_, ipfsHash_, votesReceived_, timeOut_);
     }
 
     function getPublishedPointer(uint _publishedIndex)
     public view
-    returns (uint postChainIndex_, uint publishedTime_)
+    returns (uint postChainIndex_, uint chainIndex_, uint publishedTime_)
     {
-        (uint postChainIndex, uint lowerChainIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
+        uint lowerChainIndex;
+        (postChainIndex_, chainIndex_, lowerChainIndex, publishedTime_) = publishedHistory.getPost(_publishedIndex);
     }
 
-    function backPost(uint _postIndex)
+    function backPost(uint _postIndex, uint _chainIndex)
     public
     {
         // can't vote on items that don't exist
@@ -92,7 +95,7 @@ contract DoxaHub is TransferGate, Ownable {
         require( votingAvailable(msg.sender) );
 
         bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
-        votes.addVote(_postIndex, voterCycleKey);
+        votes.addVote(_postIndex, 0, voterCycleKey);
         emit PostBacked(msg.sender, _postIndex);
     }
 
@@ -139,7 +142,7 @@ contract DoxaHub is TransferGate, Ownable {
         uint endIndex = postChain.length();
 
         for (uint postIndex = uint(nextPublishStartIndex); postIndex < endIndex; postIndex++) {
-            uint votesForThisIndex = votes.incomingVotes(postIndex);
+            uint votesForThisIndex = votes.incomingVotes(postIndex, 0);
             if (!somethingSelected || votesForThisIndex > maxVotes) {
                 maxVotes = votesForThisIndex;
                 indexToPublish = postIndex;
@@ -147,10 +150,10 @@ contract DoxaHub is TransferGate, Ownable {
             }
         }
         if (somethingSelected) {
-            uint publishedIndex = publishedHistory.publishPost(indexToPublish, indexToPublish);
+            uint publishedIndex = publishedHistory.publishPost(indexToPublish, 0, indexToPublish);
             (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(indexToPublish); // need this to know where to send the token
             token.mint(poster, 1);
-            emit Published(publishedIndex, poster);
+            emit Published(poster, publishedIndex);
             // Published(publishedIndex); // this is enough for clients to grab the rest
         }
         nextPublishTime = uint96(now + 30 seconds);

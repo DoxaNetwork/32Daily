@@ -152,7 +152,7 @@ class _Freq extends Component {
                             <Switch>
                                 <Redirect exact from={this.props.match.path} to={this.props.match.path + "/published"}/>
                                 <Route exact path={this.props.match.path + "/published"} render={() => <Published {...this.props}/>}/>
-                                <Route exact path={this.props.match.path + "/create"} component={ContentForm}/>
+                                <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
                                 <Route exact path={this.props.match.path +  "/submissions"} render={() => <Submissions {...this.props}/>} />
                             </Switch>
                         ) : (
@@ -160,7 +160,8 @@ class _Freq extends Component {
                                 <Redirect from={this.props.match.path + "/submissions"} to={this.props.match.path}/>
                                 <Redirect from={this.props.match.path + "/published"} to={this.props.match.path}/>
                                 <Route exact path={this.props.match.path} render={() => <SubmissionsAndPublished {...this.props}/>}/> 
-                                <Route exact path={this.props.match.path + '/create'} component={ContentForm}/>
+                                {/* <Route exact path={this.props.match.path + '/create'} component={ContentForm}/> */}
+                                <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
                             </Switch>
                         )
                     }

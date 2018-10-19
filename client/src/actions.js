@@ -44,8 +44,9 @@ export const loadUserIfNeeeded = (address) => ({
 })
 
 // ========== votes ========================
-export const submitVote = (index, freq) => ({
+export const submitVote = (index, chain, freq) => ({
     type: 'SUBMIT_VOTE',
     index,
+    chain,
     freq
 })

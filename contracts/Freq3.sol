@@ -10,6 +10,7 @@ contract Freq3 is HigherFreq {
         address _votes, 
         address _publishedHistory,
         address _postChain,
+        address _sideChain,
         address _doxaToken)
     HigherFreq(
         period, 
@@ -17,6 +18,7 @@ contract Freq3 is HigherFreq {
         _votes, 
         _publishedHistory,
         _postChain,
+        _sideChain,
         _doxaToken)
     public {}
 }

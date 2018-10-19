@@ -12,6 +12,8 @@ import { Timer1, Timer2, Timer3 } from './Timer.js'
 import { Notifications } from './Notifications.js'
 import { Footer } from './Footer.js'
 import './ThirtytwoDaily.css'
+import { ContentForm, ContentForm2, ContentForm3  } from './Create.js'
+
 
 import { loadBalance, loadAvailableBalance, loadAccount } from './actions'
 
@@ -40,15 +42,15 @@ class _ThirtytwoDaily extends Component {
                 <Switch>
                     <Route
                         path={'/one'}
-                        render={() => <Freq timer={<Timer1/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
+                        render={() => <Freq timer={<Timer1/>} create={<ContentForm/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
                     />
                     <Route
                         path={'/ten'}
-                        render={() => <Freq timer={<Timer2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
+                        render={() => <Freq timer={<Timer2/>} create={<ContentForm2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
                     />
                     <Route
                         path={'/hundred'}
-                        render={() => <Freq timer={<Timer3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
+                        render={() => <Freq timer={<Timer3/>} create={<ContentForm3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
                     />
                     
                     <Route

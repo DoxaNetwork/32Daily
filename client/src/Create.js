@@ -66,10 +66,11 @@ class Create extends Component {
     }
 
     submit(event) {
-        const freqName = this.props.match.path.split("/")[1];
-        if (freqName === 'one') {
-            this.props.onSubmit(this.state.content, 'freq1');
-        }
+        // const freqName = this.props.match.path.split("/")[1];
+        // if (freqName === 'one') {
+        //     this.props.onSubmit(this.state.content, 'freq1');
+        // }
+        this.props.onSubmit(this.state.content);
         event.preventDefault();
         // setTimeout(() => this.props.history.push('/one'),1000);
     }
@@ -110,23 +111,23 @@ class Create extends Component {
     }
 }
 
-const mapFreqtoDispatchtoProps = () => (
+const mapFreqtoDispatchtoProps = (freq) => (
     dispatch => ({
-        onSubmit: (text, freq) => dispatch(submitContent(text, freq))
+        onSubmit: (text) => dispatch(submitContent(text, freq))
     })
 )
 
 export const ContentForm = withRouter(connect(
     null,
-    mapFreqtoDispatchtoProps()
+    mapFreqtoDispatchtoProps('freq1')
 )(Create))
 
-// export const ContentForm2 = withRouter(connect(
-//     null,
-//     mapFreqtoDispatchtoProps('freq2')
-// )(Create))
-// 
-// export const ContentForm3 = withRouter(connect(
-//     null,
-//     mapFreqtoDispatchtoProps('freq3')
-// )(Create))
+export const ContentForm2 = withRouter(connect(
+    null,
+    mapFreqtoDispatchtoProps('freq2')
+)(Create))
+
+export const ContentForm3 = withRouter(connect(
+    null,
+    mapFreqtoDispatchtoProps('freq3')
+)(Create))

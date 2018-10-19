@@ -28,16 +28,19 @@ class _SubmittedWords extends Component {
     }
 
     render() {
+        console.log(this.props.submittedWords)
         const submittedWords = this.props.submittedWords.length ? (
             this.props.submittedWords.map(obj =>
                 <ContentCard 
-                    key={obj.poster + obj.word} 
+                    key={obj.poster + obj.content} 
                     index={obj.index} 
                     word={obj.content} 
                     poster={obj.poster}
                     user={this.props.users[obj.poster]}
                     backing={obj.votes} 
-                    onClick={this.props.onClick} />
+                    onClick={this.props.onClick}
+                    side={obj.side}
+                    chain={obj.chain} />
             )
         ) : (
             <NothingHereYet>
@@ -68,7 +71,7 @@ const mapFreqToStateToProps = freq => (
 
 const mapFreqToDispatchToProps = freq => (
     dispatch => ({
-        onClick: index => dispatch(submitVote(index, freq)),
+        onClick: (index, chain) => dispatch(submitVote(index, chain, freq)),
         load: () => {
             dispatch(loadSubmissions(freq))
             dispatch(loadPublishTime(freq))

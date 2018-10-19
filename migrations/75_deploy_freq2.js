@@ -1,4 +1,5 @@
 const PostChain = artifacts.require("./PostChain.sol");
+const PostChain2 = artifacts.require("./PostChain2.sol");
 const DoxaHub = artifacts.require("./DoxaHub.sol");
 const HigherFreq = artifacts.require("./HigherFreq.sol")
 
@@ -16,6 +17,7 @@ module.exports = function(deployer) {
         votesAddress,
         historyAddress,
         PostChain.address,
+        PostChain2.address,
         tokenAddress
     );
 };
