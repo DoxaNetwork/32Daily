@@ -12,14 +12,8 @@ contract PostChain is Spoke {
 
     Post[] public postList;
 
-    constructor() 
-    public 
-    {
-        owner = msg.sender;
-    }
-
     function newPost(address _poster, bytes32 _ipfsHash)
-    public onlyHub
+    public
     {
         Post memory newPostItem = Post(
         {

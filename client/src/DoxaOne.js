@@ -15,7 +15,7 @@ import './ThirtytwoDaily.css'
 import { ContentForm, ContentForm2, ContentForm3  } from './Create.js'
 
 
-import { loadBalance, loadAvailableBalance, loadAccount } from './actions'
+import {  loadAccount } from './actions'
 
 class DoxaOne extends Component {
     render() {

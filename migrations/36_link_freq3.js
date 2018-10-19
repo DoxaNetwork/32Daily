@@ -2,14 +2,15 @@ const PostChain = artifacts.require("./PostChain.sol");
 const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
-const HigherFreq = artifacts.require("./HigherFreq.sol")
+const Freq3 = artifacts.require("./Freq3.sol")
 
 const helpers = require('../src/helpers')
 
 module.exports = function(deployer) {
-  const historyAddress = helpers.readFactory('freq2', 'HistoryFactory');
-  const tokenAddress = helpers.readFactory('freq2', 'TokenFactory');
-  const votesAddress = helpers.readFactory('freq2', 'VotesFactory');
+  const historyAddress = helpers.readFactory('freq3', 'HistoryFactory');
+  const tokenAddress = helpers.readFactory('freq3', 'TokenFactory');
+  const votesAddress = helpers.readFactory('freq3', 'VotesFactory');
+  const postChainAddress = helpers.readFactory('freq3', 'PostChainFactory');
 
   let votes, publishedHistory, token, postChain;
 
@@ -29,15 +30,15 @@ module.exports = function(deployer) {
   }).then(function(instance) {
 
     token = instance;
-    return PostChain.deployed();
+    return PostChain.at(postChainAddress);
 
   }).then(function(instance) {
 
     postChain = instance;
 
-    votes.assignHub(HigherFreq.address);
-    publishedHistory.assignHub(HigherFreq.address);
-    token.assignHub(HigherFreq.address);
-    // contentPool.assignHub(HigherFreq.address);
+    votes.assignHub(Freq3.address);
+    publishedHistory.assignHub(Freq3.address);
+    token.assignHub(Freq3.address);
+    postChain.assignHub(Freq3.address);
   })
 }

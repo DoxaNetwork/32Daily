@@ -164,7 +164,7 @@ export class _User extends Component {
     }
 
     render() {
-        const {account, users, match} = this.props;
+        const {users, match} = this.props;
 
         if (!users) {
             return ("loading")

@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import Media from 'react-media';
 import { FaAngleLeft } from "react-icons/fa";
 
-import { ContentForm } from './Create.js'
 import { Button, Back } from './styledComponents'
 
 
@@ -160,7 +159,6 @@ class _Freq extends Component {
                                 <Redirect from={this.props.match.path + "/submissions"} to={this.props.match.path}/>
                                 <Redirect from={this.props.match.path + "/published"} to={this.props.match.path}/>
                                 <Route exact path={this.props.match.path} render={() => <SubmissionsAndPublished {...this.props}/>}/> 
-                                {/* <Route exact path={this.props.match.path + '/create'} component={ContentForm}/> */}
                                 <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
                             </Switch>
                         )

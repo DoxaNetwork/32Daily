@@ -112,7 +112,6 @@ async function getSubmissions(_contract) {
 
 async function getSideChainSubmissions(_contract) {
     const [lower, upper] = await _contract.sideRange()
-    console.log(lower.toNumber(), upper.toNumber());
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
     const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 1))
     let results = await Promise.all(functions)
@@ -129,15 +128,12 @@ function* loadSubmissions(action) {
     const contract = yield getContract(freqToContractJSON[action.freq])
     let submittedWords = yield getSubmissions(contract);
 
-    console.log(submittedWords)
     let extraWords = []
     if (['freq2', 'freq3'].includes(action.freq)) {
         extraWords = yield getSideChainSubmissions(contract)
     }
 
-    console.log(extraWords)
     submittedWords = [...submittedWords, ...extraWords];
-    console.log(submittedWords)
     submittedWords.sort((a,b) => {return b.votes - a.votes})
 
     yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
@@ -245,10 +241,16 @@ async function getTokenBalance(ownerAddress, tokenAddress) {
     return tokenBalanceBN.toNumber();
 }
 
+const freqToToken = {
+  "freq1": "0xd38fd29037e2605907908a858712159878398645",
+  "freq2": "0xe60f55df05f667a7a0b92407d82c018353b7da77",
+  "freq3": "0x07bfcc8defb307339a449554edfc726548ed9575"
+}
+
 function* loadUserBalance(action) {
-    const token1Balance = yield getTokenBalance(action.address, '0x81a06c0374039d8f6c6f8df1eda95f6615fcef9a')
-    const token2Balance = yield getTokenBalance(action.address, '0x071a9d36cf55929cb258449a4ea5dceee0338901')
-    const token3Balance = yield getTokenBalance(action.address, '0x6844930e0e26d842dbc8ef0efc905dcae59883a2')
+    const token1Balance = yield getTokenBalance(action.address, freqToToken['freq1'])
+    const token2Balance = yield getTokenBalance(action.address, freqToToken['freq2'])
+    const token3Balance = yield getTokenBalance(action.address, freqToToken['freq3'])
 
     yield put({type: "USER_BALANCE_UPDATE", address: action.address, token1Balance, token2Balance, token3Balance})
 }
