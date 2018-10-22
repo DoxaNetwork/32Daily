@@ -10,9 +10,10 @@ module.exports = function(deployer) {
 
     deployer.deploy(
         DoxaHub,
-        postChainAddress,
+        15,
         tokenAddress,
-        historyAddress,
-        votesAddress
+        postChainAddress,
+        votesAddress,
+        historyAddress
     );
 };

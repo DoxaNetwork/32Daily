@@ -18,10 +18,7 @@ contract PostChainAbstract {
     public view
     returns (address poster, bytes32 ipfsHash, uint timeStamp);
 
-    // function length() 
-    // public view 
-    // returns (uint) 
-    // {
-    //     return postList.length;
-    // }
+    function length() 
+    public view 
+    returns (uint);
 }

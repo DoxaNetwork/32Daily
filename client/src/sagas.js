@@ -177,7 +177,7 @@ const numToPreLoad = 6;
 
 function* loadHistoryFirstPage(action) {
     const contract = yield getContract(freqToContractJSON[action.freq])
-    const length = yield contract.publishedLength();
+    const length = yield contract.length();
     const end = length.toNumber();
     const start = Math.max(end - numToPreLoad, 0);
     const allPreLoaded = start === 0;
@@ -192,7 +192,7 @@ function* loadHistoryFirstPage(action) {
 
 function* loadHistoryRemainingPages(action) {
     const contract = yield getContract(freqToContractJSON[action.freq])
-    const length = yield contract.publishedLength();
+    const length = yield contract.length();
     const end = length.toNumber() - numToPreLoad;
     const start = 0;
 

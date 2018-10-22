@@ -1,24 +1,21 @@
 pragma solidity ^0.4.24;
 
-import './HigherFreq.sol';
+// import './HigherFreq.sol';
+import './DoxaHub.sol';
 
-contract Freq3 is HigherFreq {
+contract Freq3 is DoxaHub {
 
     function Freq3 (
         uint period, 
-        address _lowerFreq, 
-        address _votes, 
-        address _publishedHistory,
-        address _postChain,
+        address _doxaToken,
         address _sideChain,
-        address _doxaToken)
-    HigherFreq(
+        address _votes, 
+        address _publishedHistory)
+    DoxaHub(
         period, 
-        _lowerFreq, 
-        _votes, 
-        _publishedHistory,
-        _postChain,
+        _doxaToken,
         _sideChain,
-        _doxaToken)
+        _votes, 
+        _publishedHistory)
     public {}
 }

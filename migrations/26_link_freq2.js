@@ -3,6 +3,7 @@ const Votes = artifacts.require("./Votes.sol");
 const PublishedHistory = artifacts.require("./PublishedHistory.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
 const HigherFreq = artifacts.require("./HigherFreq.sol")
+const DoxaHub = artifacts.require("./DoxaHub.sol");
 
 const helpers = require('../src/helpers')
 
@@ -11,6 +12,7 @@ module.exports = function(deployer) {
   const tokenAddress = helpers.readFactory('freq2', 'TokenFactory');
   const votesAddress = helpers.readFactory('freq2', 'VotesFactory');
   const postChainAddress = helpers.readFactory('freq2', 'PostChainFactory');
+  // const freq1ChainAddress = helpers.readFactory('freq1', 'PostChainFactory');
 
   let votes, publishedHistory, token, postChain;
 
@@ -40,5 +42,12 @@ module.exports = function(deployer) {
     publishedHistory.assignHub(HigherFreq.address);
     token.assignHub(HigherFreq.address);
     postChain.assignHub(HigherFreq.address);
+
+    return HigherFreq.deployed();
+
+    }).then(function(higherFreq) {
+
+      higherFreq.addChain(DoxaHub.address);
+
   })
 }
