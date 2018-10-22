@@ -1,7 +1,8 @@
 pragma solidity ^0.4.24;
 import './Spoke.sol';
+import './PostChainAbstract.sol';
 
-contract PostChain is Spoke {
+contract PostChain is PostChainAbstract, Spoke {
 
     struct Post 
     {

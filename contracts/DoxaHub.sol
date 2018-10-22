@@ -9,9 +9,10 @@ import './PublishedHistory.sol';
 import './Votes.sol';
 import './DoxaToken.sol';
 import './TransferGate.sol';
+import './PostChainAbstract.sol';
 
 
-contract DoxaHub is TransferGate, Ownable {
+contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
   using SafeMath for uint;
 
     PostChain postChain;
@@ -65,38 +66,55 @@ contract DoxaHub is TransferGate, Ownable {
 
     function getPublishedItem(uint _publishedIndex) 
     public view
-    returns (uint postChainIndex_, uint chainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
+    returns (uint publishedIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
     {
         // postChainIndex can be used to find who voted for this
-        uint lowerPublishedIndex;
+        uint lowerChainIndex_;
         uint postedTime;
-        (postChainIndex_, chainIndex_, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
-        (poster_, ipfsHash_, postedTime) = postChain.getPost(postChainIndex_);
-        votesReceived_ = votes.incomingVotes(postChainIndex_, 0);
+        address chainAddress;
+        (chainAddress, lowerChainIndex_, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        // (postChainIndex_, chainIndex_, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        (poster_, ipfsHash_, postedTime) = postChain.getPost(lowerChainIndex_);
+        votesReceived_ = votes.incomingVotes(lowerChainIndex_, 0);
         // which index should this return?
-        return (postChainIndex_, chainIndex_, poster_, ipfsHash_, votesReceived_, timeOut_);
+        return (_publishedIndex, poster_, ipfsHash_, votesReceived_, timeOut_);
     }
 
-    function getPublishedPointer(uint _publishedIndex)
+
+    function getPost(uint _publishedIndex)
     public view
-    returns (uint postChainIndex_, uint chainIndex_, uint publishedTime_)
+    returns (address poster_, bytes32 ipfsHash_, uint timeStamp_)
     {
-        uint lowerChainIndex;
-        (postChainIndex_, chainIndex_, lowerChainIndex, publishedTime_) = publishedHistory.getPost(_publishedIndex);
+        address chainAddress;
+        uint lowerPublishedIndex;
+        uint timeOut_;
+        (chainAddress, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        postChain = PostChain(chainAddress); // this could be a branch or a leaf
+        return postChain.getPost(lowerPublishedIndex);
     }
+
+    // function getPublishedPointer(uint _publishedIndex)
+    // public view
+    // returns (uint postChainIndex_, uint chainIndex_, uint publishedTime_)
+    // {
+    //     uint lowerChainIndex;
+    //     (postChainIndex_, chainIndex_, lowerChainIndex, publishedTime_) = publishedHistory.getPost(_publishedIndex);
+    // }
 
     function backPost(uint _postIndex, uint _chainIndex)
     public
     {
         // can't vote on items that don't exist
         // PROBLEM: you can currently vote on items in the next block 
-        (uint lower, uint upper) = range();
+        (uint lower, uint upper) = range(0);
         require(_postIndex >= lower && _postIndex < upper );
         require( votingAvailable(msg.sender) );
 
         bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
         votes.addVote(_postIndex, 0, voterCycleKey);
         emit PostBacked(msg.sender, _postIndex);
+
+        // emit PostBacked(msg.sender, _ipfsHash, nextPublishTime);
     }
 
     function votingAvailable(address _voter)
@@ -125,7 +143,7 @@ contract DoxaHub is TransferGate, Ownable {
         return publishedHistory.length();
     }
 
-    function range()
+    function range(uint _chainIndex)
     public view
     returns (uint lower, uint upper)
     {
@@ -150,7 +168,11 @@ contract DoxaHub is TransferGate, Ownable {
             }
         }
         if (somethingSelected) {
-            uint publishedIndex = publishedHistory.publishPost(indexToPublish, 0, indexToPublish);
+            //                                     position in original chain    position in voting chain
+            // option 1 - get rid of first indexToPublish by duplicating poster and ipfsHash (2 words)
+            // option 2 - post chainAddress, chainIndex, voteIndex (1 word )
+            // (chainAddress, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+            uint publishedIndex = publishedHistory.publishPost(address(postChain), indexToPublish);
             (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(indexToPublish); // need this to know where to send the token
             token.mint(poster, 1);
             emit Published(poster, publishedIndex);

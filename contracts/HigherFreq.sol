@@ -6,6 +6,7 @@ import './Votes.sol';
 import './PublishedHistory.sol';
 import './PostChain.sol';
 import './TransferGate.sol';
+import './PostChainAbstract.sol';
 
 contract HigherFreq is TransferGate {
 
@@ -64,42 +65,13 @@ contract HigherFreq is TransferGate {
     function backPost(uint _postIndex, uint _chainIndex) 
     public 
     {
-        if (_chainIndex == 0 ) {
-            backLowerChainPost(_postIndex);
-        }
-        if (_chainIndex == 1) {
-            backSideChainPost(_postIndex);
-        }
-        // (uint lower, uint upper) = range();
-        // require(_postIndex >= lower && _postIndex < upper );
-        // require( votingAvailable(msg.sender) );
-
-        // bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
-        // votes.addVote(_postIndex, 0, voterCycleKey);
-        // emit PostBacked(msg.sender, _postIndex, 0);
-    }
-
-    function backSideChainPost(uint _postIndex)
-    public
-    {
-        (uint lower, uint upper) = sideRange();
+        (uint lower, uint upper) = range(_chainIndex);
         require(_postIndex >= lower && _postIndex < upper );
         require( votingAvailable(msg.sender) );
 
         bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
-        votes.addVote(_postIndex, 1, voterCycleKey);
-        emit PostBacked(msg.sender, _postIndex);
-    }
 
-    function backLowerChainPost(uint _postIndex)
-    public
-    {
-        (uint lower, uint upper) = range();
-        require(_postIndex >= lower && _postIndex < upper );
-        require( votingAvailable(msg.sender) );
-
-        bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
-        votes.addVote(_postIndex, 0, voterCycleKey);
+        votes.addVote(_postIndex, _chainIndex, voterCycleKey);
         emit PostBacked(msg.sender, _postIndex);
     }
 
@@ -112,77 +84,115 @@ contract HigherFreq is TransferGate {
     }
 
     // almost the same on all 
-    function range() 
+    function range(uint _chainIndex) 
     public view
     returns (uint lower, uint upper)
     {
-        return (nextPublishStartIndex, lowerFreq.publishedLength());
-    }
-
-    function sideRange()
-    public view
-    returns (uint lower, uint uppper)
-    {
-        return (nextSidePublishStartIndex, sideChain.length());
+        if (_chainIndex == 0 ) {
+            return (nextPublishStartIndex, lowerFreq.publishedLength());
+        }
+        if (_chainIndex == 1) {
+            return (nextSidePublishStartIndex, sideChain.length());
+        }
     }
 
     // instead of _chainIndex, we should probably use _chainAddress
     // nvm, index will be less data to store - just a little more complex with a necessary mapping
-    function getSubmittedItem(uint _lowerFreqPublishedIndex, uint _chainIndex) 
+    // function getSubmittedItem(uint _lowerFreqPublishedIndex, uint _chainIndex) 
+    // public view 
+    // returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeIn_)
+    // {
+    //     if (_chainIndex == 0) {
+    //         uint postChainIndex;
+    //         uint chainIndex;
+    //         uint votesReceivedLower;
+    //         (postChainIndex, chainIndex, poster_, ipfsHash_, votesReceivedLower, timeIn_) = lowerFreq.getPublishedItem(_lowerFreqPublishedIndex);
+    //         votesReceived_ = votes.incomingVotes(_lowerFreqPublishedIndex, _chainIndex);
+    //         return (postChainIndex, poster_, ipfsHash_, votesReceived_, timeIn_);
+    //     } else {
+    //         (poster_, ipfsHash_, timeIn_) = sideChain.`(_lowerFreqPublishedIndex);
+    //         votesReceived_ = votes.incomingVotes(_lowerFreqPublishedIndex, _chainIndex);
+    //         return (_lowerFreqPublishedIndex, poster_, ipfsHash_, votesReceived_, timeIn_);
+    //     }
+    // }
+    function getPost(uint _publishedIndex)
+    public view
+    returns (address poster_, bytes32 ipfsHash_, uint timeStamp_)
+    {
+        address chainAddress;
+        uint lowerPublishedIndex;
+        uint timeOut_;
+        (chainAddress, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        postChain = PostChain(chainAddress); // this could be a branch or a leaf
+        return postChain.getPost(lowerPublishedIndex);
+    }
+
+    function getSubmittedItem(uint _index, uint _chainIndex) 
     public view 
     returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeIn_)
     {
+        PostChainAbstract chain;
         if (_chainIndex == 0) {
-            uint postChainIndex;
-            uint chainIndex;
-            uint votesReceivedLower;
-            (postChainIndex, chainIndex, poster_, ipfsHash_, votesReceivedLower, timeIn_) = lowerFreq.getPublishedItem(_lowerFreqPublishedIndex);
-            votesReceived_ = votes.incomingVotes(_lowerFreqPublishedIndex, _chainIndex);
-            return (postChainIndex, poster_, ipfsHash_, votesReceived_, timeIn_);
+            chain = lowerFreq;
         } else {
-            (poster_, ipfsHash_, timeIn_) = sideChain.getPost(_lowerFreqPublishedIndex);
-            votesReceived_ = votes.incomingVotes(_lowerFreqPublishedIndex, _chainIndex);
-            return (_lowerFreqPublishedIndex, poster_, ipfsHash_, votesReceived_, timeIn_);
+            chain = sideChain;
         }
+        (address poster, bytes32 ipfsHash, uint publishedTime) = chain.getPost(_index);
+        uint votesReceived = votes.incomingVotes(_index, _chainIndex);
+        return (_index, poster, ipfsHash, votesReceived, publishedTime);
     }
-
-    // // same as DoxaHub
-    // function getPublishedItem(uint _publishedIndex)
-    // public view
-    // returns (uint postChainIndex_, uint chainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
-    // {
-    //     (uint postChainIndex, uint chainIndex, uint lowerChainIndex, uint publishedTime) = publishedHistory.getPost(_publishedIndex);
-    //     uint votesReceived = votes.incomingVotes(lowerChainIndex, chainIndex);
-    //     (address poster, bytes32 ipfsHash, uint postedTime) = postChain.getPost(postChainIndex);
-    //     return (postChainIndex, chainIndex, poster, ipfsHash, votesReceived, publishedTime);
-    // }
 
     function getPublishedItem(uint _publishedIndex) 
     public view
-    returns (uint postChainIndex_, uint chainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
+    returns (uint publishedIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
     {
         // postChainIndex can be used to find who voted for this
-        uint lowerPublishedIndex;
+        uint lowerChainIndex_;
         uint postedTime;
-        uint timeIn;
-        (postChainIndex_, chainIndex_, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
-        if (chainIndex_ == 0) {
-            (poster_, ipfsHash_, postedTime) = postChain.getPost(postChainIndex_);
-        } else {
-            (poster_, ipfsHash_, timeIn) = sideChain.getPost(postChainIndex_);
+        address chainAddress;
+        uint chainIndex;
+        (chainAddress, lowerChainIndex_, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        PostChainAbstract chain = PostChain(chainAddress);
+        // (postChainIndex_, chainIndex_, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        (poster_, ipfsHash_, postedTime) = chain.getPost(lowerChainIndex_);
+        // dont have index
+        if (chainAddress == address(lowerFreq) ) {
+            chainIndex = 0;
         }
-        votesReceived_ = votes.incomingVotes(postChainIndex_, chainIndex_);
+        if (chainAddress == address(sideChain)) {
+            chainIndex = 1;
+        }
+        votesReceived_ = votes.incomingVotes(lowerChainIndex_, chainIndex);
         // which index should this return?
-        return (postChainIndex_, chainIndex_, poster_, ipfsHash_, votesReceived_, timeOut_);
+        return (publishedIndex_, poster_, ipfsHash_, votesReceived_, timeOut_);
     }
 
-    function getPublishedPointer(uint _publishedIndex)
-    public view
-    returns (uint postChainIndex_, uint chainIndex_, uint publishedTime_)
-    {
-        uint lowerChainIndex;
-        (postChainIndex_, chainIndex_, lowerChainIndex, publishedTime_) = publishedHistory.getPost(_publishedIndex);
-    }
+    // function getPublishedItem(uint _publishedIndex) 
+    // public view
+    // returns (uint postChainIndex_, uint chainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
+    // {
+    //     // postChainIndex can be used to find who voted for this
+    //     uint lowerPublishedIndex;
+    //     uint postedTime;
+    //     uint timeIn;
+    //     (postChainIndex_, chainIndex_, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+    //     if (chainIndex_ == 0) {
+    //         (poster_, ipfsHash_, postedTime) = postChain.getPost(postChainIndex_);
+    //     } else {
+    //         (poster_, ipfsHash_, timeIn) = sideChain.getPost(postChainIndex_);
+    //     }
+    //     votesReceived_ = votes.incomingVotes(postChainIndex_, chainIndex_);
+    //     // which index should this return?
+    //     return (postChainIndex_, chainIndex_, poster_, ipfsHash_, votesReceived_, timeOut_);
+    // }
+
+    // function getPublishedPointer(uint _publishedIndex)
+    // public view
+    // returns (uint postChainIndex_, uint chainIndex_, uint publishedTime_)
+    // {
+    //     uint lowerChainIndex;
+    //     (postChainIndex_, chainIndex_, lowerChainIndex, publishedTime_) = publishedHistory.getPost(_publishedIndex);
+    // }
 
     function getMaxForChain(uint _chainIndex, uint _start, uint _end)
     public view 
@@ -201,23 +211,37 @@ contract HigherFreq is TransferGate {
         return (indexToPublish, maxVotes_, somethingSelected);
     }
 
-    function publishChain0(uint indexToPublish)
+    // function publishChain0(uint indexToPublish)
+    // public
+    // {
+    //     (uint postChainIndex, uint chainIndex, uint publishedTime) = lowerFreq.getPublishedPointer(indexToPublish);
+    //     (address poster, bytes32 ipfsHash, uint timeStamp) = postChain.getPost(postChainIndex);
+    //     (address poster, bytes32 ipfsHash, uint timeStamp) = lowerFreq.getPost(postChainIndex);
+
+    //     uint publishedIndex = publishedHistory.publishPost(postChainIndex, 0, indexToPublish);
+    //     doxaToken.mint(poster, 1);
+    //     emit Published(poster, publishedIndex);
+    // }
+
+    function publishChain(uint indexToPublish, uint _chainIndex)
     public
     {
-        // its trying to post from the semidaily side chain but its grabbing from the hourly main chain instead
-        (uint postChainIndex, uint chainIndex, uint publishedTime) = lowerFreq.getPublishedPointer(indexToPublish);
-        (address poster, bytes32 ipfsHash, uint timeStamp) = postChain.getPost(postChainIndex);
+        // if (_chainIndex == 0) {
+            // (uint postChainIndex, uint chainIndex, uint publishedTime) = lowerFreq.getPublishedPointer(indexToPublish);
+        // }
+        // (address poster, bytes32 ipfsHash, uint timeStamp) = sideChain.getPost(postChainIndex);
+        PostChainAbstract chain;
+        if (_chainIndex == 0) {
+            chain = lowerFreq;
+        } else {
+            chain = sideChain;
+        }
 
-        uint publishedIndex = publishedHistory.publishPost(postChainIndex, 0, indexToPublish);
-        doxaToken.mint(poster, 1);
-        emit Published(poster, publishedIndex);
-    }
+        (address poster, bytes32 ipfsHash, uint timeStamp) = chain.getPost(indexToPublish); // this needs to work for both the postChain and the lowerFreq
 
-    function publishChain1(uint postChainIndex)
-    public
-    {
-        (address poster, bytes32 ipfsHash, uint timeStamp) = sideChain.getPost(postChainIndex);
-        uint publishedIndex = publishedHistory.publishPost(postChainIndex, 1, postChainIndex);
+        uint publishedIndex = publishedHistory.publishPost(address(chain), indexToPublish);
+
+        // uint publishedIndex = publishedHistory.publishPost(indexToPublish, 1, indexToPublish); // I don't like how we publish two indexes, but perhaps it is necessary 
         doxaToken.mint(poster, 1);
         emit Published(poster, publishedIndex);
     }
@@ -234,82 +258,17 @@ contract HigherFreq is TransferGate {
         // both are selected. 0 wins the tie
         if (somethingSelected0 && somethingSelected1) {
             if ( max1 > max0) {
-                publishChain1(index1);
+                publishChain(index1, 1);
             } else {
-                publishChain0(index0);
+                publishChain(index0, 0);
             }
         } else if (somethingSelected0) {
-            publishChain0(index0);
+            publishChain(index0, 0);
         } else if (somethingSelected1) {
-            publishChain1(index1);
+            publishChain(index1, 1);
         }
-        // A - nothing selected in both - publlish nothing
 
-        // B - one is selected - publish that one 
-
-        // C - both are selected - publish highest
-        // if ( max1 > max0 && somethingSelected1) { // what if they are both zero?
-        //     publishChain1(index1);
-        // } else if(somethingSelected0) {
-        //     publishChain0(index0);
-        // }
-
-        // uint maxVotes = 0;
-        // uint indexToPublish = 0;
-        // uint chainToPublish = 0;
-        // bool somethingSelected = false;
-        // uint endIndex = lowerFreq.publishedLength(); // should this be lowerFreq.published.length?
-        // uint endIndexSide = sideChain.length(); // should this be lowerFreq.published.length?
-
-        // for (uint postIndex = uint(nextPublishStartIndex); postIndex < endIndex; postIndex++) {
-        //     uint votesForThisIndex1 = votes.incomingVotes(postIndex, 0);
-        //     if (!somethingSelected || votesForThisIndex1 > maxVotes) {
-        //         maxVotes = votesForThisIndex1;
-        //         indexToPublish = postIndex;
-        //         chainToPublish = 0;
-        //         somethingSelected = true;
-        //     }
-        // }
-
-        // for (uint postIndex2 = uint(nextSidePublishStartIndex); postIndex2 < endIndexSide; postIndex2++) {
-        //     uint votesForThisIndex2 = votes.incomingVotes(postIndex2, 1);
-        //     if (!somethingSelected || votesForThisIndex2 > maxVotes) {
-        //         maxVotes = votesForThisIndex2;
-        //         indexToPublish = postIndex2;
-        //         chainToPublish = 1;
-        //         somethingSelected = true;
-        //     }
-        // }
-
-        // if (somethingSelected) {
-
-        //     // this is the only line that is substantially different 
-        //     // need that postChainIndex
-        //     uint postChainIndex;
-        //     uint chainIndex__;
-        //     uint publishedTime__;
-        //     if (chainToPublish == 0) {
-        //         (postChainIndex, chainIndex__, publishedTime__) = lowerFreq.getPublishedPointer(indexToPublish);
-        //     }
-        //     if (chainToPublish == 1) {
-        //         postChainIndex = indexToPublish;
-        //     }
-
-        //     address poster;
-        //     bytes32 ipfsHash__;
-        //     uint timeStamp__;
-        //     if (chainToPublish == 0) {
-        //         (poster, ipfsHash__, timeStamp__) = postChain.getPost(postChainIndex);
-        //     }
-        //     if (chainToPublish == 1) {
-        //         (poster, ipfsHash__, timeStamp__) = sideChain.getPost(postChainIndex);
-        //     }
-
-        //     uint publishedIndex = publishedHistory.publishPost(postChainIndex, chainToPublish, indexToPublish);
-        //     doxaToken.mint(poster, 1);
-        //     emit Published(poster, publishedIndex);
-        // }
-
+        // need one of these for every chain
         nextPublishStartIndex = lowerFreq.publishedLength();
         nextSidePublishStartIndex = sideChain.length();
         // nextPublishEndIndex = lowerFreq.publishedLength();

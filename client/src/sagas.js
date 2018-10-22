@@ -97,7 +97,7 @@ function* newNotification() {
 // ===========================================================================================================================================
 
 async function getSubmissions(_contract) {
-    const [lower, upper] = await _contract.range()
+    const [lower, upper] = await _contract.range(0)
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
     const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 0))
     let results = await Promise.all(functions)
@@ -111,7 +111,7 @@ async function getSubmissions(_contract) {
 }
 
 async function getSideChainSubmissions(_contract) {
-    const [lower, upper] = await _contract.sideRange()
+    const [lower, upper] = await _contract.range(1)
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
     const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 1))
     let results = await Promise.all(functions)
@@ -165,7 +165,7 @@ async function loadHistory(_contract, start, end) {
     const indexesToRetrieve = Array.from(new Array(end - start), (x,i) => i + start)
     const functions = indexesToRetrieve.map(i => _contract.getPublishedItem(i))
     let results = await Promise.all(functions)
-    for (const [index, chainIndex, poster, ipfsHash32, votes, timeStamp] of results) {
+    for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
         const content = await contentFromIPFS32(ipfsHash32);
         history.push({content, poster, date, votes:votes.toNumber()})
@@ -242,9 +242,9 @@ async function getTokenBalance(ownerAddress, tokenAddress) {
 }
 
 const freqToToken = {
-  "freq1": "0xd38fd29037e2605907908a858712159878398645",
-  "freq2": "0xe60f55df05f667a7a0b92407d82c018353b7da77",
-  "freq3": "0x07bfcc8defb307339a449554edfc726548ed9575"
+  "freq1": "0xef8345c3fd6d1b3c552899e53d8f9375a7f3270b",
+  "freq2": "0x206105ede9f0b353913426372302596cff55556b",
+  "freq3": "0x35b3b575721450cacd9c67f55fa16954a42385d4"
 }
 
 function* loadUserBalance(action) {
