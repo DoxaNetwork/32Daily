@@ -243,7 +243,7 @@ function* loadUserBalance(action) {
 
 function* registerUser(action) {
     const registry = yield getContract(MemberRegistry);
-    const getItems = state => state.user.currentAccount;
+    const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
 
     const {username, profile, imageIPFS} = action;
@@ -256,7 +256,7 @@ function* registerUser(action) {
 
 function* updateUser(action) {
     const registry = yield getContract(MemberRegistry);
-    const getItems = state => state.user.currentAccount;
+    const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
 
     const {profile, imageIPFS} = action;

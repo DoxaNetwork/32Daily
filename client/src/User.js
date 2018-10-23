@@ -112,7 +112,6 @@ const ButtonContainer = styled.div`
 
 export class _User extends Component {
     state = {
-        userLoggedIn: false,
         registered: false,
         newUsername: '',
         newProfile: '',
@@ -120,11 +119,9 @@ export class _User extends Component {
         newImageIPFS: null,
     }
 
-    async componentDidMount() {
-        const {dispatch, match, account} = this.props;
+    componentDidMount() {
+        const {dispatch, match} = this.props;
         dispatch({type: "LOAD_USER_IF_NEEDED", address: match.params.id})
-
-        this.setState({userLoggedIn: match.params.id === account})
     }
 
     async urlFromHash(hash) {
@@ -146,7 +143,7 @@ export class _User extends Component {
         reader.readAsArrayBuffer(file)
       }
 
-    async submit() {
+    submit() {
         const {registered, newUsername, newProfile, newImageIPFS} = this.state;
         const {dispatch} = this.props;
 
@@ -164,18 +161,18 @@ export class _User extends Component {
     }
 
     render() {
-        const {users, match} = this.props;
+        const {users, match, account} = this.props;
 
         if (!users) {
             return ("loading")
         }
         const user = users[match.params.id] || {};
 
-        const editableMetadata = this.state.userLoggedIn ? (
+        const editableMetadata = match.params.id === account ? (
             <>
             <IdenticonContainer>
                 <label htmlFor="imageUpload">
-                    <Identicon poster={match.params.id} imageUrl={user.picture || this.state.imageUrl}/>
+                    <Identicon poster={match.params.id} imageUrl={this.state.newImageUrl || user.picture}/>
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
             </IdenticonContainer>
