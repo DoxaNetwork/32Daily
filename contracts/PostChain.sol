@@ -15,6 +15,7 @@ contract PostChain is PostChainAbstract, Spoke {
 
     function newPost(address _poster, bytes32 _ipfsHash)
     public
+    returns (uint index_)
     {
         Post memory newPostItem = Post(
         {
@@ -24,6 +25,8 @@ contract PostChain is PostChainAbstract, Spoke {
         });
 
         postList.push(newPostItem);
+
+        return postList.length - 1;
     }
 
     function getPost(uint _index) 

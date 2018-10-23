@@ -31,9 +31,9 @@ class _SubmittedWords extends Component {
         const submittedWords = this.props.submittedWords.length ? (
             this.props.submittedWords.map(obj =>
                 <ContentCard 
-                    key={obj.poster + obj.content} 
+                    key={"" + obj.index + obj.chain} 
                     index={obj.index} 
-                    word={obj.content} 
+                    content={obj.content} 
                     poster={obj.poster}
                     user={this.props.users[obj.poster]}
                     backing={obj.votes} 

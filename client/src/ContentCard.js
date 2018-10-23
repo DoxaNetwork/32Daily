@@ -124,7 +124,7 @@ export class ContentCard extends Component {
     dateOptions = {month: 'short', day: 'numeric'};
 
     render() {
-        const {user, index, onClick, date, poster, fontsize, word, backing, side, chain} = this.props;
+        const {user, index, onClick, date, poster, fontsize, content, backing, side, chain} = this.props;
 
         const username = user && user.username !== ''? user.username : poster.slice(0,6)
         const imageUrl = user ? user.picture : null;
@@ -141,7 +141,7 @@ export class ContentCard extends Component {
                     <div>{publishDate}</div>
                 </ContentHeader>
                 <ContentBody fontsize={fontsize}>
-                    {word}
+                    {content}
                 </ContentBody>
                 <ContentFooter>
                     {voteLink}

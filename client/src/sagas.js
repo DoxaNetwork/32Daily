@@ -46,8 +46,8 @@ function getEventsByType(events, type) {
 }
 
 function* mapPost(post) {
-    const word = yield contentFromIPFS32(post.ipfsHash);
-    return {'poster': post.owner, word, votes: 0, chain: 0, index: 0}
+    const content = yield contentFromIPFS32(post.ipfsHash);
+    return {'poster': post.owner, content, votes: 0, chain: 0, index: post.index.toNumber()}
 }
 
 function* initAccount(action) {

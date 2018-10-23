@@ -29,7 +29,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     Chain[] public chains;
     // could store top for free
 
-    event NewPost(address indexed owner, bytes32 ipfsHash);
+    event NewPost(address indexed owner, bytes32 ipfsHash, uint index);
     event PostBacked(address indexed backer, uint postIndex);
     event Published(address indexed owner, uint index);
 
@@ -174,47 +174,47 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     }
 
 function newPost(bytes32 _ipfsHash)
-    public 
-    {
-        PostChain(chains[0].chainContract).newPost(msg.sender, _ipfsHash);
-        doxaToken.mint(msg.sender, uint(1));
-        emit NewPost(msg.sender, _ipfsHash);
-    }
+public 
+{
+    uint index = PostChain(chains[0].chainContract).newPost(msg.sender, _ipfsHash);
+    doxaToken.mint(msg.sender, uint(1));
+    emit NewPost(msg.sender, _ipfsHash, index);
+}
 
 function votingAvailable(address _voter)
-    public view
-    returns (bool) {
-        return (votes.outgoingVotesThisCycle(_voter, nextPublishTime) < 1);
-    }
+public view
+returns (bool) {
+    return (votes.outgoingVotesThisCycle(_voter, nextPublishTime) < 1);
+}
 
 function getPost(uint _publishedIndex)
-    public view
-    returns (address poster_, bytes32 ipfsHash_, uint timeStamp_)
-    {
-        address chainAddress;
-        uint lowerPublishedIndex;
-        uint timeOut;
-        (chainAddress, lowerPublishedIndex, timeOut) = publishedHistory.getPost(_publishedIndex);
-        PostChainAbstract postChain = PostChainAbstract(chainAddress); // this could be a branch or a leaf
-        return postChain.getPost(lowerPublishedIndex);
-    }
+public view
+returns (address poster_, bytes32 ipfsHash_, uint timeStamp_)
+{
+    address chainAddress;
+    uint lowerPublishedIndex;
+    uint timeOut;
+    (chainAddress, lowerPublishedIndex, timeOut) = publishedHistory.getPost(_publishedIndex);
+    PostChainAbstract postChain = PostChainAbstract(chainAddress); // this could be a branch or a leaf
+    return postChain.getPost(lowerPublishedIndex);
+}
 
 function length()
-    public view
-    returns (uint)
-    {
-        return publishedHistory.length();
-    }
+public view
+returns (uint)
+{
+    return publishedHistory.length();
+}
 
 function availableToTransfer(address _owner, address _receiver)
-    public view
-    returns (uint) {
-        // token cannot be transferred yet
-        // later, we will add the ability to sell token back to the contract
-        // later, we will add the ability to transfer token to staked accounts
-        return 0;
-        // bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
-        // // can't transfer token if they are alreaddy voted in this cycle
-        // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
-    }
+public view
+returns (uint) {
+    // token cannot be transferred yet
+    // later, we will add the ability to sell token back to the contract
+    // later, we will add the ability to transfer token to staked accounts
+    return 0;
+    // bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
+    // // can't transfer token if they are alreaddy voted in this cycle
+    // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
+}
 }
