@@ -1,10 +1,14 @@
 const fs = require('fs');
 
-function recordFactory(result, freq, factoryName) {
+function recordFactory(result, freq) {
   const events = getEventsByType(result.logs, "Deployed");
-  const address = events[0].args['newContract'] 
+  const token = events[0].args['token'];
+  const postChain = events[0].args['postChain'];
+  const votes = events[0].args['votes'];
+  const history = events[0].args['history'];
+  const hub = events[0].args['hub'];
 
-  const dstPath = __dirname + '/../build/factories/' + factoryName + '.json';
+  const dstPath = __dirname + '/../build/factories/freqs.json';
 
   let data;
   if (fs.existsSync(dstPath)) {
@@ -12,12 +16,12 @@ function recordFactory(result, freq, factoryName) {
   } else {
     data = {}
   }
-  data[freq] = address;
+  data[freq] = {token, postChain, votes, history, hub};
   fs.writeFileSync(dstPath, JSON.stringify(data, null, 2), {flag: 'w'});
 }
 
-function readFactory(freq, factoryName) {
-    const path = __dirname + '/../build/factories/' + factoryName + '.json';
+function readFactory(freq) {
+    const path = __dirname + '/../build/factories/freqs.json';
     const data = require(path)
     const address = data[freq];
     return address;

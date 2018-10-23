@@ -18,7 +18,7 @@ contract Ownable {
    * account.
    */
   constructor() public {
-    owner = tx.origin;
+    owner = msg.sender;
   }
 
   /**
