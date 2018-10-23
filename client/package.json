@@ -33,8 +33,8 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "link-contracts": "run-script-os",
-    "link-contracts:linux:darwin": "cd src && ln -s ../../build/contracts contracts",
-    "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\build\\contracts"
+    "link-contracts:linux:darwin": "cd src && ln -s ../../build/contracts contracts && ln -s ../../build/factories factories",
+    "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\build\\contracts && mklink \\D factories ..\\..\\build\\factories"
   },
   "jest": {
     "collectCoverageFrom": [

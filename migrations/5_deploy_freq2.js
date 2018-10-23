@@ -2,7 +2,6 @@ const FreqFactory = artifacts.require("./FreqFactory.sol");
 const DoxaHub = artifacts.require("./DoxaHub.sol");
 const helpers = require('../src/helpers')
 
-
 let freq1address, freq2address;
 
 module.exports = function(deployer) {

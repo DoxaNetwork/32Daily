@@ -7,17 +7,10 @@ import { contentFromIPFS32, postToIPFS, fileFromIPFS } from './utils/ipfs.js'
 import getWeb3 from './utils/getWeb3'
 
 import DoxaHub from './contracts/DoxaHub.json'
-import HigherFreq from './contracts/HigherFreq.json'
-import Freq3 from './contracts/Freq3.json'
 import DoxaToken from './contracts/DoxaToken.json'
 import MemberRegistry from './contracts/MemberRegistry.json'
+import Factories from './Factories/freqs.json'
 
-
-const freqToContractJSON = {
-    'freq1': DoxaHub,
-    'freq2': HigherFreq,
-    'freq3': Freq3
-}
 
 const contractsLoaded = {}
 
@@ -65,7 +58,7 @@ function* initAccount(action) {
 function* submitPost(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
-    const contract = yield getContract(freqToContractJSON[action.freq])
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     // const freq1Instance = yield getContract(DoxaHub);
 
     const ipfsPathShort = yield postToIPFS(action.text);
@@ -125,7 +118,7 @@ async function getSideChainSubmissions(_contract) {
 }
 
 function* loadSubmissions(action) {
-    const contract = yield getContract(freqToContractJSON[action.freq])
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     let submittedWords = yield getSubmissions(contract);
 
     let extraWords = []
@@ -154,7 +147,7 @@ function* loadUsersIfNeeded(action) {
 }
 
 function* loadPublishTime(action) {
-    const contract = yield getContract(freqToContractJSON[action.freq])
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     const nextPublishTime = yield contract.nextPublishTime();
 
     yield put({type: "LOAD_PUBLISH_TIME_SUCCESS", nextPublishTime, freq: action.freq})
@@ -176,7 +169,7 @@ async function loadHistory(_contract, start, end) {
 const numToPreLoad = 6;
 
 function* loadHistoryFirstPage(action) {
-    const contract = yield getContract(freqToContractJSON[action.freq])
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     const length = yield contract.length();
     const end = length.toNumber();
     const start = Math.max(end - numToPreLoad, 0);
@@ -191,7 +184,7 @@ function* loadHistoryFirstPage(action) {
 }
 
 function* loadHistoryRemainingPages(action) {
-    const contract = yield getContract(freqToContractJSON[action.freq])
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     const length = yield contract.length();
     const end = length.toNumber() - numToPreLoad;
     const start = 0;
@@ -203,7 +196,7 @@ function* loadHistoryRemainingPages(action) {
 }
 
 function* persistVote(action) {
-    const contract = yield getContract(freqToContractJSON[action.freq])
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
 
@@ -241,16 +234,10 @@ async function getTokenBalance(ownerAddress, tokenAddress) {
     return tokenBalanceBN.toNumber();
 }
 
-const freqToToken = {
-  "freq1": "0xef8345c3fd6d1b3c552899e53d8f9375a7f3270b",
-  "freq2": "0x206105ede9f0b353913426372302596cff55556b",
-  "freq3": "0x35b3b575721450cacd9c67f55fa16954a42385d4"
-}
-
 function* loadUserBalance(action) {
-    const token1Balance = yield getTokenBalance(action.address, freqToToken['freq1'])
-    const token2Balance = yield getTokenBalance(action.address, freqToToken['freq2'])
-    const token3Balance = yield getTokenBalance(action.address, freqToToken['freq3'])
+    const token1Balance = yield getTokenBalance(action.address, Factories['freq1']['token'])
+    const token2Balance = yield getTokenBalance(action.address, Factories['freq2']['token'])
+    const token3Balance = yield getTokenBalance(action.address, Factories['freq3']['token'])
 
     yield put({type: "USER_BALANCE_UPDATE", address: action.address, token1Balance, token2Balance, token3Balance})
 }
