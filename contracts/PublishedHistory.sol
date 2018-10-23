@@ -33,7 +33,7 @@ contract PublishedHistory is Spoke {
         {
             chainAddress: _chainAddress,
             lowerChainIndex: uint48(_lowerChainIndex),
-            publishedTime: uint48(now) 
+            publishedTime: uint48(now) // this will need to be passed in to sync up with the expected publish time
         });
 
         publishedHistory.push(newPublishedPost);
