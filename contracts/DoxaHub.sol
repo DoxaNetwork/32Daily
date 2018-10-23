@@ -2,8 +2,8 @@ pragma solidity ^0.4.24;
 
 import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
 import 'zeppelin-solidity/contracts/math/SafeMath.sol';
+import 'zeppelin-solidity/contracts/ownership/Ownable.sol';
 
-import './Ownable.sol';
 import './PostChain.sol';
 import './PublishedHistory.sol';
 import './Votes.sol';
@@ -15,16 +15,15 @@ import './PostChainAbstract.sol';
 contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
   using SafeMath for uint;
 
-    PublishedHistory publishedHistory;
-    Votes votes;
-    DoxaToken doxaToken;
+    PublishedHistory public publishedHistory;
+    Votes public votes;
+    DoxaToken public doxaToken;
 
-    uint8 public SUBMISSION_MINT = 1;
-    uint96 public nextPublishTime;
-    uint period;
+    uint128 public nextPublishTime;
+    uint128 public period;
 
     struct Chain {
-        PostChainAbstract chainContract; // can I do this?
+        PostChainAbstract chainContract;
         uint96 startIndex;
     }
     Chain[] public chains;
@@ -48,8 +47,8 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
         votes = Votes(_votes);
 
         owner = msg.sender;
-        period = _period;
-        nextPublishTime = uint96(now + period * 1 seconds);
+        period = uint128(_period);
+        nextPublishTime = uint128(now + period * 1 seconds);
     }
     function addChain(address _chainAddress)
     public 
@@ -68,9 +67,8 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeIn_)
     {
         PostChainAbstract chain = chains[_chainIndex].chainContract;
-        address chainAddress = address(chain); 
         (address poster, bytes32 ipfsHash, uint publishedTime) = chain.getPost(_index);
-        uint votesReceived = votes.incomingVotes(_index, chainAddress);
+        uint votesReceived = votes.incomingVotes(_index, chain);
         return (_index, poster, ipfsHash, votesReceived, publishedTime);
     }
 
@@ -85,7 +83,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
         PostChainAbstract chain = PostChainAbstract(chainAddress);
         (poster_, ipfsHash_, postedTime) = chain.getPost(lowerChainIndex_);
         votesReceived_ = votes.incomingVotes(lowerChainIndex_, chainAddress);
-        return (publishedIndex_, poster_, ipfsHash_, votesReceived_, timeOut_);
+        return (_publishedIndex, poster_, ipfsHash_, votesReceived_, timeOut_);
     }
 
     function range(uint _chainIndex) 
@@ -99,11 +97,10 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     public 
     returns (uint indexToPublish, uint maxVotes_, bool somethingSelected_)
     {
-        address chainAddress = address(chains[_chainIndex].chainContract);
         (uint start, uint end) = range(_chainIndex);
         bool somethingSelected = false;
         for (uint postIndex = start; postIndex < end; postIndex++) {
-            uint votesForThisIndex = votes.incomingVotes(postIndex, chainAddress);
+            uint votesForThisIndex = votes.incomingVotes(postIndex, chains[_chainIndex].chainContract);
             if (!somethingSelected || votesForThisIndex > maxVotes_) {
                 maxVotes_ = votesForThisIndex;
                 indexToPublish = postIndex;
@@ -120,7 +117,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
         PostChainAbstract chain = chains[_chainIndex].chainContract;
         (address poster, bytes32 ipfsHash, uint timeStamp) = chain.getPost(indexToPublish); // this needs to work for both the postChain and the lowerFreq
 
-        uint publishedIndex = publishedHistory.publishPost(address(chain), indexToPublish);
+        uint publishedIndex = publishedHistory.publishPost(chain, indexToPublish);
 
         doxaToken.mint(poster, 1);
         emit Published(poster, publishedIndex);
@@ -150,7 +147,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
             publishChain(indexToPublish, chainIndexToPublish);
         }
 
-        nextPublishTime = uint96(now + 60 seconds);
+        nextPublishTime = uint128(now + 60 seconds);
     }
 
     // ========================= Helpers =================================
@@ -172,18 +169,14 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
         require(_postIndex >= lower && _postIndex < upper );
         require( votingAvailable(msg.sender) );
 
-        address chainAddress = address(chains[_chainIndex].chainContract);
-
-        // do we really need to hash here? might be cheaper to just bitwise combine
-        bytes32 voterCycleKey = keccak256(abi.encodePacked(msg.sender, nextPublishTime));
-        votes.addVote(_postIndex, chainAddress, voterCycleKey);
+        votes.addVote(msg.sender, _postIndex, nextPublishTime, chains[_chainIndex].chainContract);
         emit PostBacked(msg.sender, _postIndex);
     }
 
 function newPost(bytes32 _ipfsHash)
     public 
     {
-        PostChain(address(chains[0].chainContract)).newPost(msg.sender, _ipfsHash);
+        PostChain(chains[0].chainContract).newPost(msg.sender, _ipfsHash);
         doxaToken.mint(msg.sender, uint(1));
         emit NewPost(msg.sender, _ipfsHash);
     }
@@ -191,8 +184,7 @@ function newPost(bytes32 _ipfsHash)
 function votingAvailable(address _voter)
     public view
     returns (bool) {
-        bytes32 voterCycleKey = keccak256(abi.encodePacked(_voter, nextPublishTime));
-        return (votes.outgoingVotesThisCycle(voterCycleKey) < 1);
+        return (votes.outgoingVotesThisCycle(_voter, nextPublishTime) < 1);
     }
 
 function getPost(uint _publishedIndex)
@@ -201,8 +193,8 @@ function getPost(uint _publishedIndex)
     {
         address chainAddress;
         uint lowerPublishedIndex;
-        uint timeOut_;
-        (chainAddress, lowerPublishedIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        uint timeOut;
+        (chainAddress, lowerPublishedIndex, timeOut) = publishedHistory.getPost(_publishedIndex);
         PostChainAbstract postChain = PostChainAbstract(chainAddress); // this could be a branch or a leaf
         return postChain.getPost(lowerPublishedIndex);
     }

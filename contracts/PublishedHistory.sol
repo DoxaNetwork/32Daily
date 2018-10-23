@@ -8,8 +8,8 @@ contract PublishedHistory is Spoke {
     struct PublishedPost
     {
         address chainAddress;
-        uint64 lowerChainIndex; // index where it is posted
-        uint64 publishedTime; // this can be used to pull in the votes
+        uint48 lowerChainIndex; // index where it is posted
+        uint48 publishedTime; // this can be used to pull in the votes
     } 
 
     PublishedPost[] public publishedHistory;
@@ -32,8 +32,8 @@ contract PublishedHistory is Spoke {
         PublishedPost memory newPublishedPost = PublishedPost(
         {
             chainAddress: _chainAddress,
-            lowerChainIndex: uint64(_lowerChainIndex),
-            publishedTime: uint64(now) 
+            lowerChainIndex: uint48(_lowerChainIndex),
+            publishedTime: uint48(now) 
         });
 
         publishedHistory.push(newPublishedPost);

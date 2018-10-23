@@ -9,16 +9,17 @@ contract Votes is Spoke {
   using SafeMath for uint;
 
     // sha3(voter, timeStampNextPublishing) -> total amount this voter-cycle backed
-    mapping (bytes32 => uint) internal outgoingPostBackings;
+    mapping (uint => uint) internal outgoingPostBackings;
     
     mapping (uint => uint) internal incomingPostBackings;
 
-    function outgoingVotesThisCycle(bytes32 _voterCycleKey)
+    function outgoingVotesThisCycle(address _voter, uint _nextPublishTime)
     view public
     returns (uint) 
     {
         // how many votes this address has sent out this cycle
-        return outgoingPostBackings[_voterCycleKey];
+        uint voterCycleKey = createKey(_nextPublishTime, _voter);
+        return outgoingPostBackings[voterCycleKey];
     }
 
     // if we keyed this as (index, freq) then we could maybe get away with only one Votes contract
@@ -28,25 +29,28 @@ contract Votes is Spoke {
     {
         // how many votes this item received
         // must combine _postIndex and chainIndex into one number
-        return incomingPostBackings[combine(_postIndex, _chainAddress)];
+        uint postChainKey = createKey(_postIndex, _chainAddress);
+        return incomingPostBackings[postChainKey];
     }
 
-    function addVote(uint _postIndex, address _chainAddress, bytes32 _voterCycleKey)
+    function addVote(address _voter, uint _postIndex, uint _nextPublishTime, address _chainAddress)
     public onlyHub
     {
         // make sure voting is open for this item
         // or maybe we don't care if they vote for a past item? it wont affect publishing 
-        outgoingPostBackings[_voterCycleKey] = outgoingPostBackings[_voterCycleKey].add(1);
+        uint voterCycleKey = createKey(_nextPublishTime, _voter);
+        uint postChainKey = createKey(_postIndex, _chainAddress);
 
-        incomingPostBackings[combine(_postIndex, _chainAddress)] = incomingPostBackings[combine(_postIndex, _chainAddress)].add(1);
+        outgoingPostBackings[voterCycleKey] = outgoingPostBackings[voterCycleKey].add(1);
+        incomingPostBackings[postChainKey] = incomingPostBackings[postChainKey].add(1);
     }
 
-    function combine(uint _postIndex, address _chainAddress)
-    public pure
+    function createKey(uint _index, address _address)
+    internal pure
     returns (uint)
     {
-        uint combined = _postIndex;
-        combined |= uint(_chainAddress)<<160;
+        uint combined = _index;
+        combined |= uint(_address)<<160;
         return combined;
     }
 }

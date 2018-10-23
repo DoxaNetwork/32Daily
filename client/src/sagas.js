@@ -59,7 +59,6 @@ function* submitPost(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
     const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
-    // const freq1Instance = yield getContract(DoxaHub);
 
     const ipfsPathShort = yield postToIPFS(action.text);
     const result = yield contract.newPost(ipfsPathShort, { from: currentAccount})
