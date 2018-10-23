@@ -29,7 +29,7 @@ class _PublishedWords extends Component {
                 fontsize={20}
                 key={word.poster + word.date + word.content} 
                 index={word.index} 
-                word={word.content} 
+                content={word.content} 
                 poster={word.poster}
                 user={this.props.users[word.poster]}
                 backing={word.votes}

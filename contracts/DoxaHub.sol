@@ -27,7 +27,6 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
         uint96 startIndex;
     }
     Chain[] public chains;
-    // could store top for free
 
     event NewPost(address indexed owner, bytes32 ipfsHash, uint index);
     event PostBacked(address indexed backer, uint postIndex);
@@ -48,7 +47,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
 
         owner = msg.sender;
         period = uint128(_period);
-        nextPublishTime = uint128(now + period * 1 seconds);
+        nextPublishTime = uint128(topOfTheHour(now));
     }
     function addChain(address _chainAddress)
     public 
@@ -76,13 +75,13 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     public view
     returns (uint publishedIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeOut_)
     {
-        uint lowerChainIndex_;
+        uint lowerChainIndex;
         uint postedTime;
         address chainAddress;
-        (chainAddress, lowerChainIndex_, timeOut_) = publishedHistory.getPost(_publishedIndex);
+        (chainAddress, lowerChainIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
         PostChainAbstract chain = PostChainAbstract(chainAddress);
-        (poster_, ipfsHash_, postedTime) = chain.getPost(lowerChainIndex_);
-        votesReceived_ = votes.incomingVotes(lowerChainIndex_, chainAddress);
+        (poster_, ipfsHash_, postedTime) = chain.getPost(lowerChainIndex);
+        votesReceived_ = votes.incomingVotes(lowerChainIndex, chainAddress);
         return (_publishedIndex, poster_, ipfsHash_, votesReceived_, timeOut_);
     }
 
@@ -147,16 +146,14 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
             publishChain(indexToPublish, chainIndexToPublish);
         }
 
-        nextPublishTime = uint128(now + 60 seconds);
+        nextPublishTime = uint128(nextPublishTime + period * 1 seconds);
     }
 
-    // ========================= Helpers =================================
-
-    function nextUTCMidnight(uint timestamp)
+    function topOfTheHour(uint timestamp)
     public pure
     returns (uint)
     {
-        return (timestamp / 1 days) * 1 days + 1 days;
+        return (timestamp / 1 hours) * 1 hours + 1 hours;
     }
 
 
@@ -184,10 +181,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     public view
     returns (address poster_, bytes32 ipfsHash_, uint timeStamp_)
     {
-        address chainAddress;
-        uint lowerPublishedIndex;
-        uint timeOut;
-        (chainAddress, lowerPublishedIndex, timeOut) = publishedHistory.getPost(_publishedIndex);
+        (address chainAddress, uint lowerPublishedIndex, uint timeOut) = publishedHistory.getPost(_publishedIndex);
         PostChainAbstract postChain = PostChainAbstract(chainAddress); // this could be a branch or a leaf
         return postChain.getPost(lowerPublishedIndex);
     }
