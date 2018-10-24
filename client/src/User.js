@@ -218,16 +218,8 @@ export class _User extends Component {
                             <div>{match.params.id.substring(0,6)}</div>
                         </div>
                         <div>
-                            <Bold>Karma1</Bold>
-                            <div>{user.token1Balance}</div>
-                        </div>
-                         <div>
-                            <Bold>Karma2</Bold>
-                            <div>{user.token2Balance}</div>
-                        </div>
-                         <div>
-                            <Bold>Karma3</Bold>
-                            <div>{user.token3Balance}</div>
+                            <Bold>Acme</Bold>
+                            <div>{user.tokenBalance}</div>
                         </div>
                     </ChainMetadata>
                 </UserContainer>

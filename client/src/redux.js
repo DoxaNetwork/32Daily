@@ -51,7 +51,7 @@ const users = (state = {}, action) => {
         case 'PICTURE_UPDATE_SUCCESS':
             return {...state, ...{[action.address]: {...state[action.address], ...{picture: action.picture}}}}
         case 'USER_BALANCE_UPDATE':
-            return {...state, ...{[action.address]: {...state[action.address], ...{token1Balance: action.token1Balance, token2Balance: action.token2Balance, token3Balance: action.token3Balance}}}}
+            return {...state, ...{[action.address]: {...state[action.address], ...{tokenBalance: action.tokenBalance}}}}
         default:
             return state
     }

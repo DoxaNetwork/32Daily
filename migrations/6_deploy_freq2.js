@@ -1,4 +1,5 @@
 const FreqFactory = artifacts.require("./FreqFactory.sol");
+const DoxaToken = artifacts.require("./DoxaToken.sol");
 const DoxaHub = artifacts.require("./DoxaHub.sol");
 const helpers = require('../src/helpers')
 
@@ -9,19 +10,23 @@ module.exports = function(deployer) {
     return FreqFactory.deployed()
   })
   .then(function(instance) {
-    return instance.newContract(30);
+    return instance.newContract(DoxaToken.address, 30);
   })
   .then(function(result) {
-    helpers.recordFactory(result, 'freq2')
+    freq2address = helpers.recordFactory(result, 'freq2')
 
     const freq1 = helpers.readFactory('freq1');
-    const freq2 = helpers.readFactory('freq2');
     freq1address = freq1['hub'];
-    freq2address = freq2['hub'];
 
     return DoxaHub.at(freq2address);
   })
   .then(function(freq2) {
     freq2.addChain(freq1address);
+  })
+  .then(function() {
+    return DoxaToken.deployed();
+  })
+  .then(function(doxaToken) {
+    doxaToken.addHub(freq2address);
   })
 }

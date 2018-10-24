@@ -1,17 +1,26 @@
 pragma solidity ^0.4.24;
  
-import 'zeppelin-solidity/contracts/token/ERC20/BasicToken.sol';
-
-import './Spoke.sol';
-import './TransferGate.sol';
+import 'zeppelin-solidity/contracts/token/ERC20/StandardToken.sol';
+import './SharedSpoke.sol';
 
 
-contract DoxaToken is BasicToken, Spoke {
+contract DoxaToken is StandardToken, SharedSpoke {
+    string public name;
+    string public symbol;
+    uint8 public decimals = 10*18;
 
-    event Mint(address indexed to, uint _amount);
+    constructor(string _name, string _symbol)
+    public
+    {
+        name = _name;
+        symbol = _symbol;
+    }
+
+    event Mint(address indexed to, uint amount);
+    event Burn(address indexed burner, uint quantity);
 
     function mint(address _to, uint _quantity) 
-    public onlyHub 
+    public onlyHubs 
     {
         totalSupply_ = totalSupply_.add(_quantity);
         balances[_to] = balances[_to].add(_quantity);
@@ -19,20 +28,13 @@ contract DoxaToken is BasicToken, Spoke {
         emit Transfer(0x0, _to, _quantity);
     }
 
-    // we override transfer to replace balances[] with availableToTransfer()
-    function transfer(address _to, uint _value) 
-    public 
-    returns (bool) 
+    function burn(address _from, uint _quantity)
+    public onlyHubs
     {
-        require(_to != address(0));
-        TransferGate gate = TransferGate(hub);
-        require(_value <= gate.availableToTransfer(msg.sender, _to));
-
-        balances[msg.sender] = balances[msg.sender].sub(_value);
-        balances[_to] = balances[_to].add(_value);
-
-        emit Transfer(msg.sender, _to, _value);
-        return true;
+        require(_from == tx.origin);
+        require(_quantity <= balances[_from]);
+        totalSupply_ = totalSupply_.sub(_quantity);   
+        balances[_from] = balances[_from].sub(_quantity);
+        Burn(_from, _quantity);
     }
-
 }

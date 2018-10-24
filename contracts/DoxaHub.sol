@@ -8,19 +8,21 @@ import './PostChain.sol';
 import './PublishedHistory.sol';
 import './Votes.sol';
 import './DoxaToken.sol';
-import './TransferGate.sol';
 import './PostChainAbstract.sol';
 
 
-contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
+contract DoxaHub is PostChainAbstract, Ownable {
   using SafeMath for uint;
 
     PublishedHistory public publishedHistory;
     Votes public votes;
     DoxaToken public doxaToken;
+    address public developmentFund;
 
-    uint128 public nextPublishTime;
-    uint128 public period;
+    uint public period;
+    uint public nextPublishTime;
+    uint public publishMint;
+    uint public publishDevMint;
 
     struct Chain {
         PostChainAbstract chainContract;
@@ -46,9 +48,19 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
         votes = Votes(_votes);
 
         owner = msg.sender;
-        period = uint128(_period);
-        nextPublishTime = uint128(topOfTheHour(now));
+        developmentFund = tx.origin;
+        period = _period;
+        publishMint = period * 60 * 10**18;
+        publishDevMint = publishMint / 5;
+        nextPublishTime = topOfTheHour(now);
     }
+
+    function setDevelopmentFund(address _newDevelopmentFund)
+    public onlyOwner
+    {
+        developmentFund = _newDevelopmentFund;
+    }
+
     function addChain(address _chainAddress)
     public 
     {
@@ -118,7 +130,8 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
 
         uint publishedIndex = publishedHistory.publishPost(chain, indexToPublish);
 
-        doxaToken.mint(poster, 1);
+        doxaToken.mint(poster, publishMint);
+        doxaToken.mint(developmentFund, publishDevMint);
         emit Published(poster, publishedIndex);
     }
 
@@ -146,7 +159,7 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
             publishChain(indexToPublish, chainIndexToPublish);
         }
 
-        nextPublishTime = uint128(nextPublishTime + period * 1 seconds);
+        nextPublishTime = nextPublishTime + period * 1 seconds;
     }
 
     function topOfTheHour(uint timestamp)
@@ -155,7 +168,6 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     {
         return (timestamp / 1 hours) * 1 hours + 1 hours;
     }
-
 
     function backPost(uint _postIndex, uint _chainIndex)
     public
@@ -173,7 +185,6 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     public 
     {
         uint index = PostChain(chains[0].chainContract).newPost(msg.sender, _ipfsHash);
-        doxaToken.mint(msg.sender, uint(1));
         emit NewPost(msg.sender, _ipfsHash, index);
     }
 
@@ -191,17 +202,5 @@ contract DoxaHub is PostChainAbstract, TransferGate, Ownable {
     returns (uint)
     {
         return publishedHistory.length();
-    }
-
-    function availableToTransfer(address _owner, address _receiver)
-    public view
-    returns (uint) {
-        // token cannot be transferred yet
-        // later, we will add the ability to sell token back to the contract
-        // later, we will add the ability to transfer token to staked accounts
-        return 0;
-        // bytes32 ownerKey = keccak256(contentPool.currentVersion(), _owner);
-        // // can't transfer token if they are alreaddy voted in this cycle
-        // return token.balanceOf(_owner).sub(votes.outgoingVotes(ownerKey));
     }
 }

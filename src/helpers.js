@@ -2,7 +2,6 @@ const fs = require('fs');
 
 function recordFactory(result, freq) {
   const events = getEventsByType(result.logs, "Deployed");
-  const token = events[0].args['token'];
   const postChain = events[0].args['postChain'];
   const votes = events[0].args['votes'];
   const history = events[0].args['history'];
@@ -16,8 +15,10 @@ function recordFactory(result, freq) {
   } else {
     data = {}
   }
-  data[freq] = {token, postChain, votes, history, hub};
+  data[freq] = {postChain, votes, history, hub};
   fs.writeFileSync(dstPath, JSON.stringify(data, null, 2), {flag: 'w'});
+
+  return hub;
 }
 
 function readFactory(freq) {

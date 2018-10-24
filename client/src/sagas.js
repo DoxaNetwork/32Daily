@@ -227,18 +227,12 @@ function* loadUser(action) {
     yield loadUserBalance(action)
 }
 
-async function getTokenBalance(ownerAddress, tokenAddress) {
-    const tokenInstance = await getContract(DoxaToken, tokenAddress);
-    const tokenBalanceBN = await tokenInstance.balanceOf(ownerAddress);
-    return tokenBalanceBN.toNumber();
-}
-
 function* loadUserBalance(action) {
-    const token1Balance = yield getTokenBalance(action.address, Factories['freq1']['token'])
-    const token2Balance = yield getTokenBalance(action.address, Factories['freq2']['token'])
-    const token3Balance = yield getTokenBalance(action.address, Factories['freq3']['token'])
+    const tokenInstance = yield getContract(DoxaToken);
+    const tokenBalanceBN = yield tokenInstance.balanceOf(action.address);
+    const tokenBalance = tokenBalanceBN.toNumber();
 
-    yield put({type: "USER_BALANCE_UPDATE", address: action.address, token1Balance, token2Balance, token3Balance})
+    yield put({type: "USER_BALANCE_UPDATE", address: action.address, tokenBalance})
 }
 
 function* registerUser(action) {
