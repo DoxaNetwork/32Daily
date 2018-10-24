@@ -27,6 +27,15 @@ const ContentBody = styled.div`
     padding: 15px 20px 30px;
     font-family: Open sans;
     font-size: ${props => props.fontsize ? props.fontsize : "14"}px;
+    word-wrap: break-word;
+
+    a {
+        text-decoration: none;
+        color: var(--primary);
+        &:hover {
+            color: var(--bright);
+        }
+    }
 `
 const ContentFooter = styled.div`
     display:flex;
@@ -120,11 +129,28 @@ function displayPublishDate(then) {
     return dateDisplay;
 }
 
+
 export class ContentCard extends Component {
     dateOptions = {month: 'short', day: 'numeric'};
 
     render() {
-        const {user, index, onClick, date, poster, fontsize, content, backing, side, chain} = this.props;
+        let {content} = this.props;
+        const {user, index, onClick, date, poster, fontsize, backing, side, chain} = this.props;
+
+        const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
+        const regex = new RegExp(expression);
+
+        let linkFound = false;
+        const matches = content.match(regex);
+        if (matches) {
+            linkFound = true;
+            for(let i = 0; i < matches.length; i++) {
+                const linkText = matches[i];
+                const linkHref = linkText.startsWith("http") ? linkText : "http://" + linkText;
+                const link = `<a href=${linkHref}>${linkText}</a>`
+                content = content.replace(linkText, link)
+            }
+        }  
 
         const username = user && user.username !== ''? user.username : poster.slice(0,6)
         const imageUrl = user ? user.picture : null;
@@ -141,7 +167,12 @@ export class ContentCard extends Component {
                     <div>{publishDate}</div>
                 </ContentHeader>
                 <ContentBody fontsize={fontsize}>
-                    {content}
+                    {linkFound && 
+                        <span dangerouslySetInnerHTML={{ __html: content }}></span>
+                    }
+                    {!linkFound &&
+                        <span>{content}</span>
+                    }
                 </ContentBody>
                 <ContentFooter>
                     {voteLink}
