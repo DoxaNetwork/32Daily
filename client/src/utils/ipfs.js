@@ -46,6 +46,7 @@ async function fileToIPFS(readerResult) {
   const buffer = Buffer.from(readerResult)
   const response = await ipfs.add(buffer);
   const ipfsPath = response[0]['path'];
+  await ipfs.pin.add(ipfsPath);
   return ipfsPath;
 }
 
@@ -60,6 +61,7 @@ async function postToIPFS(text) {
     const ipfs = await getIPFSNode();
     const response = await ipfs.files.add(Buffer.from(text));
     const ipfsPath = response[0]['path'];
+    await ipfs.pin.add(ipfsPath);
     const ipfsPathShort = getBytes32FromIpfsHash(ipfsPath)
     return ipfsPathShort;
 }
