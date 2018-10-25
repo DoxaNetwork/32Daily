@@ -222,7 +222,7 @@ export class _User extends Component {
                             <div>{match.params.id.substring(0,6)}</div>
                         </div>
                         <div>
-                            <Bold>Acme</Bold>
+                            <Bold>Ups</Bold>
 
                             <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div>
                         </div>

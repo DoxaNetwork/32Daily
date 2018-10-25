@@ -34,7 +34,7 @@ class _Header extends Component {
             <div>
                 <StyledHeader>
                     <div></div>
-                    <Title>blocksides</Title>
+                    <Title>upblocks</Title>
                     <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
                 </StyledHeader>
             </div>

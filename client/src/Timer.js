@@ -13,32 +13,33 @@ const TimerContainer = styled.div`
 `
 
 class Timer extends Component {
-    state = {
-        time: new Date(),
-    }
 
     componentDidMount() {
-        this.interval = setInterval(() => {
+        this.getNewPublishTimeInterval = setInterval(() => {
             const endingTime = new Date(this.props.nextPublishTime*1000)
-            let msec = endingTime.getTime() - this.state.time.getTime();
+            const now = new Date();
+            let msec = endingTime.getTime() - now.getTime();
 
             if (msec < 0) {
                 this.props.refreshTime();
-            } else {
-                this.setState({ time: new Date() });
             }
+        }, 10000);
+
+        this.updateClockDisplay = setInterval(() => {
+            this.forceUpdate()
         }, 1000);
     }
 
     componentWillUnmount() {
-      clearInterval(this.interval);
+      clearInterval(this.updateClockDisplay);
+      clearInterval(this.getNewPublishTimeInterval);
     }
 
     render() {
         const endingTime = new Date(this.props.nextPublishTime*1000)
+        const now = new Date();
 
-
-        let msec = endingTime.getTime() - this.state.time.getTime();
+        let msec = endingTime.getTime() - now.getTime();
         if (msec < 0) {
             msec = 0;
         }
