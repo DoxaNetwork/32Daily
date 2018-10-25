@@ -165,7 +165,7 @@ async function loadHistory(_contract, start, end) {
     for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
         const content = await contentFromIPFS32(ipfsHash32);
-        history.push({content, poster, date, votes:votes.toNumber(), approvedChains:[]})
+        history.push({index, content, poster, date, votes:votes.toNumber(), approvedChains:[]})
     }
     return history;
 }

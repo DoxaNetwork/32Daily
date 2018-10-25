@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { NavLink, withRouter } from 'react-router-dom'
-import { CSSTransitionGroup } from 'react-transition-group'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 
@@ -28,10 +28,14 @@ class _SubmittedWords extends Component {
     }
 
     render() {
-        const submittedWords = this.props.submittedWords.length ? (
-            this.props.submittedWords.map(obj =>
+        const submittedWords = this.props.submittedWords.map(obj =>
+            <CSSTransition
+                key={"" + obj.index + obj.chain} 
+                classNames="opacity"
+                appear
+                timeout={{ enter: 300, exit: 300 }}>
                 <ContentCard 
-                    key={"" + obj.index + obj.chain} 
+                    // key={"" + obj.index + obj.chain} 
                     index={obj.index} 
                     content={obj.content} 
                     poster={obj.poster}
@@ -40,23 +44,23 @@ class _SubmittedWords extends Component {
                     backing={obj.votes} 
                     onClick={this.props.onClick}
                     chain={obj.chain} />
-            )
-        ) : (
-            <NothingHereYet>
-                <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
-                    Nothing here yet. <br/>Why don't you be the first?
-                </NavLink>
-            </NothingHereYet>
+            </CSSTransition>
         );
 
-
         return (
-            <CSSTransitionGroup
-                transitionName="opacity"
-                transitionEnterTimeout={5000}
-                transitionLeaveTimeout={300}>
-                {submittedWords}
-            </CSSTransitionGroup>
+                <>
+                { submittedWords.length > 0 ? (
+                    <TransitionGroup>
+                    {submittedWords}
+                    </TransitionGroup>
+                ) : (
+                    <NothingHereYet>
+                        <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
+                            Nothing here yet. <br/>Why don't you be the first?
+                        </NavLink>
+                    </NothingHereYet>
+                )}
+                </>
         )
     }
 }

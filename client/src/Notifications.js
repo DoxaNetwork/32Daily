@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
-import { CSSTransitionGroup } from 'react-transition-group'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 
 const NotificationsContainer = styled.div`
@@ -16,15 +16,21 @@ const NotificationsContainer = styled.div`
 
 class _Notifications extends Component {
     render() {
-        const notifications = this.props.notifications.reverse().map(m => <div key={m.timeStamp}>{m.message}</div>)
+        const notifications = this.props.notifications.reverse().map((m,i) => (
+            <CSSTransition
+                key={i} 
+                classNames="opacity"
+                appear
+                timeout={{ enter: 300, exit: 300 }}>
+                <div key={m.timeStamp}>{m.message}</div>
+            </CSSTransition>
+            )
+        )
         return (
             <NotificationsContainer>
-                <CSSTransitionGroup
-                    transitionName="opacity"
-                    transitionEnterTimeout={500}
-                    transitionLeaveTimeout={500}>
+                <TransitionGroup>
                         {notifications}
-                </CSSTransitionGroup>
+                    </TransitionGroup>
             </NotificationsContainer>
         )
     }

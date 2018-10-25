@@ -13,6 +13,7 @@ import { Notifications } from './Notifications.js'
 import { Footer } from './Footer.js'
 import './ThirtytwoDaily.css'
 import { ContentForm, ContentForm2, ContentForm3  } from './Create.js'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 
 
 import {  loadAccount } from './actions'
@@ -39,6 +40,7 @@ class _ThirtytwoDaily extends Component {
             <div style={this.props.style}>
                 <Header/>
                 <FreqSelector/>
+                
                 <Switch>
                     <Route
                         path={'/one'}
@@ -58,6 +60,7 @@ class _ThirtytwoDaily extends Component {
                         component={User}
                     />
                 </Switch>
+            
                 <Footer/>
                 <Notifications/>
             </div>

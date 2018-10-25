@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { CSSTransitionGroup } from 'react-transition-group'
+import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
 
@@ -24,29 +24,31 @@ class _PublishedWords extends Component {
     }
 
     render() {
-        const publishedWords = this.props.publishedWords.map((word,index) =>
-            <ContentCard 
-                fontsize={20}
-                key={word.poster + word.date + word.content} 
-                index={word.index} 
-                content={word.content} 
-                poster={word.poster}
-                user={this.props.users[word.poster]}
-                backing={word.votes}
-                date={word.date}
-                onClick={false} />
+        const publishedWords = this.props.publishedWords.map((obj,index) =>
+            <CSSTransition
+                key={obj.index} 
+                classNames="opacity"
+                appear
+                timeout={{ enter: 300, exit: 300 }}>
+                <ContentCard 
+                    fontsize={20}
+                    index={obj.index} 
+                    content={obj.content} 
+                    poster={obj.poster}
+                    user={this.props.users[obj.poster]}
+                    backing={obj.votes}
+                    date={obj.date}
+                    onClick={false} />
+                </CSSTransition>
         );
 
         const showAllHistoryLink = this.props.allPreLoaded ? '' : <SecondaryActionLink onClick={this.props.loadAllHistory}>See full history</SecondaryActionLink>;
 
         return (
             <div>
-                <CSSTransitionGroup
-                    transitionName="opacity"
-                    transitionEnterTimeout={5000}
-                    transitionLeaveTimeout={300}>
+                <TransitionGroup>
                     {publishedWords}
-                </CSSTransitionGroup>
+                </TransitionGroup>
                 {showAllHistoryLink}
             </div>            
         )

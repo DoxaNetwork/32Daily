@@ -38,24 +38,22 @@ body {
   transition: all 300ms ease-out;
 }
 
-.timeBar-appear {
-    width:0 !important;
-}
-
-.opacity-enter {
+.opacity-enter,
+.opacity-appear {
   opacity: 0.01;
 }
 
-.opacity-enter.opacity-enter-active {
+.opacity-enter.opacity-enter-active,
+.opacity-appear.opacity-appear-active {
   opacity: 1;
   transition: opacity 300ms ease-in;
 }
 
-.opacity-leave {
+.opacity-exit {
   opacity: 1;
 }
 
-.opacity-leave.opacity-leave-active {
+.opacity-exit.opacity-exit-active {
   opacity: 0.01;
   transition: opacity 300ms ease-in;
 }

@@ -3,7 +3,6 @@ import { NavLink, Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import styled from 'styled-components';
 import Media from 'react-media';
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-
 import { Button, Back } from './styledComponents'
 
 
