@@ -52,7 +52,8 @@ contract DoxaHub is PostChainAbstract, Ownable {
         period = _period;
         publishMint = period * 60 * 10**18;
         publishDevMint = publishMint / 5;
-        nextPublishTime = topOfTheHour(now);
+        // nextPublishTime = topOfTheHour(now);
+        nextPublishTime = now;
     }
 
     function setDevelopmentFund(address _newDevelopmentFund)
@@ -75,12 +76,13 @@ contract DoxaHub is PostChainAbstract, Ownable {
 
     function getSubmittedItem(uint _index, uint _chainIndex) 
     public view 
-    returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint timeIn_)
+    returns (uint postChainIndex_, address poster_, bytes32 ipfsHash_, uint votesReceived_, uint publishedTime_, address[4] approvedChains_)
     {
         PostChainAbstract chain = chains[_chainIndex].chainContract;
-        (address poster, bytes32 ipfsHash, uint publishedTime) = chain.getPost(_index);
+        uint approvedCount;
+        (poster_, ipfsHash_, publishedTime_, approvedChains_, approvedCount) = chain.getPost(_index);
         uint votesReceived = votes.incomingVotes(_index, chain);
-        return (_index, poster, ipfsHash, votesReceived, publishedTime);
+        return (_index, poster_, ipfsHash_, votesReceived, publishedTime_, approvedChains_);
     }
 
     function getPublishedItem(uint _publishedIndex) 
@@ -90,9 +92,11 @@ contract DoxaHub is PostChainAbstract, Ownable {
         uint lowerChainIndex;
         uint postedTime;
         address chainAddress;
+        address[4] memory approvedChains_;
+        uint approvedCount;
         (chainAddress, lowerChainIndex, timeOut_) = publishedHistory.getPost(_publishedIndex);
         PostChainAbstract chain = PostChainAbstract(chainAddress);
-        (poster_, ipfsHash_, postedTime) = chain.getPost(lowerChainIndex);
+        (poster_, ipfsHash_, postedTime, approvedChains_, approvedCount) = chain.getPost(lowerChainIndex);
         votesReceived_ = votes.incomingVotes(lowerChainIndex, chainAddress);
         return (_publishedIndex, poster_, ipfsHash_, votesReceived_, timeOut_);
     }
@@ -126,7 +130,7 @@ contract DoxaHub is PostChainAbstract, Ownable {
     public
     {
         PostChainAbstract chain = chains[_chainIndex].chainContract;
-        (address poster, bytes32 ipfsHash, uint timeStamp) = chain.getPost(indexToPublish); // this needs to work for both the postChain and the lowerFreq
+        (address poster, bytes32 ipfsHash, uint timeStamp, address[4] memory approvedChains_, uint approvedCount) = chain.getPost(indexToPublish);
 
         uint publishedIndex = publishedHistory.publishPost(chain, indexToPublish);
 
@@ -190,11 +194,14 @@ contract DoxaHub is PostChainAbstract, Ownable {
 
     function getPost(uint _publishedIndex)
     public view
-    returns (address poster_, bytes32 ipfsHash_, uint timeStamp_)
+    returns (address poster_, bytes32 ipfsHash_, uint timeStamp_, address[4] approvedLowerChains_, uint approvedChainsCount_)
     {
         (address chainAddress, uint lowerPublishedIndex, uint timeOut) = publishedHistory.getPost(_publishedIndex);
         PostChainAbstract postChain = PostChainAbstract(chainAddress); // this could be a branch or a leaf
-        return postChain.getPost(lowerPublishedIndex);
+        (poster_, ipfsHash_, timeStamp_, approvedLowerChains_, approvedChainsCount_) = postChain.getPost(lowerPublishedIndex);
+        approvedLowerChains_[approvedChainsCount_] = this;
+        approvedChainsCount_ += 1;
+        return (poster_, ipfsHash_, timeStamp_, approvedLowerChains_, approvedChainsCount_);
     }
 
     function length()

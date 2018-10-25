@@ -4,7 +4,7 @@ contract PostChainAbstract {
 
     function getPost(uint _index) 
     public view
-    returns (address poster, bytes32 ipfsHash, uint timeStamp);
+    returns (address poster, bytes32 ipfsHash, uint timeStamp, address[4] approvedChains, uint approvedChainsCount);
 
     function length() 
     public view 

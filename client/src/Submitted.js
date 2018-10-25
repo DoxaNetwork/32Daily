@@ -36,9 +36,9 @@ class _SubmittedWords extends Component {
                     content={obj.content} 
                     poster={obj.poster}
                     user={this.props.users[obj.poster]}
+                    approvedChain={this.props.users[obj.approvedChains[0]]}
                     backing={obj.votes} 
                     onClick={this.props.onClick}
-                    side={obj.side}
                     chain={obj.chain} />
             )
         ) : (

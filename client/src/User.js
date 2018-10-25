@@ -110,6 +110,10 @@ const ButtonContainer = styled.div`
     text-align:center;
 `
 
+const numberWithCommas = (x) => {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
 export class _User extends Component {
     state = {
         registered: false,
@@ -219,7 +223,8 @@ export class _User extends Component {
                         </div>
                         <div>
                             <Bold>Acme</Bold>
-                            <div>{user.tokenBalance}</div>
+
+                            <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div>
                         </div>
                     </ChainMetadata>
                 </UserContainer>

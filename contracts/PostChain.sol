@@ -31,9 +31,11 @@ contract PostChain is PostChainAbstract, Spoke {
 
     function getPost(uint _index) 
     public view
-    returns (address poster, bytes32 ipfsHash, uint timeStamp)
+    returns (address poster, bytes32 ipfsHash, uint timeStamp, address[4] approvedChains_, uint approvedChainsCount)
     {
-        return (postList[_index].poster, postList[_index].ipfsHash, uint(postList[_index].timeStamp));
+        address[4] memory approvedChains; 
+        approvedChainsCount = 0;
+        return (postList[_index].poster, postList[_index].ipfsHash, uint(postList[_index].timeStamp), approvedChains, approvedChainsCount);
     }
 
     function length() 

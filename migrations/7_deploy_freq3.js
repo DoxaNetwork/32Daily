@@ -1,6 +1,8 @@
 const FreqFactory = artifacts.require("./FreqFactory.sol");
 const DoxaHub = artifacts.require("./DoxaHub.sol");
 const DoxaToken = artifacts.require("./DoxaToken.sol");
+const MemberRegistry = artifacts.require("./MemberRegistry.sol");
+
 const helpers = require('../src/helpers')
 
 let freq2address, freq3address;
@@ -22,6 +24,12 @@ module.exports = function(deployer) {
   })
   .then(function(freq3) {
     freq3.addChain(freq2address);
+  })
+  .then(function(){
+    return MemberRegistry.deployed()
+  })
+  .then(function(registry){
+    registry.privilegedCreate(freq3address, 'weekly', 'QmboVyQ5q8oMDY5sC6cfJNmE5cMAhwM1oxSEkExxPCubok')
   })
   .then(function() {
     return DoxaToken.deployed();

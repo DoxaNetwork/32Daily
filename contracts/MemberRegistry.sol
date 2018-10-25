@@ -7,8 +7,9 @@ contract MemberRegistry is Ownable {
 
     struct Member {
         address owner;
-        bytes16 name; // up to 16 characters, guaranteed unique
+        bytes12 name; // up to 12 characters, guaranteed unique
         bytes32 profileIPFS; // this will point to image, blurb, profile, etc
+        // this is not efficiently packed yet
         bool exiled;
     }
 
@@ -16,30 +17,43 @@ contract MemberRegistry is Ownable {
     mapping (bytes32 => address) public usernameMap;
     mapping (address => address) public proxyMap;
 
-    function create(bytes16 _name, bytes32 _profileIPFS) 
+
+    function privilegedCreate(address _owner, bytes12 _name, bytes32 _profileIPFS)
+    public onlyOwner
+    {
+        createInternal(_owner, _name, _profileIPFS);
+    }
+
+    function create(bytes12 _name, bytes32 _profileIPFS)
     public
+    {
+        createInternal(msg.sender, _name, _profileIPFS);
+    }
+
+    function createInternal(address _owner, bytes12 _name, bytes32 _profileIPFS) 
+    internal
     {
         // make sure this name isn't already taken
         require (usernameMap[_name] == 0); 
         
         Member memory newMember = Member(
         {
-            owner: msg.sender,
+            owner: _owner,
             name: _name,
             profileIPFS: _profileIPFS,
             exiled: false
         });
 
-        usernameMap[_name] = msg.sender;
-        addressMap[msg.sender] = newMember;
+        usernameMap[_name] = _owner;
+        addressMap[_owner] = newMember;
     }
 
-    function setProxy(address _newOwner) 
-    public 
-    {
-        require(addressMap[msg.sender].owner > 0);
-        proxyMap[_newOwner] = msg.sender;
-    }
+    // function setProxy(address _newOwner) 
+    // public 
+    // {
+    //     require(addressMap[msg.sender].owner > 0);
+    //     proxyMap[_newOwner] = msg.sender;
+    // }
 
     function setProfile(bytes32 _profileIPFS)
     public 

@@ -47,7 +47,7 @@ function getEventsByType(events, type) {
 
 function* mapPost(post) {
     const content = yield contentFromIPFS32(post.ipfsHash);
-    return {'poster': post.owner, content, votes: 0, chain: 0, index: post.index.toNumber()}
+    return {'poster': post.owner, content, votes: 0, chain: 0, index: post.index.toNumber(), approvedChains:[]}
 }
 
 function* initAccount(action) {
@@ -95,9 +95,10 @@ async function getSubmissions(_contract) {
     let results = await Promise.all(functions)
 
     let posts = []
-    for (const [index, poster, ipfsHash32, votes, publishedTime] of results) {
+    for (const [index, poster, ipfsHash32, votes, publishedTime, approvedChains] of results) {
         const content = await contentFromIPFS32(ipfsHash32);
-        posts.push({chain: 0, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber()})
+        const filteredChains = approvedChains.filter(c => c !== '0x0000000000000000000000000000000000000000')
+        posts.push({chain: 0, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber(), approvedChains: filteredChains})
     }
     return posts
 }
@@ -109,9 +110,10 @@ async function getSideChainSubmissions(_contract) {
     let results = await Promise.all(functions)
 
     let posts = []
-    for (const [index, poster, ipfsHash32, votes, publishedTime] of results) {
+    for (const [index, poster, ipfsHash32, votes, publishedTime, approvedChains] of results) {
         const content = await contentFromIPFS32(ipfsHash32);
-        posts.push({chain: 1, side:true, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber()})
+        const filteredChains = approvedChains.filter(c => c !== '0x0000000000000000000000000000000000000000')
+        posts.push({chain: 1, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber(), approvedChains: filteredChains})
     }
     return posts
 }
@@ -137,7 +139,10 @@ function* loadUsersIfNeeded(action) {
     const accountsToLoad = {}
 
     action.words.map(word => {
-        accountsToLoad[word.poster] = 1
+        accountsToLoad[word.poster] = 1;
+        word.approvedChains.map(chain => {
+            accountsToLoad[chain] = 1;
+        })
     })
 
     for (const address in accountsToLoad) {
@@ -160,7 +165,7 @@ async function loadHistory(_contract, start, end) {
     for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
         const date = new Date(timeStamp * 1000);
         const content = await contentFromIPFS32(ipfsHash32);
-        history.push({content, poster, date, votes:votes.toNumber()})
+        history.push({content, poster, date, votes:votes.toNumber(), approvedChains:[]})
     }
     return history;
 }
@@ -230,7 +235,7 @@ function* loadUser(action) {
 function* loadUserBalance(action) {
     const tokenInstance = yield getContract(DoxaToken);
     const tokenBalanceBN = yield tokenInstance.balanceOf(action.address);
-    const tokenBalance = tokenBalanceBN.toNumber();
+    const tokenBalance = tokenBalanceBN.toNumber() / 10**18;
 
     yield put({type: "USER_BALANCE_UPDATE", address: action.address, tokenBalance})
 }

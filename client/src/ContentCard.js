@@ -12,7 +12,6 @@ const ContentContainer = styled.div`
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
     /*box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-    border: ${props => props.side ? "2px solid red" : "none"};
 
     &:hover {
         background-color:#f5f8fa;
@@ -25,9 +24,12 @@ const ContentHeader = styled.div`
 `
 const ContentBody = styled.div`
     padding: 15px 20px 30px;
-    font-family: Open sans;
-    font-size: ${props => props.fontsize ? props.fontsize : "14"}px;
     word-wrap: break-word;
+
+    span {
+        font-family: Open sans;
+        font-size: ${props => props.fontsize ? props.fontsize : "14"}px;
+    }
 
     a {
         text-decoration: none;
@@ -74,6 +76,11 @@ const Identity = styled.img`
     height:35px;
     border-radius:25px;
     margin-right: 10px;
+`
+
+const ImportFreq = styled.div`
+    color: var(--primary);
+    font-weight: 800;
 `
 
 class Identicon extends Component {
@@ -135,7 +142,7 @@ export class ContentCard extends Component {
 
     render() {
         let {content} = this.props;
-        const {user, index, onClick, date, poster, fontsize, backing, side, chain} = this.props;
+        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain} = this.props;
 
         const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         const regex = new RegExp(expression);
@@ -158,13 +165,16 @@ export class ContentCard extends Component {
         const publishDate = date ? displayPublishDate(date) : '';
         const voteLink = onClick ? <VoteLink onClick={() => onClick(index, chain)}>+ Vote</VoteLink> : <div></div>;
         return (
-            <ContentContainer side={side}>
+            <ContentContainer>
                 <ContentHeader>
                     <LinkToUser to={'/u/' + poster}>
                         <Identicon poster={poster} src={imageUrl}/>
-                        {username}
+                        <div>{username}</div>
                     </LinkToUser>
                     <div>{publishDate}</div>
+                    {approvedChain && 
+                        <ImportFreq><em>from {approvedChain.username}</em></ImportFreq>
+                    }
                 </ContentHeader>
                 <ContentBody fontsize={fontsize}>
                     {linkFound && 
