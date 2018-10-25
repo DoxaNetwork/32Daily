@@ -8,21 +8,14 @@ import { Button, Back } from './styledComponents'
 
 const SubmittedContainer = styled.div`
     padding: 40px 40px;
-    max-width:420px;
-    margin-left:auto;
+    margin:auto;
 
     a {
         justify-content: flex-end;
     }
-
-    @media only screen and (max-width: 649px) {
-        margin:auto;
-        max-width:unset;
-    }
 `
 const SubmittedOuterContainer = styled.div`
-    background-color: #fafafa;
-    width: 42%;
+    width: 70%;
 
     @media only screen and (max-width: 649px) {
         width:100%;
@@ -37,18 +30,10 @@ const Title = styled.div`
 `
 const PublishedContainer = styled.div`
     padding: 40px 40px;
-    max-width:580px;
-    margin-right:auto;
-
-    @media only screen and (max-width: 649px) {
-        margin:auto;
-        max-width:unset;
-    }
+    margin:auto;
 `
 const PublishedOuterContainer = styled.div`
-    width:58%;
-    background-color:var(--white);
-    background-color: #fafafa;
+    width:70%;
 
     @media only screen and (max-width: 649px) {
         width:100%;
@@ -58,6 +43,7 @@ const FreqContainer = styled.div`
     display: flex;
     justify-content: center;
     min-height:100vh;
+    background-color: #fafafa;
 `
 
 const TimerAndCreate = styled.div`
@@ -151,7 +137,7 @@ class SubmissionsAndPublished extends Component {
 class _Freq extends Component {
     render() {
         return (
-                <Media query="(max-width: 649px)">
+                <Media query="(max-width: 1400px)">
                     {matches =>
                         matches ? (
                             <Switch>
