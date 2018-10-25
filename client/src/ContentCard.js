@@ -2,7 +2,10 @@ import React, { Component } from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import identicon from 'identicon.js'
+import { Button, Back } from './styledComponents'
+import {  FaChevronUp   as Icon } from "react-icons/fa";
 
+// FaLevelUpAlt
 
 const ContentContainer = styled.div`
     background-color:var(--white);
@@ -10,7 +13,6 @@ const ContentContainer = styled.div`
     box-shadow: 0 0 10px rgba(0,0,0,.14);
     margin-top: 30px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
-    /*box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 
     &:hover {
@@ -41,9 +43,8 @@ const ContentBody = styled.div`
 `
 const ContentFooter = styled.div`
     display:flex;
-    justify-content: space-between;
-    border-top: 1px solid var(--lightgray);
-    padding: 10px 20px;
+    /*justify-content: space-between;*/
+    padding: 10px 20px 15px;
 `
 const LinkToUser = styled(Link)`
     color: black;
@@ -57,17 +58,16 @@ const LinkToUser = styled(Link)`
         color: var(--bright);
     }
 `
-const VoteLink = styled.div`
-    font-weight: 700;
-    color:var(--primary);
-    transition: color 200ms ease-in-out;
-    &:hover {
-        cursor: pointer;
-        color: var(--bright);
-    }
+const VoteLink = styled(Button)`
+    width: unset;
+    height: unset;
+    padding: 5px 10px;
+    margin: 0 10px 0 0;
 `
 const VoteCount = styled.div`
-    font-weight:700;
+    font-weight:800;
+    font-size:1.3em;
+    line-height:32px;
     color: var(--primary);
 `
 
@@ -163,7 +163,7 @@ export class ContentCard extends Component {
         const imageUrl = user ? user.picture : null;
 
         const publishDate = date ? displayPublishDate(date) : '';
-        const voteLink = onClick ? <VoteLink onClick={() => onClick(index, chain)}>+ Vote</VoteLink> : <div></div>;
+        const voteLink = onClick ? <VoteLink onClick={() => onClick(index, chain)}><Icon/></VoteLink> : <div></div>;
         return (
             <ContentContainer>
                 <ContentHeader>
@@ -184,10 +184,12 @@ export class ContentCard extends Component {
                         <span>{content}</span>
                     }
                 </ContentBody>
-                <ContentFooter>
-                    {voteLink}
-                    <VoteCount>{backing + 1}</VoteCount>
-                </ContentFooter>
+                { onClick &&
+                    <ContentFooter>
+                        {voteLink}
+                        <VoteCount>{(backing + 1) * 10}</VoteCount>
+                    </ContentFooter>
+                }
             </ContentContainer>
         )
     }

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { NavLink, Switch, Route, Redirect, withRouter } from 'react-router-dom'
 import styled from 'styled-components';
 import Media from 'react-media';
-import { FaAngleLeft } from "react-icons/fa";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 import { Button, Back } from './styledComponents'
 
@@ -11,6 +11,10 @@ const SubmittedContainer = styled.div`
     padding: 40px 40px;
     max-width:420px;
     margin-left:auto;
+
+    a {
+        justify-content: flex-end;
+    }
 
     @media only screen and (max-width: 649px) {
         margin:auto;
@@ -26,9 +30,11 @@ const SubmittedOuterContainer = styled.div`
     }
 `
 const Title = styled.div`
-    border-bottom: 1px solid var(--secondary);
+    border-bottom: 2px solid var(--secondary);
     padding-bottom: 10px;
     font-size: 2em;
+    font-weight: 800;
+    color: var(--secondary);
 `
 const PublishedContainer = styled.div`
     padding: 40px 40px;
@@ -43,6 +49,7 @@ const PublishedContainer = styled.div`
 const PublishedOuterContainer = styled.div`
     width:58%;
     background-color:var(--white);
+    background-color: #fafafa;
 
     @media only screen and (max-width: 649px) {
         width:100%;
@@ -74,7 +81,7 @@ class Published extends Component {
             <FreqContainer>
                 <PublishedOuterContainer>
                     <PublishedContainer>
-                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaAngleLeft/> New</NavLink></Back>
+                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaChevronLeft/> New</NavLink></Back>
                         <Title>
                             Top
                         </Title>
@@ -92,7 +99,7 @@ class Submissions extends Component {
             <FreqContainer>
                 <SubmittedOuterContainer>
                     <SubmittedContainer>
-                        <Back><NavLink to={this.props.match.url + "/published"}><FaAngleLeft/> Top</NavLink></Back>
+                        <Back><NavLink to={this.props.match.url + "/published"}>Top <FaChevronRight/> </NavLink></Back>
                         <Title>
                             New
                         </Title>

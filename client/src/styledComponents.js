@@ -11,16 +11,19 @@ export const Button = styled.button`
     cursor: pointer;
     font-size: 1em;
     border-radius: 5px;
+    font-weight:800;
 
     &:hover {
         background-color:var(--bright);
         border-color:var(--bright);
+        transition: none;
     }
 `
 
 export const Back = styled.div`
     margin-bottom:20px;
     font-size:1.2em;
+    font-weight:800;
     a {
         color: var(--primary);
         text-decoration: none;

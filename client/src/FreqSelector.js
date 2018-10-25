@@ -11,6 +11,7 @@ const FreqSelectorContainer = styled.div`
     div {
         text-align:center;
         padding: 10px 0;
+        transition: all 200ms ease-in-out;
     }
     .navLink-active div {
         background-color: var(--white) !important;
@@ -19,6 +20,8 @@ const FreqSelectorContainer = styled.div`
     div:hover {
         background-color: var(--white) !important;
         color:var(--secondary) !important;
+        transition: none;
+
     }
     a {
         text-decoration: none;

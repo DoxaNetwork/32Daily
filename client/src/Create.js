@@ -5,7 +5,7 @@ import styled from 'styled-components';
 
 import { submitContent } from './actions'
 import { Button, Back } from './styledComponents'
-import { FaAngleLeft } from "react-icons/fa";
+import { FaChevronLeft } from "react-icons/fa";
 
 
 const CreateContainer = styled.div`
@@ -81,7 +81,7 @@ class Create extends Component {
         return (
             <CreateContainer>
                 <Back>
-                    <NavLink to={"/" + this.props.match.path.split("/")[1] + "/submissions"}><FaAngleLeft/> Back</NavLink>
+                    <NavLink to={"/" + this.props.match.path.split("/")[1] + "/submissions"}><FaChevronLeft/> Back</NavLink>
                 </Back>
                 <CreateHeader>
                     Create
