@@ -91,7 +91,7 @@ class Submissions extends Component {
                         <TimerAndCreate>
                             {this.props.timer}
                             <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
-                                <Button>Create Post</Button>
+                                <Button>New post</Button>
                             </NavLink>
                         </TimerAndCreate>
                         {this.props.submittedWords}
@@ -114,7 +114,7 @@ class SubmissionsAndPublished extends Component {
                     <TimerAndCreate>
                         {this.props.timer}
                         <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
-                            <Button>Create Post</Button>
+                            <Button>New post</Button>
                         </NavLink>
                     </TimerAndCreate>
                     {this.props.submittedWords}
