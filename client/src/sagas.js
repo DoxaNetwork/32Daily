@@ -15,16 +15,18 @@ import Factories from './Factories/freqs.json'
 const contractsLoaded = {}
 
 async function getContract(contractJSON, address) {
-    const contractName = contractJSON.contractName + "-" + address;
+    let contractName;
+    contractName = contractJSON.contractName + "-" + address;
     if (!contractsLoaded[contractName]) {
-        const {web3} = await getWeb3
+        const {web3, networkId, infura} = await getWeb3
         const contractABI = contract(contractJSON)
         contractABI.setProvider(web3.currentProvider)
-        if (address) {
-            contractsLoaded[contractName] = await contractABI.at(address);
-        } else {
-            contractsLoaded[contractName] = await contractABI.deployed();
-        }
+       if (address) {
+           contractsLoaded[contractName] = await contractABI.at(address);
+       } else {
+           contractsLoaded[contractName] = await contractABI.deployed();
+       }
+        
     }
     return contractsLoaded[contractName];
 }
@@ -53,11 +55,33 @@ function* mapPost(post) {
 function* initAccount(action) {
     const currentAccount = yield getCurrentAccount();
     yield put({type: "INIT_ACCOUNT_SUCCESS", currentAccount})
+    // yield getMetaMaskWarning();
+}
+
+function* getMetaMaskWarning() {
+    // 1 - main
+    // 3 - ropsten
+    // 42 - kovan
+    // 4 - rinkeby
+    const {web3, networkId, browserSupported} = yield getWeb3
+    if (!browserSupported) {
+        yield put({type: "NEW_MODAL", 
+            message: "get web3 bro",
+            header: "This website requires a web3-compatible browser"})
+    } else if (networkId !== 3) {
+        yield put({type: "NEW_MODAL", 
+            message: "switch your network ya douche",
+            header: "Hey there, you've got to switch to the Ropsten test network"})
+    }
 }
 
 function* submitPost(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
+    if (!currentAccount) {
+        yield getMetaMaskWarning();
+        return;
+    }
     const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
 
     const ipfsPathShort = yield postToIPFS(action.text);
@@ -75,8 +99,9 @@ function* submitPost(action) {
 
 }
 
-function* newNotification() {
-    yield put({type: "NEW_NOTIFICATION", message: "submitted to blockchain", timeStamp: new Date().getTime()})
+function* newNotification(_message) {
+    const message = _message || 'submitted to blockchain';
+    yield put({type: "NEW_NOTIFICATION", message, timeStamp: new Date().getTime()})
     yield delay(10000)
     yield put({type: "CLEAR_NOTIFICATION"})
 }
@@ -200,9 +225,13 @@ function* loadHistoryRemainingPages(action) {
 }
 
 function* persistVote(action) {
-    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
+    if (!currentAccount) {
+        yield getMetaMaskWarning();
+        return;
+    }
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
 
     yield contract.backPost(action.index, action.chain, { from: currentAccount })
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
@@ -241,22 +270,29 @@ function* loadUserBalance(action) {
 }
 
 function* registerUser(action) {
-    const registry = yield getContract(MemberRegistry);
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
+    if (!currentAccount) {
+        yield getMetaMaskWarning();
+        return;
+    }
+    const registry = yield getContract(MemberRegistry);
 
     const {username, profile, imageIPFS} = action;
     const ipfsblob = {profile, image: imageIPFS}
     const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
-
     yield registry.create(username, ipfsPathShort, { from: currentAccount})
     yield newNotification()
 }
 
 function* updateUser(action) {
-    const registry = yield getContract(MemberRegistry);
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
+    if (!currentAccount) {
+        yield getMetaMaskWarning();
+        return;
+    }
+    const registry = yield getContract(MemberRegistry);
 
     const {profile, imageIPFS} = action;
     const ipfsblob = {profile, image: imageIPFS}

@@ -156,7 +156,6 @@ const numberWithCommas = (x) => {
 
 export class _User extends Component {
     state = {
-        registered: false,
         newUsername: '',
         newProfile: '',
         newImageUrl: null,
@@ -189,8 +188,11 @@ export class _User extends Component {
       }
 
     submit() {
-        const {registered, newUsername, newProfile, newImageIPFS} = this.state;
-        const {dispatch} = this.props;
+        const {newUsername, newProfile, newImageIPFS} = this.state;
+        const {dispatch, users, match} = this.props;
+
+        const user = users[match.params.id] || {};
+        const registered = Boolean(user.username);
 
         if (registered) {
             dispatch({type: "UPDATE_USER", profile: newProfile, imageIPFS: newImageIPFS})
@@ -223,6 +225,7 @@ export class _User extends Component {
         }
         const user = users[match.params.id] || {};
         const userLoggedIn = match.params.id == account;
+        const registered = Boolean(user.username);
 
         const editableMetadata = userLoggedIn && this.state.edit ? (
             <>
@@ -272,9 +275,14 @@ export class _User extends Component {
             <EditableMetadata>
                 <Bold>{user.username || "unregistered"}</Bold>
                 <div>{user.profile || "nothing here yet"}</div>
-                {userLoggedIn && !this.state.edit &&
+                {userLoggedIn && !this.state.edit && registered &&
                     <ButtonContainer>
                         <Button onClick={() => this.setState({edit:true})}>Edit</Button>
+                    </ButtonContainer>
+                }
+                {userLoggedIn && !this.state.edit  && !registered &&
+                    <ButtonContainer>
+                        <Button onClick={() => this.setState({edit:true})}>Register</Button>
                     </ButtonContainer>
                 }
             </EditableMetadata>

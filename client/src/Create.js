@@ -18,7 +18,9 @@ const CreateContainer = styled.div`
     }
 `
 const CreateHeader = styled.div`
-    border-bottom: 1px solid black;
+    border-bottom: 2px solid var(--secondary);
+    font-weight:800;
+    color: var(--secondary);
     font-size: 2em;
 `
 const FormContainer = styled.div`
@@ -37,6 +39,7 @@ const CountedTextForm = styled.form`
         padding: 40px 10px 20px;
     }
     textarea {
+        /*font-family: Open sans;*/
         outline: none;
         padding:20px;
         font-size:1.2em;
@@ -50,7 +53,6 @@ const CountedTextForm = styled.form`
 const CreateFooter = styled.div`
     text-align: center;
     padding: 20px;
-    border-top: 1px solid gray;
 `
 
 class Create extends Component {

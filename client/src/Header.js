@@ -25,8 +25,11 @@ const StyledHeader = styled.div`
 `
 const UserLink = styled(Link)`
     color: white;
+    transition: all 200ms ease-in;
+    margin-left: 20px;
     &:hover {
         color:var(--secondary);
+        transition: none;
     }
 `
 
@@ -37,7 +40,6 @@ const HeaderButton = styled(Button)`
     border: 1px solid white;
     transition: all 200ms ease-in;
     font-size: 0.6em;
-    margin-right: 20px;
 
     &:hover {
         background-color: var(--secondary);
@@ -72,15 +74,19 @@ class _Header extends Component {
                         <NavLink activeClassName="navLink-active" to={`/one/create`}>
                             <HeaderButton>New post</HeaderButton>
                         </NavLink>
-                        <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
-                        </RightSideGroup>
+                        {this.props.account && 
+                            <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
+                        }
+                    </RightSideGroup>
                     </Spacer>
                     <Title>upblocks</Title>
                     <RightSideGroup>
                         <NavLink activeClassName="navLink-active" to={`/one/create`}>
                             <HeaderButton>New post</HeaderButton>
                         </NavLink>
-                        <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
+                        {this.props.account && 
+                            <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
+                        }
                     </RightSideGroup>
                 </StyledHeader>
             </div>

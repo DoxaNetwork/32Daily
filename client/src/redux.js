@@ -78,6 +78,18 @@ const notifications = (state = [], action) => {
     }
 }
 
+const modals = (state = [], action) => {
+    switch (action.type) {
+        case 'NEW_MODAL':
+            const { message, header } = action;
+            return [...state, {message, header}]
+        case 'CLEAR_MODAL':
+            return state.slice(1)
+        default:
+            return state
+    }
+}
+
 const freqReducer = combineReducers({
     history,
     historyLoaded,
@@ -99,7 +111,8 @@ const rootReducer = combineReducers({
     freq3: createFilteredReducer(freqReducer, action => action.freq === 'freq3'),
     account,
     users,
-    notifications
+    notifications,
+    modals
 })
 
 export default rootReducer;

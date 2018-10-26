@@ -10,27 +10,37 @@ let getWeb3 = new Promise(function(resolve, reject) {
     if (typeof web3 !== 'undefined') {
       // Use Mist/MetaMask's provider.
       // web3 = new Web3(web3.currentProvider)
-
-      results = {
-        web3: web3
-      }
-
+      
       console.log('Injected web3 detected.');
 
-      resolve(results)
+      web3.version.getNetwork((e, networkId) => {
+
+        if (networkId == 3 || networkId == 1540586644447) {
+        // if (networkId == 3) {
+          results = { web3, networkId, browserSupported: true }
+          resolve(results)
+        } else {
+          var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/f6NOUQqHkXc64NJgRwvj')
+          web3 = new Web3(provider)
+
+          console.log('Injected web3 detected on wrong network: ' + networkId + ' ...using infura');
+          web3.version.getNetwork((e, networkId) => {
+            results = { web3, networkId, browserSupported: true }
+            resolve(results)
+          })
+        }
+      })
+
     } else {
       // Fallback to infura if no web3 injection.
       var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/f6NOUQqHkXc64NJgRwvj')
-
       web3 = new Web3(provider)
 
-      results = {
-        web3: web3
-      }
-
-      console.log('No web3 instance injected, using Local web3.');
-
-      resolve(results)
+      console.log('No web3 instance injected, using infura');
+      web3.version.getNetwork((e, networkId) => {
+        results = { web3, networkId, browserSupported: false }
+        resolve(results)
+      })
     }
   })
 })

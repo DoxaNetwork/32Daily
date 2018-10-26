@@ -10,6 +10,7 @@ import { PublishedWords1, PublishedWords2, PublishedWords3 } from './Published'
 import { SubmittedWords1, SubmittedWords2, SubmittedWords3 } from './Submitted'
 import { Timer1, Timer2, Timer3 } from './Timer.js'
 import { Notifications } from './Notifications.js'
+import { Modals } from './Modals.js'
 import { Footer } from './Footer.js'
 import './ThirtytwoDaily.css'
 import { ContentForm, ContentForm2, ContentForm3  } from './Create.js'
@@ -63,6 +64,7 @@ class _ThirtytwoDaily extends Component {
             
                 <Footer/>
                 <Notifications/>
+                <Modals/>
             </div>
         )
     }
