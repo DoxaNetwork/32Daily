@@ -43,10 +43,14 @@ const UserContainer = styled.div`
     max-width: 450px;
     margin: 50px auto;
     overflow:hidden;
-    margin-top: 50px;
     border-radius: 8px;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
     font-size: 1.2em;
+
+    @media only screen and (max-width: 649px) {
+        left: 230px;
+        margin: 50px 20px 0;
+    }
 `
 
 const UserOuterContainer = styled.div`
@@ -108,6 +112,42 @@ const IdenticonContainer = styled.div`
 `
 const ButtonContainer = styled.div`
     text-align:center;
+    padding-top: 30px;
+`
+const Clear = styled(Button)`
+    background-color:white;
+    color:var(--primary);
+    border: 1px solid var(--primary);
+    margin-left: 20px;
+
+    &:hover{
+        color:white;
+        background-color:var(--secondary);
+        border: 1px solid var(--secondary);
+    }
+`
+
+const TokenContainer = styled.div`
+    position: relative;
+    color: white;
+    top: -50px;
+    left: 300px;
+    display: flex;
+
+    @media only screen and (max-width: 649px) {
+        left: 230px;
+    }
+`
+
+const Address = styled.div`
+    font-size:0.8em;
+    @media only screen and (max-width: 649px) {
+        font-size: 0.7em;
+    }
+`
+const AddressLabel = styled.div`
+    font-weight:800;
+    text-align:center;
 `
 
 const numberWithCommas = (x) => {
@@ -121,6 +161,7 @@ export class _User extends Component {
         newProfile: '',
         newImageUrl: null,
         newImageIPFS: null,
+        edit: false
     }
 
     componentDidMount() {
@@ -158,6 +199,16 @@ export class _User extends Component {
         }
     }
 
+    clear() {
+        this.setState({ edit: false,
+                        newUsername: '',
+                        newProfile: '',
+                        newImageUrl: null,
+                        newImageIPFS: null,
+                        edit: false  });
+    }
+
+
     handleContentChange(e) {
         const id = e.target.id;
         const value = e.target.value;
@@ -171,24 +222,32 @@ export class _User extends Component {
             return ("loading")
         }
         const user = users[match.params.id] || {};
+        const userLoggedIn = match.params.id == account;
 
-        const editableMetadata = match.params.id === account ? (
+        const editableMetadata = userLoggedIn && this.state.edit ? (
             <>
             <IdenticonContainer>
                 <label htmlFor="imageUpload">
                     <Identicon poster={match.params.id} imageUrl={this.state.newImageUrl || user.picture}/>
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
+                <TokenContainer>
+                    <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div><Bold> Ups</Bold>
+                </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
-                <div>
-                    <input 
-                        value={this.state.newUsername} 
-                        placeholder="what should we call you?" 
-                        type="text" 
-                        id="newUsername"
-                        onChange={(e) => this.handleContentChange(e)}></input>
-                </div>
+                {user.username ? (
+                    <Bold>{user.username}</Bold>
+                    ) : (
+                    <div>
+                        <input 
+                            value={this.state.newUsername} 
+                            placeholder="what should we call you?" 
+                            type="text" 
+                            id="newUsername"
+                            onChange={(e) => this.handleContentChange(e)}></input>
+                    </div>
+                    )}
                 <div>
                     <textarea 
                         value={this.state.newProfile} 
@@ -198,6 +257,7 @@ export class _User extends Component {
                 </div>
                 <ButtonContainer>
                     <Button onClick={() => this.submit()}>Save</Button>
+                    <Clear onClick={() => this.clear()}>Clear</Clear>
                 </ButtonContainer>
             </EditableMetadata>
             </>
@@ -205,10 +265,18 @@ export class _User extends Component {
             <>
             <IdenticonContainer>
                     <Identicon poster={match.params.id} imageUrl={user.picture}/>
+                    <TokenContainer>
+                    <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div><Bold> Ups</Bold>
+                </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
-                <Bold>{user.username || "nothing here yet"}</Bold>
+                <Bold>{user.username || "unregistered"}</Bold>
                 <div>{user.profile || "nothing here yet"}</div>
+                {userLoggedIn && !this.state.edit &&
+                    <ButtonContainer>
+                        <Button onClick={() => this.setState({edit:true})}>Edit</Button>
+                    </ButtonContainer>
+                }
             </EditableMetadata>
             </>
         );
@@ -216,15 +284,11 @@ export class _User extends Component {
             <UserOuterContainer>
                 <UserContainer>
                     {editableMetadata}
+                    
                      <ChainMetadata>
                         <div>
-                            <Bold>User id</Bold>
-                            <div>{match.params.id.substring(0,6)}</div>
-                        </div>
-                        <div>
-                            <Bold>Ups</Bold>
-
-                            <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div>
+                            <AddressLabel>Account address</AddressLabel>
+                            <Address>{match.params.id}</Address>
                         </div>
                     </ChainMetadata>
                 </UserContainer>

@@ -33,8 +33,10 @@ contract MemberRegistry is Ownable {
     function createInternal(address _owner, bytes12 _name, bytes32 _profileIPFS) 
     internal
     {
-        // make sure this name isn't already taken
+        // esnure this name isn't already taken
         require (usernameMap[_name] == 0); 
+        // ensure this address has not been registered yet
+        require (addressMap[_owner].owner == 0x0); 
         
         Member memory newMember = Member(
         {
