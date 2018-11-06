@@ -37,6 +37,7 @@ class _SubmittedWords extends Component {
                 <ContentCard 
                     // key={"" + obj.index + obj.chain} 
                     index={obj.index} 
+                    date={obj.date} 
                     content={obj.content} 
                     poster={obj.poster}
                     user={this.props.users[obj.poster]}

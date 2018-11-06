@@ -55,7 +55,6 @@ function* mapPost(post) {
 function* initAccount(action) {
     const currentAccount = yield getCurrentAccount();
     yield put({type: "INIT_ACCOUNT_SUCCESS", currentAccount})
-    // yield getMetaMaskWarning();
 }
 
 function* getMetaMaskWarning() {
@@ -106,54 +105,41 @@ function* newNotification(_message) {
     yield put({type: "CLEAR_NOTIFICATION"})
 }
 
-
-
-
-// ===========================================================================================================================================
-// ============================== Functions shared between all freqs =========================================================================
-// ===========================================================================================================================================
-
-async function getSubmissions(_contract) {
-    const [lower, upper] = await _contract.range(0)
+async function getSubmissions(_contract, chain) {
+    const [lower, upper] = await _contract.range(chain)
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
-    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 0))
+    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, chain))
     let results = await Promise.all(functions)
 
     let posts = []
     for (const [index, poster, ipfsHash32, votes, publishedTime, approvedChains] of results) {
         const content = await contentFromIPFS32(ipfsHash32);
+        const date = new Date(publishedTime * 1000);
         const filteredChains = approvedChains.filter(c => c !== '0x0000000000000000000000000000000000000000')
-        posts.push({chain: 0, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber(), approvedChains: filteredChains})
-    }
-    return posts
-}
-
-async function getSideChainSubmissions(_contract) {
-    const [lower, upper] = await _contract.range(1)
-    const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
-    const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, 1))
-    let results = await Promise.all(functions)
-
-    let posts = []
-    for (const [index, poster, ipfsHash32, votes, publishedTime, approvedChains] of results) {
-        const content = await contentFromIPFS32(ipfsHash32);
-        const filteredChains = approvedChains.filter(c => c !== '0x0000000000000000000000000000000000000000')
-        posts.push({chain: 1, poster, content, 'votes': votes.toNumber(), 'index': index.toNumber(), approvedChains: filteredChains})
+        posts.push({
+            chain,
+            poster, 
+            content, 
+            date,
+            votes: votes.toNumber(), 
+            index: index.toNumber(), 
+            approvedChains: filteredChains
+        })
     }
     return posts
 }
 
 function* loadSubmissions(action) {
     const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
-    let submittedWords = yield getSubmissions(contract);
+    let submittedWords = yield getSubmissions(contract, 0);
 
     let extraWords = []
     if (['freq2', 'freq3'].includes(action.freq)) {
-        extraWords = yield getSideChainSubmissions(contract)
+        extraWords = yield getSubmissions(contract, 1)
     }
 
     submittedWords = [...submittedWords, ...extraWords];
-    submittedWords.sort((a,b) => {return b.votes - a.votes})
+    submittedWords.sort((a,b) => {return b.date - a.date})
 
     yield put({type: "LOAD_SUBMISSIONS_API_SUCCESS", freq: action.freq, submittedWords: submittedWords})
 
