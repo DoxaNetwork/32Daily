@@ -151,7 +151,7 @@ const AddressLabel = styled.div`
 `
 
 const numberWithCommas = (x) => {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return x ? x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
 }
 
 export class _User extends Component {
@@ -235,7 +235,7 @@ export class _User extends Component {
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
                 <TokenContainer>
-                    <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div><Bold> Ups</Bold>
+                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;credits</Bold>
                 </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
@@ -269,7 +269,7 @@ export class _User extends Component {
             <IdenticonContainer>
                     <Identicon poster={match.params.id} imageUrl={user.picture}/>
                     <TokenContainer>
-                    <div>{user.tokenBalance && numberWithCommas(user.tokenBalance)}</div><Bold> Ups</Bold>
+                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;credits</Bold>
                 </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
