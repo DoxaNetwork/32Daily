@@ -159,7 +159,7 @@ export class ContentCard extends Component {
             }
         }  
 
-        const username = user && user.username !== ''? user.username : poster.slice(0,6)
+        const username = user && user.username !== '' ? '@' + user.username : poster.slice(0,6)
         const imageUrl = user ? user.picture : null;
 
         const publishDate = date ? displayPublishDate(date) : '';
