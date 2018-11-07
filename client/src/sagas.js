@@ -9,7 +9,7 @@ import getWeb3 from './utils/getWeb3'
 import DoxaHub from './contracts/DoxaHub.json'
 import DoxaToken from './contracts/DoxaToken.json'
 import MemberRegistry from './contracts/MemberRegistry.json'
-import Factories from './Factories/freqs.json'
+import Factories from './factories/freqs.json'
 
 
 const contractsLoaded = {}
