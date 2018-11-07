@@ -27,7 +27,7 @@ const submissions = (state = [], action) => {
         case 'LOAD_SUBMISSIONS_API_SUCCESS':
             return action.submittedWords
         case 'CONTENT_POST_SUCCEEDED':
-            return [...state, action.newPost]
+            return [action.newPost, ...state]
         default:
             return state
     }

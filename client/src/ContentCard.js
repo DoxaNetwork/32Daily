@@ -10,9 +10,9 @@ import {  FaChevronUp   as Icon } from "react-icons/fa";
 const ContentContainer = styled.div`
     background-color:var(--white);
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
+    /*box-shadow: 0 0 10px rgba(0,0,0,.14);*/
     margin-top: 30px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
+    /*box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 
     &:hover {
@@ -21,12 +21,17 @@ const ContentContainer = styled.div`
 `
 const ContentHeader = styled.div`
     display:flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: 20px 20px 10px;
+    align-items: center;
 `
 const ContentBody = styled.div`
-    padding: 15px 20px 30px;
+    padding: 15px 50px 30px 90px;
     word-wrap: break-word;
+
+    @media only screen and (max-width: 649px) {
+        padding: 15px 20px 30px 70px;    
+    }
 
     span {
         font-family: Open sans;
@@ -44,7 +49,11 @@ const ContentBody = styled.div`
 const ContentFooter = styled.div`
     display:flex;
     /*justify-content: space-between;*/
-    padding: 10px 20px 15px;
+    font-size: 0.7em;
+    padding: 10px 20px 15px 90px;
+    @media only screen and (max-width: 649px) {
+        padding: 10px 20px 15px 70px;
+    }
 `
 const LinkToUser = styled(Link)`
     color: black;
@@ -62,7 +71,16 @@ const VoteLink = styled(Button)`
     width: unset;
     height: unset;
     padding: 5px 10px;
+    color: var(--primary);
+    background-color:inherit;
     margin: 0 10px 0 0;
+    border:none;
+
+    &:hover{
+        color: white;
+        border: var(--primary);
+        background-color: var(--primary);
+    }
 `
 const VoteCount = styled.div`
     font-weight:800;
@@ -72,15 +90,31 @@ const VoteCount = styled.div`
 `
 
 const Identity = styled.img`
-    width:35px;
-    height:35px;
-    border-radius:25px;
+    width:60px;
+    height:60px;
+    border-radius:50px;
     margin-right: 10px;
+
+    @media only screen and (max-width: 649px) {
+        width:40px;
+        height:40px;
+    }
 `
 
 const ImportFreq = styled.div`
     color: var(--primary);
     font-weight: 800;
+    position: relative;
+
+    span {
+        position: absolute;
+        top: -30px;
+        width: 200px;
+    }
+`
+
+const DateContainer = styled.span`
+    color:#789;
 `
 
 class Identicon extends Component {
@@ -169,12 +203,14 @@ export class ContentCard extends Component {
                 <ContentHeader>
                     <LinkToUser to={'/u/' + poster}>
                         <Identicon poster={poster} src={imageUrl}/>
-                        <div>{username}</div>
                     </LinkToUser>
-                    <div>{publishDate}</div>
                     {approvedChain && 
-                        <ImportFreq><em>from {approvedChain.username}</em></ImportFreq>
+                        <ImportFreq><span>{approvedChain.username} approved</span></ImportFreq>
                     }
+                    <LinkToUser to={'/u/' + poster}>
+                        <span>{username}</span>
+                    </LinkToUser>
+                    <DateContainer>&nbsp;- {publishDate} ago</DateContainer>
                 </ContentHeader>
                 <ContentBody fontsize={fontsize}>
                     {linkFound && 
