@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 
 import { Header } from './Header'
 import { User } from './User'
-import { FreqSelector } from './FreqSelector.js'
 import { Freq } from './Freq.js'
 import { PublishedWords1, PublishedWords2, PublishedWords3 } from './Published'
 import { SubmittedWords1, SubmittedWords2, SubmittedWords3 } from './Submitted'
@@ -40,7 +39,6 @@ class _ThirtytwoDaily extends Component {
         return (
             <div style={this.props.style}>
                 <Header/>
-                <FreqSelector/>
                 
                 <Switch>
                     <Route
