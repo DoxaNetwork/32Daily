@@ -1,24 +1,23 @@
 import React, { Component } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
+import Media from 'react-media';
 
 import { FaUserAstronaut } from "react-icons/fa";
 
 import styled from 'styled-components';
 import { Button } from './styledComponents'
 
-const Title = styled.div`
-    font-family: 'Comfortaa', serif;
-`
+import mainLogo from './public/Temporank_B2_KO.png';
+
+
 
 const StyledHeader = styled.div`
     color: var(--white);
     font-size:24px;
-    padding: 15px 20px 15px;
-    /*background: linear-gradient(to bottom right, var(--primary) , #102898);*/
+    padding: 15px 20px 0 20px;
     background-color: var(--primary);
     margin:auto;
-    /*text-align: center;*/
     align-items:center;
     display: flex;
     justify-content: space-between;
@@ -50,46 +49,101 @@ const HeaderButton = styled(Button)`
 const RightSideGroup = styled.div`
     display: flex;
     align-items: center;
+    padding-bottom: 10px;
 
     a {
         display: flex;
         text-decoration: none;
     }
 `
-const Spacer = styled.div`
-    visibility:hidden;
 
-    @media only screen and (max-width: 649px) {
-        display: none;
+const MainLogo = styled.img`
+    width: 105px;
+    margin: -35px;
+    margin-left: -15px;
+    margin-right:60px;
+`
+
+const Up = styled.span`
+    color:#e0eaf8;
+`
+const Block = styled.span`
+    color:#a8c4ec;
+`
+const Title = styled.div`
+    font-family: 'Comfortaa', serif;
+    position: absolute;
+    left: 80px;
+    top: 10px;
+`
+
+const FreqSelector = styled.div`
+    display: flex;
+    font-size: 0.8em;
+    font-weight: 800;
+    a {
+        text-decoration: none;
+        color: white;
+        padding: 10px 15px;
+        color: #a8c4ec;
+        transition: all 150ms ease-in-out;
     }
+    a:hover {
+        color: white;
+        border-bottom: 3px solid white;
+    }
+
+    .navLink-active {
+        color: white;
+        border-bottom: 3px solid white;
+    }
+`
+
+const MobileFreqSelector = styled(FreqSelector)`
+    background-color: var(--primary);
+    justify-content: space-around;
+    height: 39px;
 `
 
 class _Header extends Component {
     render() {
         return (
-            <div>
-                <StyledHeader>
-                    <Spacer>
-                        <RightSideGroup>
-                        <NavLink activeClassName="navLink-active" to={`/one/create`}>
-                            <HeaderButton>New post</HeaderButton>
-                        </NavLink>
-                        {this.props.account && 
-                            <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
-                        }
-                    </RightSideGroup>
-                    </Spacer>
-                    <Title>upblocks</Title>
-                    <RightSideGroup>
-                        <NavLink activeClassName="navLink-active" to={`/one/create`}>
-                            <HeaderButton>New post</HeaderButton>
-                        </NavLink>
-                        {this.props.account && 
-                            <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
-                        }
-                    </RightSideGroup>
-                </StyledHeader>
-            </div>
+            <Media query="(max-width: 649px)">
+                    {mobile =>
+                    <div>
+                        <StyledHeader>
+                            <div>
+                                <MainLogo  src={mainLogo}/>
+                                <Title>
+                                    <Up>up</Up><Block>block</Block>
+                                </Title>
+                            </div>
+                            { mobile ? '' : (
+                            <FreqSelector>
+                                <NavLink activeClassName="navLink-active" to="/one/"><div>hourly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/ten/"><div>semidaily</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/hundred/"><div>weekly</div></NavLink>
+                            </FreqSelector>
+                            ) }
+                            <RightSideGroup>
+                                <NavLink to='/one/create/'>
+                                    <HeaderButton>New post</HeaderButton>
+                                </NavLink>
+                                {this.props.account && 
+                                    <UserLink to={'/u/' + this.props.account}><FaUserAstronaut/></UserLink>
+                                }
+                            </RightSideGroup>
+                        </StyledHeader>
+                        { mobile ? (
+                            <MobileFreqSelector>
+                                <NavLink activeClassName="navLink-active" to="/one/"><div>hourly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/ten/"><div>semidaily</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/hundred/"><div>weekly</div></NavLink>
+                            </MobileFreqSelector>
+                            ) : ''}
+                    </div>
+                    }
+            </Media>
         )
     }
 }
@@ -98,6 +152,6 @@ const mapStateToProps = state => ({
     account: state.account.account,
 })
 
-export const Header = connect(
+export const Header = withRouter(connect(
     mapStateToProps,
-)(_Header)
+)(_Header))

@@ -33,6 +33,7 @@ async function getContract(contractJSON, address) {
 
 async function getCurrentAccount(){
     let {web3} = await getWeb3;
+    await window.ethereum.enable()
     const account = web3.eth.accounts[0];
     return account;
 }
@@ -78,6 +79,7 @@ function* submitPost(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
     if (!currentAccount) {
+        // note - metamask may simply be locked
         yield getMetaMaskWarning();
         return;
     }

@@ -17,11 +17,6 @@ body {
     font-family: 'Quicksand', sans-serif;
 }
 
-.navLink-active {
-    background-color: var(--primary) !important;
-    color:var(--white) !important;
-}
-
 .red {
     color: red !important;
 }
