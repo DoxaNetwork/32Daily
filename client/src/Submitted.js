@@ -56,7 +56,7 @@ class _SubmittedWords extends Component {
                     </TransitionGroup>
                 ) : (
                     <NothingHereYet>
-                        <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
+                        <NavLink activeClassName="navLink-active" to={`/${this.props.match.path.split('/')[1]}/create`}>
                             Nothing here yet. <br/>Why don't you be the first?
                         </NavLink>
                     </NothingHereYet>
