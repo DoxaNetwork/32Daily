@@ -1,39 +1,54 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
+import Blockies from 'react-blockies';
 
-import identicon from 'identicon.js'
 import Img from 'react-image'
 import { Button } from './styledComponents'
 
 import {fileFromIPFS, fileToIPFS } from './utils/ipfs' 
 
 
-const Identity = styled(Img)`
-    width:75px;
-    height:75px;
-    border-radius:75px;
-    border: 5px solid var(--white);
-    top: 25px;
-    position: relative;
+const Identity = styled.div`
+    margin-right: 10px;
+
+    img {
+        width:72px;
+        height:72px;
+        border-radius:50px;
+        position: relative;
+        top: 25px;
+        border: 5px  solid var(--white);
+
+        @media only screen and (max-width: 649px) {
+            width:40px;
+            height:40px;
+        }
+    }
+
+    canvas {
+        border-radius: 100px;
+        border: 5px solid var(--white);
+        position: relative;
+        top: 25px;
+    }
 `
 
 class Identicon extends Component {
-    options = {
-      // foreground: [0, 0, 0, 255],               // rgba black
-      // background: [255, 255, 255, 255],         // rgba white
-      margin: 0.2,                              // 20% margin
-      size: 420,                                // 420px square
-      format: 'png'                             // could use SVG instead of PNG
-    };
 
     render() {
-        const data = new identicon(this.props.poster, this.options);
-
-        const src = this.props.imageUrl ? this.props.imageUrl : "data:image/png;base64," + data.toString();
-
         return (
-            <Identity width="75" height="75" src={src}/>
+            <Identity>
+                {this.props.src ? (
+                    <img src={this.props.src}/>
+                ) : (
+                    <Blockies
+                      seed={this.props.poster} /* the only required prop; determines how the image is generated */
+                      size={8} /* number of squares wide/tall the image will be; default = 15 */
+                      scale={9} /* width/height of each square in pixels; default = 4 */
+                    />
+                ) }
+            </Identity>
         )
     }
 }
@@ -231,7 +246,7 @@ export class _User extends Component {
             <>
             <IdenticonContainer>
                 <label htmlFor="imageUpload">
-                    <Identicon poster={match.params.id} imageUrl={this.state.newImageUrl || user.picture}/>
+                    <Identicon poster={match.params.id} src={this.state.newImageUrl || user.picture}/>
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
                 <TokenContainer>
@@ -267,7 +282,7 @@ export class _User extends Component {
         ) : (
             <>
             <IdenticonContainer>
-                    <Identicon poster={match.params.id} imageUrl={user.picture}/>
+                    <Identicon poster={match.params.id} src={user.picture}/>
                     <TokenContainer>
                     <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;credits</Bold>
                 </TokenContainer>

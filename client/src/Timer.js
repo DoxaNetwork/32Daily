@@ -53,7 +53,7 @@ class Timer extends Component {
 
         return (
             <TimerContainer>
-                <h4>Next item published in</h4>
+                <h4>New post selected in</h4>
                 <h2>{('00' + hours).slice(-2)} : {('00' + minutes).slice(-2)} : {('00' + seconds).slice(-2)}</h2>
             </TimerContainer>
             )

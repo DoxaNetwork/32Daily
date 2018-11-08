@@ -1,18 +1,16 @@
 import React, { Component } from 'react'
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
-import identicon from 'identicon.js'
 import { Button, Back } from './styledComponents'
 import {  FaChevronUp   as Icon } from "react-icons/fa";
+import Blockies from 'react-blockies';
+import Media from 'react-media';
 
-// FaLevelUpAlt
 
 const ContentContainer = styled.div`
     background-color:var(--white);
     border-radius: 5px;
-    /*box-shadow: 0 0 10px rgba(0,0,0,.14);*/
     margin-top: 30px;
-    /*box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);*/
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
 
     &:hover {
@@ -48,7 +46,6 @@ const ContentBody = styled.div`
 `
 const ContentFooter = styled.div`
     display:flex;
-    /*justify-content: space-between;*/
     font-size: 0.7em;
     padding: 10px 20px 15px 90px;
     @media only screen and (max-width: 649px) {
@@ -89,15 +86,22 @@ const VoteCount = styled.div`
     color: var(--primary);
 `
 
-const Identity = styled.img`
-    width:60px;
-    height:60px;
-    border-radius:50px;
+const Identity = styled.div`
     margin-right: 10px;
 
-    @media only screen and (max-width: 649px) {
-        width:40px;
-        height:40px;
+    img {
+        width:56px;
+        height:56px;
+        border-radius:50px;
+
+        @media only screen and (max-width: 649px) {
+            width:40px;
+            height:40px;
+        }
+    }
+
+    canvas {
+        border-radius: 100px;
     }
 `
 
@@ -118,20 +122,31 @@ const DateContainer = styled.span`
 `
 
 class Identicon extends Component {
-    options = {
-      // foreground: [0, 0, 0, 255],               // rgba black
-      // background: [255, 255, 255, 255],         // rgba white
-      margin: 0.2,                              // 20% margin
-      size: 420,                                // 420px square
-      format: 'png'                             // could use SVG instead of PNG
-    };
 
     render() {
-        const data = new identicon(this.props.poster, this.options);
-        const src = this.props.src ? this.props.src : "data:image/png;base64," + data.toString();
-
         return (
-            <Identity width="35" height="35" src={src}/>
+            <Identity>
+                {this.props.src ? (
+                    <img src={this.props.src}/>
+                    ) : (
+                    <Media query="(max-width: 649px)">
+                        {mobile =>
+                            mobile ? (
+                                <Blockies
+                                  seed={this.props.poster} /* the only required prop; determines how the image is generated */
+                                  size={8} /* number of squares wide/tall the image will be; default = 15 */
+                                  scale={5} /* width/height of each square in pixels; default = 4 */
+                                />
+                                ) : (
+                                <Blockies
+                                  seed={this.props.poster} /* the only required prop; determines how the image is generated */
+                                  size={8} /* number of squares wide/tall the image will be; default = 15 */
+                                  scale={7} /* width/height of each square in pixels; default = 4 */
+                                />
+                            ) }
+                    </Media>
+                    )}
+            </Identity>
         )
     }
 }
@@ -205,7 +220,7 @@ export class ContentCard extends Component {
                         <Identicon poster={poster} src={imageUrl}/>
                     </LinkToUser>
                     {approvedChain && 
-                        <ImportFreq><span>{approvedChain.username} approved</span></ImportFreq>
+                        <ImportFreq><span>{approvedChain.username} selected</span></ImportFreq>
                     }
                     <LinkToUser to={'/u/' + poster}>
                         <span>{username}</span>

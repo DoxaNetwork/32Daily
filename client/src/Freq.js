@@ -7,12 +7,12 @@ import { Button, Back } from './styledComponents'
 
 
 const SubmittedContainer = styled.div`
-    padding: 40px 40px;
+    padding: 40px 20px;
     margin:auto;
 
-    a {
+    /*a {
         justify-content: flex-end;
-    }
+    }*/
 `
 const SubmittedOuterContainer = styled.div`
     width: 70%;
@@ -29,7 +29,7 @@ const Title = styled.div`
     color: var(--secondary);
 `
 const PublishedContainer = styled.div`
-    padding: 40px 40px;
+    padding: 40px 20px;
     margin:auto;
 `
 const PublishedOuterContainer = styled.div`
@@ -66,9 +66,9 @@ class Published extends Component {
             <FreqContainer>
                 <PublishedOuterContainer>
                     <PublishedContainer>
-                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaChevronLeft/> New</NavLink></Back>
+                        <Back><NavLink to={this.props.match.path + "/submissions"}><FaChevronLeft/> Submitted</NavLink></Back>
                         <Title>
-                            Top
+                            Selected
                         </Title>
                         {this.props.publishedWords}
                     </PublishedContainer>
@@ -84,9 +84,9 @@ class Submissions extends Component {
             <FreqContainer>
                 <SubmittedOuterContainer>
                     <SubmittedContainer>
-                        <Back><NavLink to={this.props.match.url + "/published"}>Top <FaChevronRight/> </NavLink></Back>
+                        <Back><NavLink to={this.props.match.url + "/published"}><FaChevronLeft/> Selected</NavLink></Back>
                         <Title>
-                            New
+                            Submitted
                         </Title>
                         <TimerAndCreate>
                             {this.props.timer}
@@ -109,7 +109,7 @@ class SubmissionsAndPublished extends Component {
             <SubmittedOuterContainer>
                 <SubmittedContainer>
                     <Title>
-                        New
+                        Submitted
                     </Title>
                     <TimerAndCreate>
                         {this.props.timer}
@@ -124,7 +124,7 @@ class SubmissionsAndPublished extends Component {
             <PublishedOuterContainer>
                 <PublishedContainer>
                     <Title>
-                        Top
+                        Selected
                     </Title>
                     {this.props.publishedWords}
                 </PublishedContainer>
