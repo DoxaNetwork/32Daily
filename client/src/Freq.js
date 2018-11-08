@@ -28,9 +28,11 @@ const Title = styled.div`
     font-weight: 800;
     color: var(--secondary);
 `
-const PublishedContainer = styled.div`
-    padding: 40px 20px;
-    margin:auto;
+const FreqContainer = styled.div`
+    display: flex;
+    justify-content: center;
+    min-height:100vh;
+    background-color: #fafafa;
 `
 const PublishedOuterContainer = styled.div`
     width:70%;
@@ -39,11 +41,9 @@ const PublishedOuterContainer = styled.div`
         width:100%;
     }
 `
-const FreqContainer = styled.div`
-    display: flex;
-    justify-content: center;
-    min-height:100vh;
-    background-color: #fafafa;
+const PublishedContainer = styled.div`
+    padding: 40px 20px;
+    margin:auto;
 `
 
 const TimerAndCreate = styled.div`

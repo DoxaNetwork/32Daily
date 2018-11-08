@@ -17,10 +17,6 @@ body {
     font-family: 'Quicksand', sans-serif;
 }
 
-.red {
-    color: red !important;
-}
-
 /* ==================== Animations ==================== */
 .width-appear {
   width:0 !important;

@@ -1,5 +1,5 @@
 import { delay } from 'redux-saga'
-import { put, takeEvery, select } from 'redux-saga/effects'
+import { put, takeEvery, select, fork } from 'redux-saga/effects'
 import contract from 'truffle-contract'
 
 import { toAscii } from './utils/helpers'
@@ -80,11 +80,12 @@ function* submitPost(action) {
     const currentAccount = yield select(getItems);
     if (!currentAccount) {
         // note - metamask may simply be locked
-        yield getMetaMaskWarning();
+        yield fork(getMetaMaskWarning);
         return;
     }
     const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
 
+    yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(action.text);
     const result = yield contract.newPost(ipfsPathShort, { from: currentAccount})
 
@@ -96,7 +97,7 @@ function* submitPost(action) {
     yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 
-    yield newNotification()
+    yield fork(newNotification)
 
 }
 
@@ -216,7 +217,7 @@ function* persistVote(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
     if (!currentAccount) {
-        yield getMetaMaskWarning();
+        yield fork(getMetaMaskWarning);
         return;
     }
     const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
@@ -224,7 +225,7 @@ function* persistVote(action) {
     yield contract.backPost(action.index, action.chain, { from: currentAccount })
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
 
-    yield newNotification()
+    yield fork(newNotification)
 }
 
 function* loadUser(action) {
@@ -261,32 +262,34 @@ function* registerUser(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
     if (!currentAccount) {
-        yield getMetaMaskWarning();
+        yield fork(getMetaMaskWarning);
         return;
     }
     const registry = yield getContract(MemberRegistry);
 
     const {username, profile, imageIPFS} = action;
     const ipfsblob = {profile, image: imageIPFS}
+    yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
     yield registry.create(username, ipfsPathShort, { from: currentAccount})
-    yield newNotification()
+    yield fork(newNotification)
 }
 
 function* updateUser(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
     if (!currentAccount) {
-        yield getMetaMaskWarning();
+        yield fork(getMetaMaskWarning);
         return;
     }
     const registry = yield getContract(MemberRegistry);
 
     const {profile, imageIPFS} = action;
     const ipfsblob = {profile, image: imageIPFS}
+    yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
     yield registry.setProfile(ipfsPathShort, { from: currentAccount})
-    yield newNotification()
+    yield fork(newNotification)
 }
 
 function* loadUserIfNeeded(action) {

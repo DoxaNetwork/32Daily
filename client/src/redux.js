@@ -70,7 +70,7 @@ const notifications = (state = [], action) => {
     switch (action.type) {
         case 'NEW_NOTIFICATION':
             const { message, timeStamp } = action;
-            return [...state, {message, timeStamp}]
+            return [{message, timeStamp}, ...state]
         case 'CLEAR_NOTIFICATION':
             return state.slice(1)
         default:

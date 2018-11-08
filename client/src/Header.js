@@ -103,6 +103,7 @@ const MobileFreqSelector = styled(FreqSelector)`
     background-color: var(--primary);
     justify-content: space-around;
     height: 39px;
+    border-top: 1px solid #7da8e2;
 `
 
 class _Header extends Component {

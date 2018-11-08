@@ -29,6 +29,7 @@ export const Back = styled.div`
         text-decoration: none;
         display: flex;
         align-items: center;
+        cursor: pointer;
     }
     a:hover {
         color: var(--bright);

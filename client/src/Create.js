@@ -8,14 +8,22 @@ import { Button, Back } from './styledComponents'
 import { FaChevronLeft } from "react-icons/fa";
 
 
-const CreateContainer = styled.div`
+const CreateContainer1 = styled.div`
     background-color:#fafafa;
-    padding: 40px 25%;
     min-height:70vh;
+`
 
-    @media only screen and (max-width: 749px) {
-        padding: 40px;
+const CreateContainer2 = styled.div`
+    width: 70%;
+    margin: auto;
+
+    @media only screen and (max-width: 649px) {
+        width: 100%;
     }
+`
+const CreateContainer3 = styled.div`
+    padding: 40px 20px;
+    margin: auto;
 `
 const CreateHeader = styled.div`
     border-bottom: 2px solid var(--secondary);
@@ -26,7 +34,6 @@ const CreateHeader = styled.div`
 const FormContainer = styled.div`
     background-color: var(--white);
     border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0,0,0,.14);
     margin-top: 40px;
 `
 const TextInputCount = styled.span`
@@ -56,59 +63,52 @@ const CreateFooter = styled.div`
 `
 
 class Create extends Component {
-    maxCharacters = 256;
     state = {
         content: '',
-        charactersRemaining: this.maxCharacters
+        characterCount: 0
     }
 
     handleContentChange(event) {
-        const charactersRemaining = this.maxCharacters - event.target.value.length;
-        this.setState({content: event.target.value, charactersRemaining})
+        this.setState({content: event.target.value, characterCount: event.target.value.length})
     }
 
     submit(event) {
-        // const freqName = this.props.match.path.split("/")[1];
-        // if (freqName === 'one') {
-        //     this.props.onSubmit(this.state.content, 'freq1');
-        // }
         this.props.onSubmit(this.state.content);
         event.preventDefault();
-        // setTimeout(() => this.props.history.push('/one'),1000);
     }
 
     render() {
-        const tooManyCharacters = this.state.charactersRemaining < 0 ? 'red' : '';
 
         return (
-            <CreateContainer>
-                <Back>
-                    <NavLink to={"/" + this.props.match.path.split("/")[1] + "/submissions"}><FaChevronLeft/> Back</NavLink>
-                </Back>
-                <CreateHeader>
-                    Create
-                </CreateHeader>
-                <FormContainer>
-                    <CountedTextForm>
-                        <textarea 
-                            autoComplete="off" 
-                            autoFocus
-                            required 
-                            pattern=".{1,256}" 
-                            title="No longer than 256 characters" 
-                            placeholder="What do you want to tell the world?" 
-                            name="content" 
-                            value={this.state.content} 
-                            onChange={this.handleContentChange.bind(this)}/>
-                        <TextInputCount className={`${tooManyCharacters}`}>{this.state.charactersRemaining}</TextInputCount>
-                    </CountedTextForm>
-                    <CreateFooter>
-                        <Button onClick={this.submit.bind(this)}>
-                            Submit
-                        </Button>
-                    </CreateFooter>
-                </FormContainer>  
-            </CreateContainer>
+            <CreateContainer1>
+                <CreateContainer2>
+                    <CreateContainer3>
+                        <Back>
+                            <NavLink to={"/" + this.props.match.path.split("/")[1] + "/submissions"}><FaChevronLeft/> Back</NavLink>
+                        </Back>
+                        <CreateHeader>
+                            Create
+                        </CreateHeader>
+                        <FormContainer>
+                            <CountedTextForm>
+                                <textarea 
+                                    autoComplete="off" 
+                                    autoFocus
+                                    placeholder="What do you want to tell the world?" 
+                                    name="content" 
+                                    value={this.state.content} 
+                                    onChange={this.handleContentChange.bind(this)}/>
+                                <TextInputCount>{this.state.characterCount}</TextInputCount>
+                            </CountedTextForm>
+                            <CreateFooter>
+                                <Button onClick={this.submit.bind(this)}>
+                                    Submit
+                                </Button>
+                            </CreateFooter>
+                        </FormContainer>  
+                    </CreateContainer3>
+                </CreateContainer2>
+            </CreateContainer1>
         )
     }
 }
