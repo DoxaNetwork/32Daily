@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { Link, NavLink, withRouter } from 'react-router-dom'
+
 import styled from 'styled-components';
 import Blockies from 'react-blockies';
-
+import { FaChevronLeft } from "react-icons/fa";
 import Img from 'react-image'
-import { Button } from './styledComponents'
+import { Button, Back } from './styledComponents'
 
 import {fileFromIPFS, fileToIPFS } from './utils/ipfs' 
 
@@ -19,11 +21,6 @@ const Identity = styled.div`
         position: relative;
         top: 25px;
         border: 5px  solid var(--white);
-
-        @media only screen and (max-width: 649px) {
-            width:40px;
-            height:40px;
-        }
     }
 
     canvas {
@@ -55,21 +52,20 @@ class Identicon extends Component {
 
 const UserContainer = styled.div`
     background-color: var(--white);
-    max-width: 450px;
-    margin: 50px auto;
     overflow:hidden;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16), 0 0 0 0 rgba(0,0,0,0.12);
+    border-radius: 5px;
     font-size: 1.2em;
-
-    @media only screen and (max-width: 649px) {
-        left: 230px;
-        margin: 50px 20px 0;
-    }
 `
 
 const UserOuterContainer = styled.div`
-    min-height:70vh;
+    min-height:100vh;
+    background-color:#fafafa;
+` 
+
+const UserInnerContainer = styled.div`
+    max-width: 450px;
+    margin: 0 auto;
+    padding: 50px 20px;
 `
 
 const ChainMetadata = styled.div`
@@ -146,11 +142,12 @@ const TokenContainer = styled.div`
     position: relative;
     color: white;
     top: -50px;
-    left: 300px;
+    float: right;
+    right: 60px;
     display: flex;
 
     @media only screen and (max-width: 649px) {
-        left: 230px;
+        right:30px;
     }
 `
 
@@ -305,6 +302,10 @@ export class _User extends Component {
         );
         return (
             <UserOuterContainer>
+                <UserInnerContainer>
+                <Back>
+                    <a onClick={this.props.history.goBack}><FaChevronLeft/> Back</a>
+                </Back>
                 <UserContainer>
                     {editableMetadata}
                     
@@ -315,6 +316,7 @@ export class _User extends Component {
                         </div>
                     </ChainMetadata>
                 </UserContainer>
+                </UserInnerContainer>
             </UserOuterContainer>
         )
     }
@@ -325,6 +327,6 @@ const mapStateToProps = state => ({
     users: state.users
 })
 
-export const User = connect(
+export const User = withRouter(connect(
     mapStateToProps,
-)(_User)
+)(_User))

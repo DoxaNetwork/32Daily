@@ -81,8 +81,8 @@ const notifications = (state = [], action) => {
 const modals = (state = [], action) => {
     switch (action.type) {
         case 'NEW_MODAL':
-            const { message, header } = action;
-            return [...state, {message, header}]
+            const { message, header, id } = action;
+            return [...state, {message, header, id}]
         case 'CLEAR_MODAL':
             return state.slice(1)
         default:

@@ -160,7 +160,7 @@ function displayHour(then) {
     const now = new Date();
     const msec = now.getTime() - then.getTime();
     const hours = Math.floor(msec / 1000 / 60 / 60);
-    return `${hours}h`;
+    return `${hours}h  ago`;
 }
 
 function displayMins(then) {
@@ -169,7 +169,7 @@ function displayMins(then) {
     const hours = Math.floor(msec / 1000 / 60 / 60);
     msec -= hours * 1000 * 60 * 60;
     const minutes = Math.floor(msec / 1000 / 60);
-    return `${minutes}m`;
+    return `${minutes}m  ago`;
 }
 
 function displayPublishDate(then) {
@@ -225,7 +225,7 @@ export class ContentCard extends Component {
                     <LinkToUser to={'/u/' + poster}>
                         <span>{username}</span>
                     </LinkToUser>
-                    <DateContainer>&nbsp;- {publishDate} ago</DateContainer>
+                    <DateContainer>&nbsp;- {publishDate}</DateContainer>
                 </ContentHeader>
                 <ContentBody fontsize={fontsize}>
                     {linkFound && 

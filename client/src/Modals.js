@@ -4,15 +4,14 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
 import {  FaWindowClose   as Icon } from "react-icons/fa";
 
+import ropstenGIF from './public/ropsten.gif';
+
 
 const ModalsContainer = styled.div`
     top: 0;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    padding: 15% 10%;
-    box-sizing: border-box;
-    background-color: rgba(4,53,88,0.7);
+    position: absolute;
+    padding: 100px;
+    background-color: rgba(88,88,88,0.7);
 
     @media only screen and (max-width: 649px) {
         padding: 30% 10%;
@@ -41,7 +40,13 @@ const ModalsContainer2 = styled.div`
 `
 
 const ModalsBody = styled.div`
-    padding:70px 10%;
+    padding:40px 10%;
+    text-align:center;
+
+    img {
+        max-width:100%;
+        border-radius: 5px;
+    }
 `
 
 const ModalHeader = styled.h1`
@@ -56,25 +61,55 @@ class _Modals extends Component {
     }
     render() {
         const {modals} = this.props;
-        const modalMessage = modals[0] ? modals[0].message : '';
-        const modalHeader = modals[0] ? modals[0].header : '';
+
+        let modal;
+        if (modals.length) {
+            switch (modals[0].id) {
+                case 'ROPSTEN':
+                    modal = <Ropsten/>
+                    break;
+                default:
+                    modal = <Generic {...modals[0]}/>
+            }
+        }
 
         return (
             <>
-                {modalMessage && 
+                {modals.length && 
                     <ModalsContainer>
                         <ModalsContainer2>
                             <a onClick={() => this.close()}><Icon/></a>
-                            <ModalsBody>
-                                <ModalHeader>
-                                    {modalHeader}
-                                </ModalHeader>
-                                {modalMessage}
-                            </ModalsBody>
+                            {modal}
                         </ModalsContainer2>                
                     </ModalsContainer>
                 }
             </>
+        )
+    }
+}
+
+class Generic extends Component {
+    render() {
+        return (
+            <ModalsBody>
+                <ModalHeader>
+                    {this.props.header}
+                </ModalHeader>
+                {this.props.message}
+            </ModalsBody>
+        )
+    }
+}
+
+class Ropsten extends Component {
+    render() {
+        return (
+            <ModalsBody>
+                <ModalHeader>
+                    Hey there, you've got to switch to the Ropsten test network
+                </ModalHeader>
+                <img src={ropstenGIF}/>
+            </ModalsBody>
         )
     }
 }
