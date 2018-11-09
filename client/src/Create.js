@@ -10,7 +10,7 @@ import { FaChevronLeft } from "react-icons/fa";
 
 const CreateContainer1 = styled.div`
     background-color:#fafafa;
-    min-height:70vh;
+    min-height:100vh;
 `
 
 const CreateContainer2 = styled.div`

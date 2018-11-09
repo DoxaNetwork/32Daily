@@ -2,15 +2,17 @@ import React, { Component } from 'react'
 import styled from 'styled-components';
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
-import {  FaWindowClose   as Icon } from "react-icons/fa";
+import {  FaWindowClose as Icon } from "react-icons/fa";
 
 import ropstenGIF from './public/ropsten.gif';
+import metamask from './public/download_metamask.png';
 
 
 const ModalsContainer = styled.div`
     top: 0;
     position: absolute;
     padding: 100px;
+    min-height:108vh;
     background-color: rgba(88,88,88,0.7);
 
     @media only screen and (max-width: 649px) {
@@ -24,18 +26,18 @@ const ModalsContainer2 = styled.div`
     box-sizing: border-box;
     border-radius: 5px;
     position:relative;
+`
 
-    a {
-        font-size: 2.5em;
-        color: var(--primary);
-        position: absolute;
-        right:0;
-        margin: 20px;
+const Close = styled.a`
+    font-size: 2.5em;
+    color: var(--primary);
+    position: absolute;
+    right:0;
+    margin: 20px;
 
-        &:hover {
-            cursor:pointer;
-            color: var(--bright);
-        }
+    &:hover {
+        cursor:pointer;
+        color: var(--bright);
     }
 `
 
@@ -68,8 +70,9 @@ class _Modals extends Component {
                 case 'ROPSTEN':
                     modal = <Ropsten/>
                     break;
-                default:
-                    modal = <Generic {...modals[0]}/>
+                case 'WEB3':
+                    modal = <Web3/>
+                    break;
             }
         }
 
@@ -78,7 +81,7 @@ class _Modals extends Component {
                 {modals.length && 
                     <ModalsContainer>
                         <ModalsContainer2>
-                            <a onClick={() => this.close()}><Icon/></a>
+                            <Close onClick={() => this.close()}><Icon/></Close>
                             {modal}
                         </ModalsContainer2>                
                     </ModalsContainer>
@@ -88,14 +91,20 @@ class _Modals extends Component {
     }
 }
 
-class Generic extends Component {
+const Metamask = styled.img`
+    width: 250px;
+    max-width: 100%;
+    margin: 40px 0;
+`
+
+class Web3 extends Component {
     render() {
         return (
             <ModalsBody>
                 <ModalHeader>
-                    {this.props.header}
+                    Hey there, you're gonna need a browser that supports web3
                 </ModalHeader>
-                {this.props.message}
+                <a href="http://metamask.io"><Metamask src={metamask}/></a>
             </ModalsBody>
         )
     }
@@ -106,7 +115,7 @@ class Ropsten extends Component {
         return (
             <ModalsBody>
                 <ModalHeader>
-                    Hey there, you've got to switch to the Ropsten test network
+                    Hey there, you've got to switch to the Ropsten Test Network
                 </ModalHeader>
                 <img src={ropstenGIF}/>
             </ModalsBody>
@@ -115,7 +124,7 @@ class Ropsten extends Component {
 }
 
 const mapStateToProps = state => ({
-    modals: state.modals, // have got to initialize this somewhere
+    modals: state.modals,
 })
 
 export const Modals = connect(

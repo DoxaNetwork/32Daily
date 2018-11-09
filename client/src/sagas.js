@@ -65,19 +65,9 @@ function* getMetaMaskWarning() {
     // 4 - rinkeby
     const {web3, networkId, browserSupported} = yield getWeb3
     if (!browserSupported) {
-        yield put({type: "NEW_MODAL", 
-            header: "This website requires a web3-compatible browser",
-            // message:
-            // message: `
-            //         Upblock is built on blockchain technology, 
-            //         which gives it the great benefit of being permissionless
-            //         as well 
-
-            })
+        yield put({type: "NEW_MODAL", id: "WEB3"})
     } else if (networkId !== 3) {
         yield put({type: "NEW_MODAL", id: "ROPSTEN"})
-            // header: "Hey there, you've got to switch to the Ropsten test network",
-            // image: true})
     }
 }
 

@@ -6,6 +6,9 @@ const FooterContainer = styled.div`
     display: flex;
     background-color:var(--secondary);
     padding:40px 50px 70px;
+    position: absolute;
+    width: 100%;
+    box-sizing: border-box;
     color:var(--white);
 ` 
 const FooterCol = styled.div`
