@@ -81,6 +81,7 @@ const FreqSelector = styled.div`
     display: flex;
     font-size: 0.8em;
     font-weight: 800;
+    height: 47px;
     a {
         text-decoration: none;
         color: white;
@@ -113,12 +114,14 @@ class _Header extends Component {
                     {mobile =>
                     <div>
                         <StyledHeader>
-                            <div>
-                                <MainLogo  src={mainLogo}/>
-                                <Title>
-                                    <Up>up</Up><Block>block</Block>
-                                </Title>
-                            </div>
+                            <Link to="/">
+                                <div>
+                                    <MainLogo  src={mainLogo}/>
+                                    <Title>
+                                        <Up>up</Up><Block>block</Block>
+                                    </Title>
+                                </div>
+                            </Link>
                             { mobile ? '' : (
                             <FreqSelector>
                                 <NavLink activeClassName="navLink-active" to="/one/"><div>hourly</div></NavLink>
