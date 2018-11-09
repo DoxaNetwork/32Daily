@@ -138,10 +138,10 @@ class _Freq extends Component {
     render() {
         return (
                 <Media query="(max-width: 1400px)">
-                    {matches =>
-                        matches ? (
+                    {mobile =>
+                        mobile ? (
                             <Switch>
-                                <Redirect exact from={this.props.match.path} to={this.props.match.path + "/published"}/>
+                                <Redirect exact from={this.props.match.path} to={this.props.match.path + "/submissions"}/>
                                 <Route exact path={this.props.match.path + "/published"} render={() => <Published {...this.props}/>}/>
                                 <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
                                 <Route exact path={this.props.match.path +  "/submissions"} render={() => <Submissions {...this.props}/>} />
