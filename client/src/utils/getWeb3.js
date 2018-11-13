@@ -15,9 +15,9 @@ let getWeb3 = new Promise(function(resolve, reject) {
 
       web3.version.getNetwork((e, networkId) => {
 
-        if (networkId == 3 || networkId == 1540586644447) {
         // if (networkId == 3) {
-          results = { web3, networkId, browserSupported: true }
+        if (networkId) {
+          results = { web3, networkId, web3Browser: true }
           resolve(results)
         } else {
           var provider = new Web3.providers.HttpProvider('https://ropsten.infura.io/f6NOUQqHkXc64NJgRwvj')
@@ -25,7 +25,7 @@ let getWeb3 = new Promise(function(resolve, reject) {
 
           console.log('Injected web3 detected on wrong network: ' + networkId + ' ...using infura');
           web3.version.getNetwork((e, networkId) => {
-            results = { web3, networkId, browserSupported: true }
+            results = { web3, networkId, web3Browser: true }
             resolve(results)
           })
         }
@@ -38,7 +38,7 @@ let getWeb3 = new Promise(function(resolve, reject) {
 
       console.log('No web3 instance injected, using infura');
       web3.version.getNetwork((e, networkId) => {
-        results = { web3, networkId, browserSupported: false }
+        results = { web3, networkId, web3Browser: false }
         resolve(results)
       })
     }

@@ -60,7 +60,6 @@ class _ThirtytwoDaily extends Component {
                     />
                 </Switch>
             
-                <Footer/>
                 <Notifications/>
                 <Modals/>
             </div>

@@ -18,7 +18,7 @@ async function getContract(contractJSON, address) {
     let contractName;
     contractName = contractJSON.contractName + "-" + address;
     if (!contractsLoaded[contractName]) {
-        const {web3, networkId, infura} = await getWeb3
+        const {web3, networkId, web3Browser} = await getWeb3
         const contractABI = contract(contractJSON)
         contractABI.setProvider(web3.currentProvider)
        if (address) {
@@ -32,10 +32,12 @@ async function getContract(contractJSON, address) {
 }
 
 async function getCurrentAccount(){
-    let {web3} = await getWeb3;
-    await window.ethereum.enable()
-    const account = web3.eth.accounts[0];
-    return account;
+    let {web3, networkId, web3Browser} = await getWeb3;
+    if (web3Browser && networkId == 3) {
+        await window.ethereum.enable()
+        const account = web3.eth.accounts[0];
+        return account;
+    }
 }
 
 function getEventsByType(events, type) {
@@ -53,9 +55,36 @@ function* mapPost(post) {
     return {'poster': post.owner, content, votes: 0, chain: 0, index: post.index.toNumber(), approvedChains:[]}
 }
 
+function getBalance(address) {
+    return new Promise((resolve,reject) => {
+        window.web3.eth.getBalance(address, (error, result) => {
+            if(error) reject(error);
+            resolve(result.toNumber())
+        });
+    });
+}
+
 function* initAccount(action) {
     const currentAccount = yield getCurrentAccount();
+    if (currentAccount) {
+        const balance = yield getBalance(currentAccount);
+        if (balance < 0.5*10**18) {
+            yield fork(getFunds, currentAccount)
+        }   
+    }
     yield put({type: "INIT_ACCOUNT_SUCCESS", currentAccount})
+}
+
+function* getFunds(address) {
+    const result = yield fetch("https://temporank.com/api/faucet/", {
+        method: "POST",
+        headers: {"Content-Type": "application/json; charset=utf-8"},
+        body: JSON.stringify({address})
+    })
+    const data = yield result.json()
+    if (data.data && data.data['success']) {
+        yield fork(newNotification, "To get you started, we just sent you 1 ether")
+    }
 }
 
 function* getMetaMaskWarning() {

@@ -50,6 +50,8 @@ const RightSideGroup = styled.div`
     display: flex;
     align-items: center;
     padding-bottom: 10px;
+    justify-content: flex-end;
+    width: 150px;
 
     a {
         display: flex;

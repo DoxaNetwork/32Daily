@@ -78,7 +78,7 @@ class _Modals extends Component {
 
         return (
             <>
-                {modals.length && 
+                {modals.length > 0 && 
                     <ModalsContainer>
                         <ModalsContainer2>
                             <Close onClick={() => this.close()}><Icon/></Close>
