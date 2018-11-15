@@ -92,8 +92,8 @@ function* getMetaMaskWarning() {
     // 3 - ropsten
     // 42 - kovan
     // 4 - rinkeby
-    const {web3, networkId, browserSupported} = yield getWeb3
-    if (!browserSupported) {
+    const {web3, networkId, web3Browser} = yield getWeb3
+    if (!web3Browser) {
         yield put({type: "NEW_MODAL", id: "WEB3"})
     } else if (networkId !== 3) {
         yield put({type: "NEW_MODAL", id: "ROPSTEN"})
