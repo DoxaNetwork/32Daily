@@ -116,7 +116,7 @@ class _Header extends Component {
                     {mobile =>
                     <div>
                         <StyledHeader>
-                            <Link to="/">
+                            <Link to="/semidaily/">
                                 <div>
                                     <MainLogo  src={mainLogo}/>
                                     <Title>
@@ -126,13 +126,13 @@ class _Header extends Component {
                             </Link>
                             { mobile ? '' : (
                             <FreqSelector>
-                                <NavLink activeClassName="navLink-active" to="/one/"><div>hourly</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/ten/"><div>semidaily</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/hundred/"><div>weekly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/hourly/"><div>hourly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/semidaily/"><div>semidaily</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/weekly/"><div>weekly</div></NavLink>
                             </FreqSelector>
                             ) }
                             <RightSideGroup>
-                                <NavLink to='/one/create/'>
+                                <NavLink to='/hourly/create/'>
                                     <HeaderButton>New post</HeaderButton>
                                 </NavLink>
                                 {this.props.account && 
@@ -142,9 +142,9 @@ class _Header extends Component {
                         </StyledHeader>
                         { mobile ? (
                             <MobileFreqSelector>
-                                <NavLink activeClassName="navLink-active" to="/one/"><div>hourly</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/ten/"><div>semidaily</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/hundred/"><div>weekly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/hourly/"><div>hourly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/semidaily/"><div>semidaily</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to="/weekly/"><div>weekly</div></NavLink>
                             </MobileFreqSelector>
                             ) : ''}
                     </div>

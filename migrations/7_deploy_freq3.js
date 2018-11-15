@@ -12,7 +12,7 @@ module.exports = function(deployer) {
     return FreqFactory.deployed()
   })
   .then(function(instance) {
-    return instance.newContract(DoxaToken.address, 60);
+    return instance.newContract(DoxaToken.address, 168);
   })
   .then(function(result) {
     freq3address = helpers.recordFactory(result, 'freq3')

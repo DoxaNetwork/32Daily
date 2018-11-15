@@ -49,11 +49,10 @@ contract DoxaHub is PostChainAbstract, Ownable {
 
         owner = msg.sender;
         developmentFund = tx.origin;
-        period = _period;
+        period = _period * 1 hours;
         publishMint = period * 60 * 10**18;
         publishDevMint = publishMint / 5;
-        // nextPublishTime = topOfTheHour(now);
-        nextPublishTime = now;
+        nextPublishTime = topOfTheHour(now);
     }
 
     function setDevelopmentFund(address _newDevelopmentFund)

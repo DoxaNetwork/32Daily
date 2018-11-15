@@ -42,15 +42,15 @@ class _ThirtytwoDaily extends Component {
                 
                 <Switch>
                     <Route
-                        path={'/one'}
+                        path={'/hourly'}
                         render={() => <Freq timer={<Timer1/>} create={<ContentForm/>} submittedWords={<SubmittedWords1/>} publishedWords={<PublishedWords1/>}/>}
                     />
                     <Route
-                        path={'/ten'}
+                        path={'/semidaily'}
                         render={() => <Freq timer={<Timer2/>} create={<ContentForm2/>} submittedWords={<SubmittedWords2/>} publishedWords={<PublishedWords2/>}/>}
                     />
                     <Route
-                        path={'/hundred'}
+                        path={'/weekly'}
                         render={() => <Freq timer={<Timer3/>} create={<ContentForm3/>} submittedWords={<SubmittedWords3/>} publishedWords={<PublishedWords3/>}/>}
                     />
                     

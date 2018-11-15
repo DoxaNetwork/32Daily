@@ -112,6 +112,7 @@ function* submitPost(action) {
 
     yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(action.text);
+    yield fork(newNotification)
     const result = yield contract.newPost(ipfsPathShort, { from: currentAccount})
 
     const filteredEvents = getEventsByType(result.logs, "NewPost")
@@ -122,7 +123,6 @@ function* submitPost(action) {
     yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
     yield put({type: "TOKEN_BALANCE_UPDATE"})
 
-    yield fork(newNotification)
 
 }
 
@@ -247,10 +247,10 @@ function* persistVote(action) {
     }
     const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
 
+    yield fork(newNotification)
     yield contract.backPost(action.index, action.chain, { from: currentAccount })
     yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
 
-    yield fork(newNotification)
 }
 
 function* loadUser(action) {
@@ -296,8 +296,8 @@ function* registerUser(action) {
     const ipfsblob = {profile, image: imageIPFS}
     yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
-    yield registry.create(username, ipfsPathShort, { from: currentAccount})
     yield fork(newNotification)
+    yield registry.create(username, ipfsPathShort, { from: currentAccount})
 }
 
 function* updateUser(action) {
@@ -313,8 +313,8 @@ function* updateUser(action) {
     const ipfsblob = {profile, image: imageIPFS}
     yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
-    yield registry.setProfile(ipfsPathShort, { from: currentAccount})
     yield fork(newNotification)
+    yield registry.setProfile(ipfsPathShort, { from: currentAccount})
 }
 
 function* loadUserIfNeeded(action) {
