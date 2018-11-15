@@ -34,7 +34,9 @@ async function getContract(contractJSON, address) {
 async function getCurrentAccount(){
     let {web3, networkId, web3Browser} = await getWeb3;
     if (web3Browser && networkId == 3) {
-        await window.ethereum.enable()
+        try {
+            await window.ethereum.enable()
+        } catch (e) {}
         const account = web3.eth.accounts[0];
         return account;
     }
