@@ -15,8 +15,7 @@ let getWeb3 = new Promise(function(resolve, reject) {
 
       web3.version.getNetwork((e, networkId) => {
 
-        // if (networkId == 3) {
-        if (networkId) {
+        if (networkId == 3) {
           results = { web3, networkId, web3Browser: true }
           resolve(results)
         } else {
