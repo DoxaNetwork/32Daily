@@ -111,6 +111,14 @@ const MobileFreqSelector = styled(FreqSelector)`
 
 class _Header extends Component {
     render() {
+        let urlSecondPart;
+        const urlFirstPart = this.props.location.pathname.split("/")[1];
+        if (['hourly', 'semidaily', 'weekly'].includes(urlFirstPart)) {
+            urlSecondPart = this.props.location.pathname.split("/")[2];
+        } else {
+            urlSecondPart = "submissions";
+        }
+
         return (
             <Media query="(max-width: 649px)">
                     {mobile =>
@@ -126,9 +134,9 @@ class _Header extends Component {
                             </Link>
                             { mobile ? '' : (
                             <FreqSelector>
-                                <NavLink activeClassName="navLink-active" to="/hourly/"><div>hourly</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/semidaily/"><div>semidaily</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/weekly/"><div>weekly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to={"/hourly/" + urlSecondPart}><div>hourly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to={"/semidaily/" + urlSecondPart}><div>semidaily</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to={"/weekly/" + urlSecondPart}><div>weekly</div></NavLink>
                             </FreqSelector>
                             ) }
                             <RightSideGroup>
@@ -142,9 +150,9 @@ class _Header extends Component {
                         </StyledHeader>
                         { mobile ? (
                             <MobileFreqSelector>
-                                <NavLink activeClassName="navLink-active" to="/hourly/"><div>hourly</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/semidaily/"><div>semidaily</div></NavLink>
-                                <NavLink activeClassName="navLink-active" to="/weekly/"><div>weekly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to={"/hourly/" + urlSecondPart}><div>hourly</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to={"/semidaily/" + urlSecondPart}><div>semidaily</div></NavLink>
+                                <NavLink activeClassName="navLink-active" to={"/weekly/" + urlSecondPart}><div>weekly</div></NavLink>
                             </MobileFreqSelector>
                             ) : ''}
                     </div>

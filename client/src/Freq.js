@@ -102,60 +102,16 @@ class Submissions extends Component {
     }
 }
 
-class SubmissionsAndPublished extends Component {
-    render() {
-        return (
-             <FreqContainer>
-            <SubmittedOuterContainer>
-                <SubmittedContainer>
-                    <Title>
-                        Submitted
-                    </Title>
-                    <TimerAndCreate>
-                        {this.props.timer}
-                        <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
-                            <Button>New post</Button>
-                        </NavLink>
-                    </TimerAndCreate>
-                    {this.props.submittedWords}
-                </SubmittedContainer>
-            </SubmittedOuterContainer>
-
-            <PublishedOuterContainer>
-                <PublishedContainer>
-                    <Title>
-                        Selected
-                    </Title>
-                    {this.props.publishedWords}
-                </PublishedContainer>
-            </PublishedOuterContainer>
-             </FreqContainer>
-            )
-    }
-}
-
 class _Freq extends Component {
     render() {
         return (
-                <Media query="(max-width: 1400px)">
-                    {mobile =>
-                        mobile ? (
-                            <Switch>
-                                <Redirect exact from={this.props.match.path} to={this.props.match.path + "/submissions"}/>
-                                <Route exact path={this.props.match.path + "/published"} render={() => <Published {...this.props}/>}/>
-                                <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
-                                <Route exact path={this.props.match.path +  "/submissions"} render={() => <Submissions {...this.props}/>} />
-                            </Switch>
-                        ) : (
-                            <Switch>
-                                <Redirect from={this.props.match.path + "/submissions"} to={this.props.match.path}/>
-                                <Redirect from={this.props.match.path + "/published"} to={this.props.match.path}/>
-                                <Route exact path={this.props.match.path} render={() => <SubmissionsAndPublished {...this.props}/>}/> 
-                                <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
-                            </Switch>
-                        )
-                    }
-                </Media>
+            <Switch>
+                <Redirect exact from={this.props.match.path} to={this.props.match.path + "/submissions"}/>
+                <Route exact path={this.props.match.path + "/published"} render={() => <Published {...this.props}/>}/>
+                <Route exact path={this.props.match.path + "/create"} render={() => <div>{this.props.create}</div>}/>
+                <Route exact path={this.props.match.path +  "/submissions"} render={() => <Submissions {...this.props}/>} />
+            </Switch>
+                       
         )
     }
 }
