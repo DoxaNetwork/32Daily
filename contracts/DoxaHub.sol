@@ -162,7 +162,7 @@ contract DoxaHub is PostChainAbstract, Ownable {
             publishChain(indexToPublish, chainIndexToPublish);
         }
 
-        nextPublishTime = nextPublishTime + period * 1 seconds;
+        nextPublishTime = nextPublishTime + period;
     }
 
     function topOfTheHour(uint timestamp)

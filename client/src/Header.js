@@ -140,7 +140,7 @@ class _Header extends Component {
                             </FreqSelector>
                             ) }
                             <RightSideGroup>
-                                <NavLink to='/hourly/create/'>
+                                <NavLink to={"/" + urlFirstPart + "/create/"}>
                                     <HeaderButton>New post</HeaderButton>
                                 </NavLink>
                                 {this.props.account && 
