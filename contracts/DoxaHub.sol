@@ -50,7 +50,7 @@ contract DoxaHub is PostChainAbstract, Ownable {
         owner = msg.sender;
         developmentFund = tx.origin;
         period = _period * 1 hours;
-        publishMint = period * 60 * 10**18;
+        publishMint = _period * 10**18;
         publishDevMint = publishMint / 5;
         nextPublishTime = topOfTheHour(now);
     }
