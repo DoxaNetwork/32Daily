@@ -238,7 +238,7 @@ export class ContentCard extends Component {
                 { onClick &&
                     <ContentFooter>
                         {voteLink}
-                        <VoteCount>{(backing + 1) * 10}</VoteCount>
+                        <VoteCount>{(backing + 1)}</VoteCount>
                     </ContentFooter>
                 }
             </ContentContainer>
