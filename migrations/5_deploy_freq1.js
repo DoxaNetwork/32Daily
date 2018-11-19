@@ -20,7 +20,9 @@ module.exports = function(deployer) {
     return MemberRegistry.deployed()
   })
   .then(function(registry){
-    registry.privilegedCreate(freq1Address, 'hourly', 'QmboVyQ5q8oMDY5sC6cfJNmE5cMAhwM1oxSEkExxPCubok')
+    // this is the empty profile ipfs bytes 32 hash
+    // {profile: "", image: null}
+    registry.privilegedCreate(freq1Address, 'hourly', '0xe2fcad220630c8aaf3de6a3600931003de341d41638d8437631ed2f5fa54f37d')
   })
   .then(function() {
     return DoxaToken.deployed();

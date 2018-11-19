@@ -204,8 +204,9 @@ export class _User extends Component {
         reader.readAsArrayBuffer(file)
       }
 
-    submit() {
+    submit(e) {
         const {newUsername, newProfile, newImageIPFS} = this.state;
+        if (newUsername == '') return;
         const {dispatch, users, match} = this.props;
 
         const user = users[match.params.id] || {};
@@ -216,6 +217,7 @@ export class _User extends Component {
         } else {
             dispatch({type: "REGISTER_USER", username: newUsername, profile: newProfile, imageIPFS: newImageIPFS})
         }
+        e.preventDefault();
     }
 
     clear() {
@@ -257,29 +259,34 @@ export class _User extends Component {
                 </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
-                {user.username ? (
-                    <Bold>{user.username}</Bold>
-                    ) : (
-                    <div>
-                        <input 
-                            value={this.state.newUsername} 
-                            placeholder="what should we call you?" 
-                            type="text" 
-                            id="newUsername"
-                            onChange={(e) => this.handleContentChange(e)}></input>
-                    </div>
+                <form name="userForm">
+                    {user.username ? (
+                        <Bold>{user.username}</Bold>
+                        ) : (
+                        <div>
+                            <input 
+                                value={this.state.newUsername} 
+                                placeholder="what should we call you?" 
+                                type="text" 
+                                pattern=".{1,}"
+                                required
+                                title="Must be at least one character"
+                                id="newUsername"
+                                onChange={(e) => this.handleContentChange(e)}></input>
+                        </div>
                     )}
-                <div>
-                    <textarea 
-                        value={this.state.newProfile} 
-                        placeholder="what should we know about you?" 
-                        id="newProfile"
-                        onChange={(e) => this.handleContentChange(e)}></textarea>
-                </div>
-                <ButtonContainer>
-                    <Button onClick={() => this.submit()}>Save</Button>
-                    <Clear onClick={() => this.clear()}>Clear</Clear>
-                </ButtonContainer>
+                    <div>
+                        <textarea 
+                            value={this.state.newProfile} 
+                            placeholder="what should we know about you?" 
+                            id="newProfile"
+                            onChange={(e) => this.handleContentChange(e)}></textarea>
+                    </div>
+                    <ButtonContainer>
+                        <Button type="submit" onClick={(e) => this.submit(e)}>Save</Button>
+                        <Clear onClick={() => this.clear()}>Clear</Clear>
+                    </ButtonContainer>
+                </form>
             </EditableMetadata>
             </>
         ) : (

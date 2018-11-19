@@ -29,7 +29,7 @@ module.exports = function(deployer) {
     return MemberRegistry.deployed()
   })
   .then(function(registry){
-    registry.privilegedCreate(freq3address, 'weekly', 'QmboVyQ5q8oMDY5sC6cfJNmE5cMAhwM1oxSEkExxPCubok')
+    registry.privilegedCreate(freq3address, 'weekly', '0xe2fcad220630c8aaf3de6a3600931003de341d41638d8437631ed2f5fa54f37d')
   })
   .then(function() {
     return DoxaToken.deployed();
