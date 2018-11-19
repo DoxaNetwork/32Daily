@@ -11,12 +11,23 @@ const history = (state = [], action) => {
     }
 }
 
-const historyLoaded = (state = false, action) => {
+const historyLoadedAll = (state = false, action) => {
     switch (action.type) {
         case 'INIT_HISTORY_API_SUCCESS':
             return action.allPreLoaded
         case 'LOAD_ALL_HISTORY_API_SUCCESS':
             return action.allPreLoaded
+        default:
+            return state
+    }
+}
+
+const historyLoadedSome = (state = false, action) => {
+    switch (action.type) {
+        case 'INIT_HISTORY_API_SUCCESS':
+            return true
+        case 'LOAD_ALL_HISTORY_API_SUCCESS':
+            return true
         default:
             return state
     }
@@ -28,6 +39,15 @@ const submissions = (state = [], action) => {
             return action.submittedWords
         case 'CONTENT_POST_SUCCEEDED':
             return [action.newPost, ...state]
+        default:
+            return state
+    }
+}
+
+const submissionsLoaded = (state = false, action) => {
+    switch (action.type) {
+        case 'LOAD_SUBMISSIONS_API_SUCCESS':
+            return true
         default:
             return state
     }
@@ -92,8 +112,10 @@ const modals = (state = [], action) => {
 
 const freqReducer = combineReducers({
     history,
-    historyLoaded,
+    historyLoadedSome,
+    historyLoadedAll,
     submissions,
+    submissionsLoaded,
     nextPublishTime,
 })
 

@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { Link, NavLink, withRouter } from 'react-router-dom'
 
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Blockies from 'react-blockies';
 import { FaChevronLeft } from "react-icons/fa";
 import Img from 'react-image'
 import { Button, Back } from './styledComponents'
 
 import {fileFromIPFS, fileToIPFS } from './utils/ipfs' 
+import { ClimbingBoxLoader } from 'react-spinners';
 
 
 const Identity = styled.div`
@@ -166,6 +167,10 @@ const numberWithCommas = (x) => {
   return x ? x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : 0;
 }
 
+const override = css`
+    margin: 20px auto;
+`
+
 export class _User extends Component {
     state = {
         newUsername: '',
@@ -235,6 +240,7 @@ export class _User extends Component {
         if (!users) {
             return ("loading")
         }
+        const userLoaded = Boolean(users[match.params.id]);
         const user = users[match.params.id] || {};
         const userLoggedIn = match.params.id == account;
         const registered = Boolean(user.username);
@@ -307,7 +313,16 @@ export class _User extends Component {
                     <a onClick={this.props.history.goBack}><FaChevronLeft/> Back</a>
                 </Back>
                 <UserContainer>
-                    {editableMetadata}
+                    {userLoaded && 
+                        <>
+                        {editableMetadata}
+                        </>
+                    }
+                    <ClimbingBoxLoader
+                      className={override}
+                      color={'#266DD3'}
+                      loading={!userLoaded}
+                    />
                     
                      <ChainMetadata>
                         <div>

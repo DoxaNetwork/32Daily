@@ -2,10 +2,11 @@ import React, { Component } from 'react'
 import { NavLink, withRouter } from 'react-router-dom'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { loadSubmissions, submitVote, loadPublishTime } from './actions'
 import { ContentCard } from './ContentCard.js'
+import { ClimbingBoxLoader } from 'react-spinners';
 
 
 const NothingHereYet = styled.div`
@@ -22,6 +23,11 @@ const NothingHereYet = styled.div`
         color: var(--bright);
     }
 `
+
+const override = css`
+    margin: 20px auto;
+`
+
 class _SubmittedWords extends Component {
     componentDidMount() {
         this.props.load()
@@ -49,19 +55,28 @@ class _SubmittedWords extends Component {
         );
 
         return (
-                <>
-                { submittedWords.length > 0 ? (
-                    <TransitionGroup>
-                    {submittedWords}
-                    </TransitionGroup>
-                ) : (
-                    <NothingHereYet>
-                        <NavLink activeClassName="navLink-active" to={`/${this.props.match.path.split('/')[1]}/create`}>
-                            Nothing here yet. <br/>Why don't you be the first?
-                        </NavLink>
-                    </NothingHereYet>
-                )}
-                </>
+            <>
+                { this.props.loaded &&
+                    <>
+                    { submittedWords.length > 0 ? (
+                        <TransitionGroup>
+                        {submittedWords}
+                        </TransitionGroup>
+                    ) : (
+                        <NothingHereYet>
+                            <NavLink activeClassName="navLink-active" to={`/${this.props.match.path.split('/')[1]}/create`}>
+                                Nothing here yet. <br/>Why don't you be the first?
+                            </NavLink>
+                        </NothingHereYet>
+                    )}
+                    </>
+                }
+                <ClimbingBoxLoader
+                      className={override}
+                      color={'#266DD3'}
+                      loading={!this.props.loaded}
+                    />
+            </>
         )
     }
 }
@@ -69,6 +84,7 @@ class _SubmittedWords extends Component {
 const mapFreqToStateToProps = freq => (
     state => ({
         submittedWords: state[freq].submissions,
+        loaded: state[freq].submissionsLoaded,
         users: state.users,
     })
 )

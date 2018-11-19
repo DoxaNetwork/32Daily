@@ -1,11 +1,15 @@
 import React, { Component } from 'react'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { connect } from 'react-redux'
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { loadLatestHistory, loadAllHistory } from './actions'
 import { ContentCard } from './ContentCard.js'
+import { ClimbingBoxLoader } from 'react-spinners';
 
+const override = css`
+    margin: 20px auto;
+`
 
 const SecondaryActionLink = styled.div`
     margin-top: 20px;
@@ -46,10 +50,19 @@ class _PublishedWords extends Component {
 
         return (
             <div>
-                <TransitionGroup>
-                    {publishedWords}
-                </TransitionGroup>
-                {showAllHistoryLink}
+                {this.props.loaded && 
+                    <>
+                        <TransitionGroup>
+                            {publishedWords}
+                        </TransitionGroup>
+                        {showAllHistoryLink}
+                    </>
+                }
+                <ClimbingBoxLoader
+                  className={override}
+                  color={'#266DD3'}
+                  loading={!this.props.loaded}
+                />
             </div>            
         )
     }
@@ -58,7 +71,8 @@ class _PublishedWords extends Component {
 const mapFreqToStateToProps = freq => (
     state => ({
         publishedWords: state[freq].history,
-        allPreLoaded: state[freq].historyLoaded,
+        allPreLoaded: state[freq].historyLoadedAll,
+        loaded: state[freq].historyLoadedSome,
         users: state.users,
     })
 )

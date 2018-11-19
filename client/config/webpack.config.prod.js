@@ -207,6 +207,7 @@ module.exports = {
     // <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
     // In production, it will be an empty string unless you specify "homepage"
     // in `package.json`, in which case it will be the pathname of that URL.
+    "emotion", // added this because of react-spinners
     new InterpolateHtmlPlugin({
       PUBLIC_URL: publicUrl
     }),
