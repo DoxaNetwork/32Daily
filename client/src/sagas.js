@@ -78,7 +78,7 @@ function* initAccount(action) {
 }
 
 function* getFunds(address) {
-    const result = yield fetch("https://upblock.city/api/faucet/", {
+    const result = yield fetch("https://upbloc.io/api/faucet/", {
         method: "POST",
         headers: {"Content-Type": "application/json; charset=utf-8"},
         body: JSON.stringify({address})

@@ -128,7 +128,7 @@ class _Header extends Component {
                                 <div>
                                     <MainLogo  src={mainLogo}/>
                                     <Title>
-                                        <Up>up</Up><Block>block</Block>
+                                        <Up>up</Up><Block>bloc</Block>
                                     </Title>
                                 </div>
                             </Link>
