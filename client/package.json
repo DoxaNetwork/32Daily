@@ -13,6 +13,7 @@
     "chai-as-promised": "^7.1.1",
     "chai-bignumber": "^2.0.2",
     "ipfs-api": "^24.0.2",
+    "pluralize": "^7.0.0",
     "react": "^16.4.2",
     "react-blockies": "^1.4.0",
     "react-dom": "^16.4.2",

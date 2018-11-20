@@ -68,7 +68,7 @@ class Published extends Component {
                     <PublishedContainer>
                         <Back><NavLink to={this.props.match.path + "/submissions"}><FaChevronLeft/> Submitted</NavLink></Back>
                         <Title>
-                            Selected
+                            Published
                         </Title>
                         {this.props.publishedWords}
                     </PublishedContainer>
@@ -84,7 +84,7 @@ class Submissions extends Component {
             <FreqContainer>
                 <SubmittedOuterContainer>
                     <SubmittedContainer>
-                        <Back><NavLink to={this.props.match.url + "/published"}><FaChevronLeft/> Selected</NavLink></Back>
+                        <Back><NavLink to={this.props.match.url + "/published"}><FaChevronLeft/> Published</NavLink></Back>
                         <Title>
                             Submitted
                         </Title>

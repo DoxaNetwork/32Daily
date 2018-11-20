@@ -5,6 +5,7 @@ import { Button, Back } from './styledComponents'
 import {  FaChevronUp   as Icon } from "react-icons/fa";
 import Blockies from 'react-blockies';
 import Media from 'react-media';
+import pluralize from 'pluralize';
 
 
 const ContentContainer = styled.div`
@@ -121,6 +122,12 @@ const DateContainer = styled.span`
     color:#789;
 `
 
+const Award = styled.span`
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.3em;
+`
+
 class Identicon extends Component {
 
     render() {
@@ -191,7 +198,7 @@ export class ContentCard extends Component {
 
     render() {
         let {content} = this.props;
-        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain} = this.props;
+        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain, awarded} = this.props;
 
         const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         const regex = new RegExp(expression);
@@ -220,7 +227,7 @@ export class ContentCard extends Component {
                         <Identicon poster={poster} src={imageUrl}/>
                     </LinkToUser>
                     {approvedChain && 
-                        <ImportFreq><span>{approvedChain.username} selected</span></ImportFreq>
+                        <ImportFreq><span>{approvedChain.username} published</span></ImportFreq>
                     }
                     <LinkToUser to={'/u/' + poster}>
                         <span>{username}</span>
@@ -239,6 +246,11 @@ export class ContentCard extends Component {
                     <ContentFooter>
                         {voteLink}
                         <VoteCount>{(backing + 1)}</VoteCount>
+                    </ContentFooter>
+                }
+                { awarded && 
+                    <ContentFooter>
+                        <Award>awarded {pluralize('credit', awarded, true)}</Award>
                     </ContentFooter>
                 }
             </ContentContainer>

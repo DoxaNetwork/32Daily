@@ -42,6 +42,7 @@ class _PublishedWords extends Component {
                     user={this.props.users[obj.poster]}
                     backing={obj.votes}
                     date={obj.date}
+                    awarded={this.props.awarded}
                     onClick={false} />
                 </CSSTransition>
         );
@@ -68,12 +69,19 @@ class _PublishedWords extends Component {
     }
 }
 
+const awardSchedule = {
+    'freq1': 1,
+    'freq2': 12,
+    'freq3': 168
+}
+
 const mapFreqToStateToProps = freq => (
     state => ({
         publishedWords: state[freq].history,
         allPreLoaded: state[freq].historyLoadedAll,
         loaded: state[freq].historyLoadedSome,
         users: state.users,
+        awarded: awardSchedule[freq]
     })
 )
 

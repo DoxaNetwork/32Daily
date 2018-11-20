@@ -10,6 +10,8 @@ import { Button, Back } from './styledComponents'
 
 import {fileFromIPFS, fileToIPFS } from './utils/ipfs' 
 import { ClimbingBoxLoader } from 'react-spinners';
+import pluralize from 'pluralize';
+
 
 
 const Identity = styled.div`
@@ -255,7 +257,7 @@ export class _User extends Component {
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
                 <TokenContainer>
-                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;credits</Bold>
+                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;{pluralize('credit', user.tokenBalance)}</Bold>
                 </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
@@ -294,7 +296,7 @@ export class _User extends Component {
             <IdenticonContainer>
                     <Identicon poster={match.params.id} src={user.picture}/>
                     <TokenContainer>
-                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;credits</Bold>
+                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;{pluralize('credit', user.tokenBalance)}</Bold>
                 </TokenContainer>
             </IdenticonContainer>
             <EditableMetadata>
