@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components';
+import ReactTooltip from 'react-tooltip'
 import { loadPublishTime } from './actions'
 
 const TimerContainer = styled.div`
@@ -53,7 +54,8 @@ class Timer extends Component {
 
         return (
             <TimerContainer>
-                <h4>New post published in</h4>
+                <ReactTooltip className="custom-tooltip" effect="solid"/>
+                <h4 data-tip="post with most votes will be published">Next post published in</h4>
                 <h2>{('00' + hours).slice(-2)} : {('00' + minutes).slice(-2)} : {('00' + seconds).slice(-2)}</h2>
             </TimerContainer>
             )

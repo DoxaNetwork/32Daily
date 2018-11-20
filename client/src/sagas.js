@@ -129,7 +129,7 @@ function* submitPost(action) {
 }
 
 function* newNotification(_message) {
-    const message = _message || 'submitted to blockchain';
+    const message = _message || 'submitting to blockchain';
     yield put({type: "NEW_NOTIFICATION", message, timeStamp: new Date().getTime()})
     yield delay(10000)
     yield put({type: "CLEAR_NOTIFICATION"})

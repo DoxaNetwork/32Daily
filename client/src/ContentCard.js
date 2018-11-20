@@ -6,6 +6,7 @@ import {  FaChevronUp   as Icon } from "react-icons/fa";
 import Blockies from 'react-blockies';
 import Media from 'react-media';
 import pluralize from 'pluralize';
+import ReactTooltip from 'react-tooltip'
 
 
 const ContentContainer = styled.div`
@@ -227,7 +228,10 @@ export class ContentCard extends Component {
                         <Identicon poster={poster} src={imageUrl}/>
                     </LinkToUser>
                     {approvedChain && 
-                        <ImportFreq><span>{approvedChain.username} published</span></ImportFreq>
+                        <>
+                        <ImportFreq ><span data-tip="already published by this freq">{approvedChain.username} published</span></ImportFreq>
+                        <ReactTooltip className="custom-tooltip" effect="solid"/>
+                        </>
                     }
                     <LinkToUser to={'/u/' + poster}>
                         <span>{username}</span>
@@ -244,13 +248,15 @@ export class ContentCard extends Component {
                 </ContentBody>
                 { onClick &&
                     <ContentFooter>
-                        {voteLink}
-                        <VoteCount>{(backing + 1)}</VoteCount>
+                        <VoteLink onClick={() => onClick(index, chain)}><Icon/></VoteLink> 
+                        <VoteCount data-tip="how many people have voted for this">{(backing + 1)}</VoteCount>
+                        <ReactTooltip className="custom-tooltip" effect="solid"/>
                     </ContentFooter>
                 }
                 { awarded && 
                     <ContentFooter>
-                        <Award>awarded {pluralize('credit', awarded, true)}</Award>
+                        <Award data-tip="credits are an ERC-20 token awarded to the creator">awarded {pluralize('credit', awarded, true)}</Award>
+                        <ReactTooltip className="custom-tooltip" effect="solid"/>
                     </ContentFooter>
                 }
             </ContentContainer>

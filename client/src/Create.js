@@ -54,7 +54,6 @@ const CountedTextForm = styled.form`
         border:none;
         width:calc(100% - 45px);
         height:160px;
-        max-width:500px;
     }
 `
 const CreateFooter = styled.div`

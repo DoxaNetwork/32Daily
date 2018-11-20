@@ -11,7 +11,7 @@ import { Button, Back } from './styledComponents'
 import {fileFromIPFS, fileToIPFS } from './utils/ipfs' 
 import { ClimbingBoxLoader } from 'react-spinners';
 import pluralize from 'pluralize';
-
+import ReactTooltip from 'react-tooltip'
 
 
 const Identity = styled.div`
@@ -249,6 +249,13 @@ export class _User extends Component {
         const userLoggedIn = match.params.id == account;
         const registered = Boolean(user.username);
 
+        const tokenBalance = (
+            <TokenContainer>
+                <div>{numberWithCommas(user.tokenBalance)}</div><Bold data-tip="these are won by getting posts published">&nbsp;{pluralize('credit', user.tokenBalance)}</Bold>
+                <ReactTooltip className="custom-tooltip" effect="solid"/>
+            </TokenContainer>
+        )
+
         const editableMetadata = userLoggedIn && this.state.edit ? (
             <>
             <IdenticonContainer>
@@ -256,14 +263,12 @@ export class _User extends Component {
                     <Identicon poster={match.params.id} src={this.state.newImageUrl || user.picture}/>
                 </label>
                 <input type='file' id='imageUpload' onChange={(e) => this.imageUpload(e)}/>
-                <TokenContainer>
-                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;{pluralize('credit', user.tokenBalance)}</Bold>
-                </TokenContainer>
+                {tokenBalance}
             </IdenticonContainer>
             <EditableMetadata>
                 <form name="userForm">
                     {user.username ? (
-                        <Bold>{user.username}</Bold>
+                        <Bold>@{user.username}</Bold>
                         ) : (
                         <div>
                             <input 
@@ -295,13 +300,11 @@ export class _User extends Component {
             <>
             <IdenticonContainer>
                     <Identicon poster={match.params.id} src={user.picture}/>
-                    <TokenContainer>
-                    <div>{numberWithCommas(user.tokenBalance)}</div><Bold>&nbsp;{pluralize('credit', user.tokenBalance)}</Bold>
-                </TokenContainer>
+                    {tokenBalance}
             </IdenticonContainer>
             <EditableMetadata>
-                <Bold>{user.username || "unregistered"}</Bold>
-                <div>{user.profile || "nothing here yet"}</div>
+                <Bold>{ user.username ? `@${user.username}` : match.params.id.slice(0,6)}</Bold>
+                <div>{user.profile || "no bio yet"}</div>
                 {userLoggedIn && !this.state.edit && registered &&
                     <ButtonContainer>
                         <Button onClick={() => this.setState({edit:true})}>Edit</Button>
@@ -336,7 +339,8 @@ export class _User extends Component {
                      <ChainMetadata>
                         <div>
                             <AddressLabel>Account address</AddressLabel>
-                            <Address>{match.params.id}</Address>
+                            <ReactTooltip className="custom-tooltip" effect="solid"/>
+                            <Address data-tip="the ethereum address that owns this account">{match.params.id}</Address>
                         </div>
                     </ChainMetadata>
                 </UserContainer>
