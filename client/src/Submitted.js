@@ -41,7 +41,6 @@ class _SubmittedWords extends Component {
                 appear
                 timeout={{ enter: 300, exit: 300 }}>
                 <ContentCard 
-                    // key={"" + obj.index + obj.chain} 
                     index={obj.index} 
                     date={obj.date} 
                     content={obj.content} 
@@ -50,7 +49,25 @@ class _SubmittedWords extends Component {
                     approvedChain={this.props.users[obj.approvedChains[0]]}
                     backing={obj.votes} 
                     onClick={this.props.onClick}
-                    chain={obj.chain} />
+                    chain={obj.chain} 
+                    pending={obj.pending}/>
+            </CSSTransition>
+        );
+
+        const pendingSubmissions = this.props.pendingSubmissions.map(obj =>
+            <CSSTransition
+                key={obj.hash} 
+                classNames="opacity"
+                appear
+                timeout={{ enter: 300, exit: 300 }}>
+                <ContentCard 
+                    content={obj.content} 
+                    poster={obj.poster}
+                    user={this.props.users[obj.poster]}
+                    backing={obj.votes} 
+                    onClick={this.props.onClick}
+                    chain={obj.chain} 
+                    pending={Boolean(obj.hash)}/>
             </CSSTransition>
         );
 
@@ -60,6 +77,7 @@ class _SubmittedWords extends Component {
                     <>
                     { submittedWords.length > 0 ? (
                         <TransitionGroup>
+                        {pendingSubmissions}
                         {submittedWords}
                         </TransitionGroup>
                     ) : (
@@ -84,6 +102,7 @@ class _SubmittedWords extends Component {
 const mapFreqToStateToProps = freq => (
     state => ({
         submittedWords: state[freq].submissions,
+        pendingSubmissions: state[freq].pendingSubmissions,
         loaded: state[freq].submissionsLoaded,
         users: state.users,
     })

@@ -1,10 +1,11 @@
-import { delay } from 'redux-saga'
-import { put, takeEvery, select, fork } from 'redux-saga/effects'
+import { delay, eventChannel, END } from 'redux-saga'
+import { put, takeEvery, select, fork, call, take } from 'redux-saga/effects'
 import contract from 'truffle-contract'
 
 import { toAscii } from './utils/helpers'
 import { contentFromIPFS32, postToIPFS, fileFromIPFS } from './utils/ipfs.js'
 import getWeb3 from './utils/getWeb3'
+import web3 from 'web3'
 
 import DoxaHub from './contracts/DoxaHub.json'
 import DoxaToken from './contracts/DoxaToken.json'
@@ -32,13 +33,13 @@ async function getContract(contractJSON, address) {
 }
 
 async function getCurrentAccount(){
-    let {web3, networkId, web3Browser} = await getWeb3;
-    if (web3Browser && networkId == 3) {
+    let {web3, web3Browser, canSendTransactions} = await getWeb3;
+    if (web3Browser && canSendTransactions) {
         try {
             await window.ethereum.enable()
         } catch (e) {}
-        const account = web3.eth.accounts[0];
-        return account;
+        const accounts = await web3.eth.getAccounts();
+        return accounts[0];
     }
 }
 
@@ -54,7 +55,7 @@ function getEventsByType(events, type) {
 
 function* mapPost(post) {
     const content = yield contentFromIPFS32(post.ipfsHash);
-    return {'poster': post.owner, content, votes: 0, chain: 0, index: post.index.toNumber(), approvedChains:[]}
+    return {'poster': post.owner, content, votes: 0, chain: 0, index: post.index.toNumber(), approvedChains:[], date: new Date()}
 }
 
 function getBalance(address) {
@@ -94,12 +95,28 @@ function* getMetaMaskWarning() {
     // 3 - ropsten
     // 42 - kovan
     // 4 - rinkeby
-    const {web3, networkId, web3Browser} = yield getWeb3
+    const {web3, web3Browser, canSendTransactions} = yield getWeb3
     if (!web3Browser) {
         yield put({type: "NEW_MODAL", id: "WEB3"})
-    } else if (networkId !== 3) {
+    } else if (!canSendTransactions) {
         yield put({type: "NEW_MODAL", id: "ROPSTEN"})
     }
+}
+
+function submitPostChannel(contract, ipfsPathShort, currentAccount) {
+    return eventChannel(emitter => {
+
+        contract.newPost(ipfsPathShort, {from: currentAccount})
+        .once('transactionHash', function(hash) {
+            emitter({ type: "SUMBIT_POST_HASH", payload: hash })
+        })
+        .then(function(receipt) {
+            emitter({ type: "SUMBIT_POST_RECEIPT", payload: receipt})
+            emitter(END);
+        })
+
+        return () => { console.debug('channel closed') }
+    })
 }
 
 function* submitPost(action) {
@@ -114,45 +131,64 @@ function* submitPost(action) {
 
     yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(action.text);
-    yield fork(newNotification)
-    const result = yield contract.newPost(ipfsPathShort, { from: currentAccount})
+    yield fork(newNotification);
 
-    const filteredEvents = getEventsByType(result.logs, "NewPost")
-    const newPost = yield mapPost(filteredEvents[0].args);
+    const channel = yield call(submitPostChannel, contract, ipfsPathShort, currentAccount)
 
-    // also need to update tokenBalance and availableVotes
-    yield put({type: "CONTENT_POST_SUCCEEDED", freq: action.freq, newPost});
-    yield delay(1200) // ANNOYING - WHY IS THIS NECESSARY
-    yield put({type: "TOKEN_BALANCE_UPDATE"})
+    try {    
+        while (true) {
+            const response = yield take(channel)
+            if(response.type == "SUMBIT_POST_HASH") {
+                yield fork(newNotification, 'successfully sent to blockchain')
+                yield put({type: "REDIRECT"});
 
-
+                const pendingPost = {
+                    hash:response.payload, 
+                    poster:currentAccount, 
+                    content: action.text, 
+                    date: new Date(),
+                    votes: 0, 
+                    chain: 0, 
+                    approvedChains:[]
+                }
+                yield put({type: "PENDING_POST", freq: action.freq, pendingPost});
+           
+            } else if (response.type == "SUMBIT_POST_RECEIPT") {
+                const filteredEvents = getEventsByType(response.payload.logs, "NewPost");
+                const newPost = yield mapPost(filteredEvents[0].args);
+                yield put({type: "PENDING_POST_CONFIRMED", freq: action.freq, newPost, hash: response.payload.tx});
+            }
+        }
+      } finally {
+            console.debug('transaction completed')
+      }
 }
 
 function* newNotification(_message) {
-    const message = _message || 'submitting to blockchain';
+    const message = _message || 'submitting to blockchain, please confirm in metamask';
     yield put({type: "NEW_NOTIFICATION", message, timeStamp: new Date().getTime()})
-    yield delay(10000)
+    yield delay(5000)
     yield put({type: "CLEAR_NOTIFICATION"})
 }
 
 async function getSubmissions(_contract, chain) {
-    const [lower, upper] = await _contract.range(chain)
+    const {lower, upper} = await _contract.range(chain)
     const indexesToRetrieve = Array.from(new Array(upper.toNumber() - lower.toNumber()), (x,i) => i + lower.toNumber())
     const functions = indexesToRetrieve.map(index => _contract.getSubmittedItem(index, chain))
     let results = await Promise.all(functions)
 
     let posts = []
-    for (const [index, poster, ipfsHash32, votes, publishedTime, approvedChains] of results) {
-        const content = await contentFromIPFS32(ipfsHash32);
-        const date = new Date(publishedTime * 1000);
-        const filteredChains = approvedChains.filter(c => c !== '0x0000000000000000000000000000000000000000')
+    for (const {postChainIndex_, poster_, ipfsHash_, votesReceived_, publishedTime_, approvedChains_} of results) {
+        const content = await contentFromIPFS32(ipfsHash_);
+        const date = new Date(publishedTime_ * 1000);
+        const filteredChains = approvedChains_.filter(c => c !== '0x0000000000000000000000000000000000000000')
         posts.push({
             chain,
-            poster, 
+            poster: poster_,
             content, 
             date,
-            votes: votes.toNumber(), 
-            index: index.toNumber(), 
+            votes: votesReceived_.toNumber(), 
+            index: postChainIndex_.toNumber(), 
             approvedChains: filteredChains
         })
     }
@@ -203,10 +239,17 @@ async function loadHistory(_contract, start, end) {
     const indexesToRetrieve = Array.from(new Array(end - start), (x,i) => i + start)
     const functions = indexesToRetrieve.map(i => _contract.getPublishedItem(i))
     let results = await Promise.all(functions)
-    for (const [index, poster, ipfsHash32, votes, timeStamp] of results) {
-        const date = new Date(timeStamp * 1000);
-        const content = await contentFromIPFS32(ipfsHash32);
-        history.push({index, content, poster, date, votes:votes.toNumber(), approvedChains:[]})
+    for (const {publishedIndex_, poster_, ipfsHash_, votesReceived_, timeOut_} of results) {
+        const date = new Date(timeOut_ * 1000);
+        const content = await contentFromIPFS32(ipfsHash_);
+        history.push({
+            index:publishedIndex_, 
+            content, 
+            poster: poster_, 
+            date, 
+            votes:votesReceived_.toNumber(), 
+            approvedChains:[]
+        })
     }
     return history;
 }
@@ -257,20 +300,19 @@ function* persistVote(action) {
 
 function* loadUser(action) {
     const registry = yield getContract(MemberRegistry)
-    let [owner, name, profileIPFS, exiled] = yield registry.get(action.address);
-    let profile, imageUrl;
-    name = toAscii(name)
+    const {owner_, name_, profileIPFS_, exiled_} = yield registry.get(action.address);
+    const name = toAscii(name_)
     yield put({type: "USERNAME_UPDATE_SUCCESS", address: action.address, username:name})
 
     if (name !== '') {
-        profile = yield contentFromIPFS32(profileIPFS);
-        profile = JSON.parse(profile)
+        const profileUnParsed = yield contentFromIPFS32(profileIPFS_);
+        const profile = JSON.parse(profileUnParsed)
         yield put({type: "PROFILE_UPDATE_SUCCESS", address: action.address, profile:profile['profile']})
 
         const pictureHash = profile['image'];
 
         if (pictureHash !== null) {
-            imageUrl = yield urlFromHash(pictureHash);
+            const imageUrl = yield urlFromHash(pictureHash);
             yield put({type: "PICTURE_UPDATE_SUCCESS", address: action.address, picture:imageUrl})
         }        
     }
@@ -280,7 +322,7 @@ function* loadUser(action) {
 function* loadUserBalance(action) {
     const tokenInstance = yield getContract(DoxaToken);
     const tokenBalanceBN = yield tokenInstance.balanceOf(action.address);
-    const tokenBalance = tokenBalanceBN.toNumber() / 10**18;
+    const tokenBalance = tokenBalanceBN.div(web3.utils.toBN(10**18)).toNumber();
 
     yield put({type: "USER_BALANCE_UPDATE", address: action.address, tokenBalance})
 }
@@ -342,6 +384,7 @@ export default function* rootSaga() {
     yield takeEvery('LOAD_ALL_HISTORY', loadHistoryRemainingPages)
 
     yield takeEvery('LOAD_SUBMISSIONS', loadSubmissions)
+
 
     yield takeEvery('LOAD_ACCOUNT', initAccount)
 

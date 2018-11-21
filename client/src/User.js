@@ -43,7 +43,7 @@ class Identicon extends Component {
                     <img src={this.props.src}/>
                 ) : (
                     <Blockies
-                      seed={this.props.poster} /* the only required prop; determines how the image is generated */
+                      seed={this.props.poster.toLowerCase()} /* the only required prop; determines how the image is generated */
                       size={8} /* number of squares wide/tall the image will be; default = 15 */
                       scale={9} /* width/height of each square in pixels; default = 4 */
                     />
@@ -68,7 +68,7 @@ const UserOuterContainer = styled.div`
 const UserInnerContainer = styled.div`
     max-width: 450px;
     margin: 0 auto;
-    padding: 50px 20px;
+    padding: 40px 20px;
 `
 
 const ChainMetadata = styled.div`

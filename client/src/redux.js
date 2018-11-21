@@ -37,8 +37,19 @@ const submissions = (state = [], action) => {
     switch (action.type) {
         case 'LOAD_SUBMISSIONS_API_SUCCESS':
             return action.submittedWords
-        case 'CONTENT_POST_SUCCEEDED':
+        case 'PENDING_POST_CONFIRMED':
             return [action.newPost, ...state]
+        default:
+            return state
+    }
+}
+
+const pendingSubmissions = (state = [], action) => {
+    switch (action.type) {
+        case 'PENDING_POST':
+            return [action.pendingPost, ...state]
+        case 'PENDING_POST_CONFIRMED':
+            return state.filter(post=>post.hash !== action.hash)
         default:
             return state
     }
@@ -110,10 +121,22 @@ const modals = (state = [], action) => {
     }
 }
 
+const redirect = (state = false, action) => {
+    switch (action.type) {
+        case 'REDIRECT':
+            return true
+        case 'CLEAR_REDIRECT':
+            return false
+        default:
+            return state
+    }
+}
+
 const freqReducer = combineReducers({
     history,
     historyLoadedSome,
     historyLoadedAll,
+    pendingSubmissions,
     submissions,
     submissionsLoaded,
     nextPublishTime,
@@ -134,7 +157,8 @@ const rootReducer = combineReducers({
     account,
     users,
     notifications,
-    modals
+    modals,
+    redirect
 })
 
 export default rootReducer;

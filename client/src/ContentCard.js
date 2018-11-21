@@ -49,7 +49,7 @@ const ContentBody = styled.div`
 const ContentFooter = styled.div`
     display:flex;
     font-size: 0.7em;
-    padding: 10px 20px 15px 90px;
+    padding: 10px 20px 20px 90px;
     @media only screen and (max-width: 649px) {
         padding: 10px 20px 15px 70px;
     }
@@ -141,13 +141,13 @@ class Identicon extends Component {
                         {mobile =>
                             mobile ? (
                                 <Blockies
-                                  seed={this.props.poster} /* the only required prop; determines how the image is generated */
+                                  seed={this.props.poster.toLowerCase()} /* the only required prop; determines how the image is generated */
                                   size={8} /* number of squares wide/tall the image will be; default = 15 */
                                   scale={5} /* width/height of each square in pixels; default = 4 */
                                 />
                                 ) : (
                                 <Blockies
-                                  seed={this.props.poster} /* the only required prop; determines how the image is generated */
+                                  seed={this.props.poster.toLowerCase()} /* the only required prop; determines how the image is generated */
                                   size={8} /* number of squares wide/tall the image will be; default = 15 */
                                   scale={7} /* width/height of each square in pixels; default = 4 */
                                 />
@@ -180,6 +180,17 @@ function displayMins(then) {
     return `${minutes}m  ago`;
 }
 
+function displaySecs(then) {
+    const now = new Date();
+    let msec = now.getTime() - then.getTime();
+    const hours = Math.floor(msec / 1000 / 60 / 60);
+    msec -= hours * 1000 * 60 * 60;
+    const minutes = Math.floor(msec / 1000 / 60);
+    msec -= minutes * 1000 * 60;
+    const seconds = Math.floor(msec / 1000);
+    return `${seconds}s ago`;
+}
+
 function displayPublishDate(then) {
     let dateDisplay;
     let msec = new Date() - then;
@@ -187,8 +198,10 @@ function displayPublishDate(then) {
         dateDisplay = displayDate(then)
     } else if (msec > 3600000) {
         dateDisplay = displayHour(then)
-    } else {
+    } else if (msec > 60000) {
         dateDisplay = displayMins(then)
+    } else {
+        dateDisplay = displaySecs(then)
     }
     return dateDisplay;
 }
@@ -199,7 +212,7 @@ export class ContentCard extends Component {
 
     render() {
         let {content} = this.props;
-        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain, awarded} = this.props;
+        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain, awarded, pending} = this.props;
 
         const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         const regex = new RegExp(expression);
@@ -219,7 +232,7 @@ export class ContentCard extends Component {
         const username = user && user.username !== '' ? '@' + user.username : poster.slice(0,6)
         const imageUrl = user ? user.picture : null;
 
-        const publishDate = date ? displayPublishDate(date) : '';
+        const publishDate = !pending ? displayPublishDate(date) : 'pending';
         const voteLink = onClick ? <VoteLink onClick={() => onClick(index, chain)}><Icon/></VoteLink> : <div></div>;
         return (
             <ContentContainer>
@@ -246,7 +259,7 @@ export class ContentCard extends Component {
                         <span>{content}</span>
                     }
                 </ContentBody>
-                { onClick &&
+                { onClick && !pending &&
                     <ContentFooter>
                         <VoteLink onClick={() => onClick(index, chain)}><Icon/></VoteLink> 
                         <VoteCount data-tip="how many people have voted for this">{(backing + 1)}</VoteCount>

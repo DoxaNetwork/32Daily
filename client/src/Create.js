@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { NavLink, withRouter } from 'react-router-dom'
 import { connect } from 'react-redux'
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { submitContent } from './actions'
 import { Button, Back } from './styledComponents'
 import { FaChevronLeft } from "react-icons/fa";
+import { ClimbingBoxLoader } from 'react-spinners';
 
 
 const CreateContainer1 = styled.div`
@@ -61,10 +62,17 @@ const CreateFooter = styled.div`
     padding: 20px;
 `
 
+const override = css`
+    height:100% !important;
+    width:100% !important;
+    overflow:hidden;
+`
+
 class Create extends Component {
     state = {
         content: '',
-        characterCount: 0
+        characterCount: 0,
+        submitting: false
     }
 
     handleContentChange(event) {
@@ -72,8 +80,23 @@ class Create extends Component {
     }
 
     submit(event) {
+        this.setState({submitting:true})
         this.props.onSubmit(this.state.content);
         event.preventDefault();
+    }
+
+    componentDidUpdate(){
+        let {shouldRedirect} = this.props;
+        if(shouldRedirect === true){
+            this.props.history.goBack();
+        }
+    }
+
+    componentWillMount() {
+        this.props.clearRedirect()
+    }
+    componentWillUnmount() {
+        this.props.clearRedirect()
     }
 
     render() {
@@ -101,7 +124,15 @@ class Create extends Component {
                             </CountedTextForm>
                             <CreateFooter>
                                 <Button onClick={this.submit.bind(this)}>
-                                    Submit
+                                    {!this.state.submitting && 
+                                        "Submit"
+                                    }
+                                    <ClimbingBoxLoader
+                                      className={override}
+                                      color={'#fff'}
+                                      size={7}
+                                      loading={this.state.submitting}
+                                    />
                                 </Button>
                             </CreateFooter>
                         </FormContainer>  
@@ -112,23 +143,29 @@ class Create extends Component {
     }
 }
 
+
+const mapStateToProps = state => ({
+    shouldRedirect: state.redirect,
+})
+
 const mapFreqtoDispatchtoProps = (freq) => (
     dispatch => ({
-        onSubmit: (text) => dispatch(submitContent(text, freq))
+        onSubmit: (text) => dispatch(submitContent(text, freq)),
+        clearRedirect: () => dispatch({type: "CLEAR_REDIRECT"})
     })
 )
 
 export const ContentForm = withRouter(connect(
-    null,
+    mapStateToProps,
     mapFreqtoDispatchtoProps('freq1')
 )(Create))
 
 export const ContentForm2 = withRouter(connect(
-    null,
+    mapStateToProps,
     mapFreqtoDispatchtoProps('freq2')
 )(Create))
 
 export const ContentForm3 = withRouter(connect(
-    null,
+    mapStateToProps,
     mapFreqtoDispatchtoProps('freq3')
 )(Create))

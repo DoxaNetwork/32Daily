@@ -2,7 +2,7 @@ const Web3 = require('web3')
 const web3 = new Web3();
 
 function toAscii(hex) {
-    let zeroPaddedString = web3.toAscii(hex);
+    let zeroPaddedString = web3.utils.hexToAscii(hex);
     return zeroPaddedString.split("\u0000")[0];
 }
 
