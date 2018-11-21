@@ -50,7 +50,8 @@ class _SubmittedWords extends Component {
                     backing={obj.votes} 
                     onClick={this.props.onClick}
                     chain={obj.chain} 
-                    pending={obj.pending}/>
+                    pending={obj.pending}
+                    pendingVotes={obj.pendingVotes}/>
             </CSSTransition>
         );
 

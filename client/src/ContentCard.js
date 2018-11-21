@@ -69,8 +69,8 @@ const LinkToUser = styled(Link)`
 const VoteLink = styled(Button)`
     width: unset;
     height: unset;
-    padding: 5px 10px;
-    color: var(--primary);
+    padding: 5px;
+    color: ${props => props.pendingVotes ? "var(--gray)" : "var(--primary)"};
     background-color:inherit;
     margin: 0 10px 0 0;
     border:none;
@@ -85,7 +85,7 @@ const VoteCount = styled.div`
     font-weight:800;
     font-size:1.3em;
     line-height:32px;
-    color: var(--primary);
+    color: ${props => props.pendingVotes ? "var(--gray)" : "var(--primary)"};
 `
 
 const Identity = styled.div`
@@ -212,7 +212,7 @@ export class ContentCard extends Component {
 
     render() {
         let {content} = this.props;
-        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain, awarded, pending} = this.props;
+        const {user, index, onClick, date, poster, fontsize, backing, chain, approvedChain, awarded, pending, pendingVotes} = this.props;
 
         const expression = /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
         const regex = new RegExp(expression);
@@ -229,7 +229,7 @@ export class ContentCard extends Component {
             }
         }  
 
-        const username = user && user.username !== '' ? '@' + user.username : poster.slice(0,6)
+        const username = user && user.username !== '' ? '@' + user.username : poster.slice(0,6).toLowerCase()
         const imageUrl = user ? user.picture : null;
 
         const publishDate = !pending ? displayPublishDate(date) : 'pending';
@@ -261,8 +261,8 @@ export class ContentCard extends Component {
                 </ContentBody>
                 { onClick && !pending &&
                     <ContentFooter>
-                        <VoteLink onClick={() => onClick(index, chain)}><Icon/></VoteLink> 
-                        <VoteCount data-tip="how many people have voted for this">{(backing + 1)}</VoteCount>
+                        <VoteLink pendingVotes={pendingVotes} onClick={() => onClick(index, chain)}><Icon/></VoteLink> 
+                        <VoteCount pendingVotes={pendingVotes} data-tip="how many people have voted for this">{(backing + 1)}</VoteCount>
                         <ReactTooltip className="custom-tooltip" effect="solid"/>
                     </ContentFooter>
                 }

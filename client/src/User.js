@@ -303,7 +303,7 @@ export class _User extends Component {
                     {tokenBalance}
             </IdenticonContainer>
             <EditableMetadata>
-                <Bold>{ user.username ? `@${user.username}` : match.params.id.slice(0,6)}</Bold>
+                <Bold>{ user.username ? `@${user.username}` : match.params.id.slice(0,6).toLowerCase()}</Bold>
                 <div>{user.profile || "no bio yet"}</div>
                 {userLoggedIn && !this.state.edit && registered &&
                     <ButtonContainer>

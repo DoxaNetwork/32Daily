@@ -33,12 +33,37 @@ const historyLoadedSome = (state = false, action) => {
     }
 }
 
+function setPendingVote(array, action) {
+  return array.map((post) => {
+    if (post.index !== action.index || post.chain !== action.chain) {
+      return post
+    }
+    post.votes += 1;
+    post.pendingVotes = true;
+    return post
+  })
+}
+
+function setConfirmedVote(array, action) {
+  return array.map((post) => {
+    if (post.index !== action.index || post.chain !== action.chain) {
+      return post
+    }
+    post.pendingVotes = false;
+    return post
+  })
+}
+
 const submissions = (state = [], action) => {
     switch (action.type) {
         case 'LOAD_SUBMISSIONS_API_SUCCESS':
             return action.submittedWords
         case 'PENDING_POST_CONFIRMED':
             return [action.newPost, ...state]
+        case 'PERSIST_VOTE_HASH':
+            return setPendingVote(state, action)
+        case 'PERSIST_VOTE_CONFIRMED':
+            return setConfirmedVote(state, action)
         default:
             return state
     }
@@ -49,7 +74,7 @@ const pendingSubmissions = (state = [], action) => {
         case 'PENDING_POST':
             return [action.pendingPost, ...state]
         case 'PENDING_POST_CONFIRMED':
-            return state.filter(post=>post.hash !== action.hash)
+            return state.filter(post => post.hash !== action.hash)
         default:
             return state
     }

@@ -103,6 +103,51 @@ function* getMetaMaskWarning() {
     }
 }
 
+function persistVoteChannel(contract, index, chain, currentAccount) {
+    return eventChannel(emitter => {
+
+        contract.backPost(index, chain, { from: currentAccount })
+        .once('transactionHash', function(hash) {
+            emitter({ type: "SUMBIT_VOTE_HASH", payload: hash })
+        })
+        .then(function(receipt) {
+            emitter({ type: "SUMBIT_VOTE_RECEIPT", payload: receipt})
+            emitter(END);
+        })
+
+        return () => {console.debug('vote channel closed')}
+    })
+}
+
+function* persistVote(action) {
+    const getItems = state => state.account.account;
+    const currentAccount = yield select(getItems);
+    if (!currentAccount) {
+        yield fork(getMetaMaskWarning);
+        return;
+    }
+    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
+
+    yield fork(newNotification)
+
+    const channel = yield call(persistVoteChannel, contract, action.index, action.chain, currentAccount)
+
+    try {
+        while(true) {
+            const response = yield take(channel)
+            if (response.type == "SUMBIT_VOTE_HASH") {
+                yield fork(newNotification, 'successfully sent to blockchain')
+                yield put({type: "PERSIST_VOTE_HASH", freq: action.freq, index: action.index, chain: action.chain});  
+            } else if (response.type == "SUMBIT_VOTE_RECEIPT") {
+                console.debug("vote confirmed")
+                yield put({type: "PERSIST_VOTE_CONFIRMED", freq: action.freq, index: action.index, chain: action.chain});  
+            }
+        }
+    } finally {
+        console.debug('transaction completed')
+    }
+}
+
 function submitPostChannel(contract, ipfsPathShort, currentAccount) {
     return eventChannel(emitter => {
 
@@ -115,7 +160,7 @@ function submitPostChannel(contract, ipfsPathShort, currentAccount) {
             emitter(END);
         })
 
-        return () => { console.debug('channel closed') }
+        return () => { console.debug('post channel closed') }
     })
 }
 
@@ -281,21 +326,6 @@ function* loadHistoryRemainingPages(action) {
     publishedHistory.reverse();
     yield put({type: "LOAD_ALL_HISTORY_API_SUCCESS", freq: action.freq, publishedWords: publishedHistory, allPreLoaded: true})
     yield put({type: "LOAD_USERS_IF_NEEDED", words: publishedHistory})
-}
-
-function* persistVote(action) {
-    const getItems = state => state.account.account;
-    const currentAccount = yield select(getItems);
-    if (!currentAccount) {
-        yield fork(getMetaMaskWarning);
-        return;
-    }
-    const contract = yield getContract(DoxaHub, Factories[action.freq]['hub'])
-
-    yield fork(newNotification)
-    yield contract.backPost(action.index, action.chain, { from: currentAccount })
-    yield put({type: "PERSIST_VOTE_API_SUCCESS", freq: action.freq});  
-
 }
 
 function* loadUser(action) {
