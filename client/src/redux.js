@@ -34,24 +34,24 @@ const historyLoadedSome = (state = false, action) => {
 }
 
 function setPendingVote(array, action) {
-  return array.map((post) => {
-    if (post.index !== action.index || post.chain !== action.chain) {
-      return post
-    }
-    post.votes += 1;
-    post.pendingVotes = true;
-    return post
-  })
+    return array.map((post) => {
+        if (post.index !== action.index || post.chain !== action.chain) {
+              return post
+        }
+        post.votes += 1;
+        post.pendingVotes = true;
+        return post
+    })
 }
 
 function setConfirmedVote(array, action) {
-  return array.map((post) => {
-    if (post.index !== action.index || post.chain !== action.chain) {
-      return post
-    }
-    post.pendingVotes = false;
-    return post
-  })
+    return array.map((post) => {
+        if (post.index !== action.index || post.chain !== action.chain) {
+              return post
+        }
+        post.pendingVotes = false;
+        return post
+      })
 }
 
 const submissions = (state = [], action) => {
@@ -157,6 +157,15 @@ const redirect = (state = false, action) => {
     }
 }
 
+const latestUpper = (state = 0, action) => {
+    switch (action.type) {
+        case 'NEW_SUBMISSIONS':
+            return action.upper
+        default:
+            return state
+    }
+}
+
 const freqReducer = combineReducers({
     history,
     historyLoadedSome,
@@ -165,6 +174,7 @@ const freqReducer = combineReducers({
     submissions,
     submissionsLoaded,
     nextPublishTime,
+    latestUpper
 })
 
 function createFilteredReducer(reducerFunction, reducerPredicate) {

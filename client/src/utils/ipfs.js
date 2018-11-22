@@ -14,7 +14,7 @@ async function getIPFSNode() {
     console.log('connected to local ipfs node')
   } catch {
     ipfs = new IPFS({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' });
-    console.log('could not find local node, connecting to infura node');
+    console.log('could not find local ipfs node, connecting to infura ipfs');
   }
   ipfsLoaded = true;
   return ipfs;

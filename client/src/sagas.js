@@ -409,6 +409,19 @@ async function urlFromHash(hash) {
     return imageUrl;
 }
 
+function* checkForNewSubmissions(freq) {
+    const contract = yield getContract(DoxaHub, Factories[freq]['hub'])
+    // this doesnt check if lower freqs have published (chain 1 may have grown)
+    const {lower, upper} = yield contract.range(0)
+    const getItems = state => state[freq].latestUpper;
+    const currentUpper = yield select(getItems);
+
+    if (upper.toNumber() > currentUpper) {
+        yield put({type: "NEW_SUBMISSIONS", freq, upper: upper.toNumber()})
+        yield put({type: "LOAD_SUBMISSIONS", freq})
+    }
+}
+
 export default function* rootSaga() {
     yield takeEvery('LOAD_LATEST_HISTORY', loadHistoryFirstPage)
     yield takeEvery('LOAD_ALL_HISTORY', loadHistoryRemainingPages)
@@ -429,4 +442,13 @@ export default function* rootSaga() {
 
     yield takeEvery('REGISTER_USER', registerUser)
     yield takeEvery('UPDATE_USER', updateUser)
+
+    while (true) {
+        yield delay(5000)
+        yield fork(checkForNewSubmissions, 'freq1')
+        yield delay(5000)
+        yield fork(checkForNewSubmissions, 'freq2')
+        yield delay(5000)
+        yield fork(checkForNewSubmissions, 'freq3')
+    }
 }
