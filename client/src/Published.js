@@ -60,7 +60,7 @@ class _PublishedWords extends Component {
                     </>
                 }
                 <ClimbingBoxLoader
-                  className={override}
+                  className={`${override}`}
                   color={'#266DD3'}
                   loading={!this.props.loaded}
                 />

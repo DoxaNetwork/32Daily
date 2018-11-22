@@ -128,7 +128,7 @@ class Create extends Component {
                                         "Submit"
                                     }
                                     <ClimbingBoxLoader
-                                      className={override}
+                                      className={`${override}`}
                                       color={'#fff'}
                                       size={7}
                                       loading={this.state.submitting}
