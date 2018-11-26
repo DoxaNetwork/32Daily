@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 import styled from 'styled-components';
 import ReactTooltip from 'react-tooltip'
 import { loadPublishTime } from './actions'
+import pluralize from 'pluralize';
+
 
 const TimerContainer = styled.div`
     h2,h4 {
@@ -13,10 +15,35 @@ const TimerContainer = styled.div`
     }
 `
 
+function displayMoreThanDay(msec) {
+    const days = Math.floor(msec / 1000 / 60 / 60 / 24)
+    msec -= days * 1000 * 60 * 60 * 24;
+    const hours = Math.floor(msec / 1000 / 60 / 60);
+    msec -= hours * 1000 * 60 * 60;
+    const minutes = Math.floor(msec / 1000 / 60);
+
+    return `${pluralize('day', days, true)} ${pluralize('hour', hours, true)}`
+}
+
+function displayLessThanDay(msec) {
+    const hours = Math.floor(msec / 1000 / 60 / 60);
+    msec -= hours * 1000 * 60 * 60;
+    const minutes = Math.floor(msec / 1000 / 60);
+
+    return `${pluralize('hour', hours, true)} ${pluralize('min', minutes, true)}`
+}
+
+function displayLessThanHour(msec) {
+    const minutes = Math.floor(msec / 1000 / 60);
+    msec -= minutes * 1000 * 60;
+
+    return `${pluralize('min', minutes, true)}`
+}
+
 class Timer extends Component {
 
     componentDidMount() {
-        this.getNewPublishTimeInterval = setInterval(() => {
+        this.getNewPublishTime = setInterval(() => {
             const endingTime = new Date(this.props.nextPublishTime*1000)
             const now = new Date();
             let msec = endingTime.getTime() - now.getTime();
@@ -33,30 +60,36 @@ class Timer extends Component {
 
     componentWillUnmount() {
       clearInterval(this.updateClockDisplay);
-      clearInterval(this.getNewPublishTimeInterval);
+      clearInterval(this.getNewPublishTime);
     }
+
+    
 
     render() {
         const endingTime = new Date(this.props.nextPublishTime*1000)
         const now = new Date();
 
         let msec = endingTime.getTime() - now.getTime();
-        if (msec < 0) {
-            msec = 0;
+        let timeLeft;
+
+        if (this.props.nextPublishTime == 0) {
+            timeLeft = "loading..."
+        } else if (msec < 0) {
+            timeLeft = "publishing now..."
+        } else if (msec > 86400000) {
+            timeLeft = displayMoreThanDay(msec)
+        } else if (msec > 3600000) {
+            timeLeft = displayLessThanDay(msec)
+        } else if (msec > 60000) {
+            timeLeft = displayLessThanHour(msec)
         }
-        const hours = Math.floor(msec / 1000 / 60 / 60);
-        msec -= hours * 1000 * 60 * 60;
-        const minutes = Math.floor(msec / 1000 / 60);
-        msec -= minutes * 1000 * 60;
-        const seconds = Math.floor(msec / 1000);
-        msec -= seconds * 1000;
 
 
         return (
             <TimerContainer>
                 <ReactTooltip className="custom-tooltip" effect="solid"/>
                 <h4 data-tip="post with most votes will be published">Next post published in</h4>
-                <h2>{('00' + hours).slice(-2)} : {('00' + minutes).slice(-2)} : {('00' + seconds).slice(-2)}</h2>
+                <h2 dangerouslySetInnerHTML={{ __html: timeLeft }}></h2>
             </TimerContainer>
             )
     }
