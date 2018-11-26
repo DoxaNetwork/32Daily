@@ -115,7 +115,6 @@ class Create extends Component {
                             <CountedTextForm>
                                 <textarea 
                                     autoComplete="off" 
-                                    autoFocus
                                     placeholder="What do you want to tell the world?" 
                                     name="content" 
                                     value={this.state.content} 
