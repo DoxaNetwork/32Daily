@@ -7,6 +7,7 @@ import styled, { css } from 'styled-components';
 import { loadSubmissions, submitVote, loadPublishTime } from './actions'
 import { ContentCard } from './ContentCard.js'
 import { ClimbingBoxLoader } from 'react-spinners';
+import { FaChevronDown } from "react-icons/fa";
 
 
 const NothingHereYet = styled.div`
@@ -28,13 +29,59 @@ const override = css`
     margin: 20px auto;
 `
 
+const Sort = styled.div`
+    padding-top: 15px;
+    display:flex;
+    color: var(--gray);
+
+    button { 
+        padding-left: 5px;
+        background: none;
+        border: none;
+        font-size: 1em;
+        color: var(--primary); 
+        display: flex;
+        align-items: center; 
+        cursor:pointer;
+        outline: none;
+        svg {
+            padding-left: 10px;
+        }
+
+        &:hover {
+            color: var(--bright);
+        }
+    }
+`
+
 class _SubmittedWords extends Component {
+    state = {
+        sort: "newest",
+        sorting: false
+    }
+
     componentDidMount() {
         this.props.load()
     }
 
+    toggleSort() {
+        let newSort;
+        if (this.state.sort == "newest") {
+            newSort = "top"
+        } else {
+            newSort = "newest"
+        }
+        this.setState({sort: newSort, sorting: true})
+        setTimeout(() => this.setState({sorting: false}), 800)
+    }
+
     render() {
-        const submittedWords = this.props.submittedWords.map(obj =>
+        const sortTop = (i,j) => (j.votes - i.votes)
+        const sortNewest = (i,j) => (j.date - i.date)
+        const sortFns = {"newest": sortNewest, "top": sortTop}
+        const sortFn = sortFns[this.state.sort];
+
+        const submittedWords = this.props.submittedWords.sort(sortFn).map(obj =>
             <CSSTransition
                 key={"" + obj.index + obj.chain} 
                 classNames="opacity"
@@ -74,7 +121,8 @@ class _SubmittedWords extends Component {
 
         return (
             <>
-                { this.props.loaded &&
+                <Sort>sorted by <button onClick={() => this.toggleSort()}><span>{this.state.sort}</span><FaChevronDown/></button></Sort>
+                { this.props.loaded && !this.state.sorting && 
                     <>
                     { submittedWords.length > 0 ? (
                         <TransitionGroup>
@@ -93,7 +141,7 @@ class _SubmittedWords extends Component {
                 <ClimbingBoxLoader
                       className={`${override}`}
                       color={'#266DD3'}
-                      loading={!this.props.loaded}
+                      loading={!this.props.loaded || this.state.sorting}
                     />
             </>
         )

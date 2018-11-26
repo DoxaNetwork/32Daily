@@ -164,11 +164,18 @@ function displayDate(then) {
     return then.toLocaleDateString('en-US', dateOptions)
 }
 
+function displayDays(then) {
+    const now = new Date();
+    const msec = now.getTime() - then.getTime();
+    const days = Math.floor(msec / 1000 / 60 / 60 / 24)
+    return `${days} days ago`
+}
+
 function displayHour(then) {
     const now = new Date();
     const msec = now.getTime() - then.getTime();
     const hours = Math.floor(msec / 1000 / 60 / 60);
-    return `${hours}h  ago`;
+    return `${hours} hours  ago`;
 }
 
 function displayMins(then) {
@@ -177,7 +184,7 @@ function displayMins(then) {
     const hours = Math.floor(msec / 1000 / 60 / 60);
     msec -= hours * 1000 * 60 * 60;
     const minutes = Math.floor(msec / 1000 / 60);
-    return `${minutes}m  ago`;
+    return `${minutes} mins  ago`;
 }
 
 function displaySecs(then) {
@@ -188,14 +195,16 @@ function displaySecs(then) {
     const minutes = Math.floor(msec / 1000 / 60);
     msec -= minutes * 1000 * 60;
     const seconds = Math.floor(msec / 1000);
-    return `${seconds}s ago`;
+    return `${seconds} secs ago`;
 }
 
 function displayPublishDate(then) {
     let dateDisplay;
     let msec = new Date() - then;
-    if (msec > 86400000) {
+    if (msec > 604800000) {
         dateDisplay = displayDate(then)
+    } else if (msec > 86400000) {
+        dateDisplay = displayDays(then)
     } else if (msec > 3600000) {
         dateDisplay = displayHour(then)
     } else if (msec > 60000) {

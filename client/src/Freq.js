@@ -70,6 +70,12 @@ class Published extends Component {
                         <Title>
                             Published
                         </Title>
+                        <TimerAndCreate>
+                            {this.props.timer}
+                            <NavLink activeClassName="navLink-active" to={`${this.props.match.path}/create`}>
+                                <Button>New post</Button>
+                            </NavLink>
+                        </TimerAndCreate>
                         {this.props.publishedWords}
                     </PublishedContainer>
                 </PublishedOuterContainer>
