@@ -39,6 +39,7 @@ const Sort = styled.div`
         background: none;
         border: none;
         font-size: 1em;
+        font-weight: 800;
         color: var(--primary); 
         display: flex;
         align-items: center; 
@@ -72,7 +73,7 @@ class _SubmittedWords extends Component {
             newSort = "newest"
         }
         this.setState({sort: newSort, sorting: true})
-        setTimeout(() => this.setState({sorting: false}), 800)
+        setTimeout(() => this.setState({sorting: false}), 500)
     }
 
     render() {

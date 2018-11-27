@@ -34,6 +34,7 @@ const Sort = styled.div`
         background: none;
         border: none;
         font-size: 1em;
+        font-weight: 800;
         color: var(--primary); 
         display: flex;
         align-items: center; 
@@ -60,18 +61,18 @@ class _PublishedWords extends Component {
     }
 
     toggleSort() {
+        let newSort;
         if (this.state.sort == "newest") {
             if(!this.props.allPreLoaded) {
                 this.props.loadAllHistory()
             }
-            this.setState({sort: "oldest", sorting: true})
-
-            setTimeout(() => this.setState({sorting: false}), 800)
+            newSort = "oldest";
         } else {
-            this.setState({sort: "newest", sorting: true})
+            newSort = "newest";
 
-            setTimeout(() => this.setState({sorting: false}), 800)
         }
+        this.setState({sort: newSort, sorting: true})
+        setTimeout(() => this.setState({sorting: false}), 500)
     }
 
     render() {
