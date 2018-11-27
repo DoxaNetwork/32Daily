@@ -114,6 +114,8 @@ function persistVoteChannel(contract, index, chain, currentAccount) {
             emitter({ type: "SUMBIT_VOTE_RECEIPT", payload: receipt})
             emitter(END);
         })
+        .catch(function(error) {
+        })
 
         return () => {console.debug('vote channel closed')}
     })
@@ -159,6 +161,7 @@ function submitPostChannel(contract, ipfsPathShort, currentAccount) {
             emitter({ type: "SUMBIT_POST_RECEIPT", payload: receipt})
             emitter(END);
         })
+        .catch(function(error){})
 
         return () => { console.debug('post channel closed') }
     })
@@ -371,7 +374,7 @@ function* registerUser(action) {
     yield fork(newNotification, 'saving to ipfs...')
     const ipfsPathShort = yield postToIPFS(JSON.stringify(ipfsblob));
     yield fork(newNotification)
-    yield registry.create(username, ipfsPathShort, { from: currentAccount})
+    yield registry.create(web3.utils.asciiToHex(username), ipfsPathShort, { from: currentAccount})
 }
 
 function* updateUser(action) {

@@ -14,10 +14,6 @@ const ContentContainer = styled.div`
     border-radius: 5px;
     margin-top: 30px;
     transition: all 0.3s cubic-bezier(.25,.8,.25,1);
-
-    &:hover {
-        background-color:#f5f8fa;
-    }
 `
 const ContentHeader = styled.div`
     display:flex;
@@ -53,6 +49,7 @@ const ContentFooter = styled.div`
     @media only screen and (max-width: 649px) {
         padding: 10px 20px 15px 70px;
     }
+    cursor: ${props => props.onClick ? "pointer" : "unset"};
 `
 const LinkToUser = styled(Link)`
     color: black;
@@ -67,7 +64,7 @@ const LinkToUser = styled(Link)`
     }
 `
 const VoteLink = styled(Button)`
-    width: unset;
+    width: 32px;
     height: unset;
     padding: 5px;
     color: ${props => props.pendingVotes ? "var(--gray)" : "var(--primary)"};
@@ -75,6 +72,11 @@ const VoteLink = styled(Button)`
     margin: 0 10px 0 0;
     border:none;
 
+    ${ContentFooter}:hover & {
+        color: white;
+        border: var(--primary);
+        background-color: var(--primary);
+    }
     &:hover{
         color: white;
         border: var(--primary);
@@ -269,8 +271,8 @@ export class ContentCard extends Component {
                     }
                 </ContentBody>
                 { onClick && !pending &&
-                    <ContentFooter>
-                        <VoteLink pendingVotes={pendingVotes} onClick={() => onClick(index, chain)}><Icon/></VoteLink> 
+                    <ContentFooter onClick={() => onClick(index, chain)}>
+                        <VoteLink pendingVotes={pendingVotes}><Icon/></VoteLink> 
                         <VoteCount pendingVotes={pendingVotes} data-tip="how many people have voted for this">{(backing + 1)}</VoteCount>
                         <ReactTooltip className="custom-tooltip" effect="solid"/>
                     </ContentFooter>

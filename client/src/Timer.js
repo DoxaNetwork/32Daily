@@ -55,7 +55,7 @@ class Timer extends Component {
 
         this.updateClockDisplay = setInterval(() => {
             this.forceUpdate()
-        }, 1000);
+        }, 5000);
     }
 
     componentWillUnmount() {

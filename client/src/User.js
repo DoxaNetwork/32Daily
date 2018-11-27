@@ -208,11 +208,11 @@ export class _User extends Component {
 
     submit(e) {
         const {newUsername, newProfile, newImageIPFS} = this.state;
-        if (newUsername == '') return;
         const {dispatch, users, match} = this.props;
 
         const user = users[match.params.id] || {};
         const registered = Boolean(user.username);
+        if (!registered && newUsername == '') return;
 
         if (registered) {
             dispatch({type: "UPDATE_USER", profile: newProfile, imageIPFS: newImageIPFS})
@@ -331,7 +331,7 @@ export class _User extends Component {
                         </>
                     }
                     <ClimbingBoxLoader
-                      className={override}
+                      className={`${override}`}
                       color={'#266DD3'}
                       loading={!userLoaded}
                     />
