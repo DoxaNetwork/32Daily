@@ -35,7 +35,7 @@ const Sort = styled.div`
     color: var(--gray);
 
     button { 
-        padding-left: 5px;
+        padding:0 0 0 5px;
         background: none;
         border: none;
         font-size: 1em;
