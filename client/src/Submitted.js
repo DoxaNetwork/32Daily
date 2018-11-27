@@ -33,6 +33,7 @@ const Sort = styled.div`
     padding-top: 15px;
     display:flex;
     color: var(--gray);
+    align-items:center;
 
     button { 
         padding:0 0 0 5px;

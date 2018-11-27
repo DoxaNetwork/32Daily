@@ -27,6 +27,7 @@ const SecondaryActionLink = styled.div`
 const Sort = styled.div`
     padding-top: 15px;
     display:flex;
+    align-items:center;
     color: var(--gray);
 
     button { 
