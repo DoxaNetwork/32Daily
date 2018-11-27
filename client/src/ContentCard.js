@@ -253,7 +253,7 @@ export class ContentCard extends Component {
                     </LinkToUser>
                     {approvedChain && 
                         <>
-                        <ImportFreq ><span data-tip="already published by this freq">{approvedChain.username} published</span></ImportFreq>
+                        <ImportFreq ><span data-tip="already published by a lower chain">{approvedChain.username} published</span></ImportFreq>
                         <ReactTooltip className="custom-tooltip" effect="solid"/>
                         </>
                     }
