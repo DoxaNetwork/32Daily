@@ -52,7 +52,7 @@ contract DoxaHub is PostChainAbstract, Ownable {
         period = _period * 1 hours;
         publishMint = _period * 10**18;
         publishDevMint = publishMint / 5;
-        nextPublishTime = topOfTheHour(now);
+        nextPublishTime = tomorrow4pm(now);
     }
 
     function setDevelopmentFund(address _newDevelopmentFund)
@@ -170,6 +170,13 @@ contract DoxaHub is PostChainAbstract, Ownable {
     returns (uint)
     {
         return (timestamp / 1 hours) * 1 hours + 1 hours;
+    }
+
+    function tomorrow4pm(uint timestamp)
+    public pure
+    returns (uint)
+    {
+        return (timestamp / 1 days) * 1 days + 1 days + 16 hours;
     }
 
     function backPost(uint _postIndex, uint _chainIndex)
