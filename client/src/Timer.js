@@ -43,13 +43,13 @@ function displayLessThanHour(msec) {
 class Timer extends Component {
 
     componentDidMount() {
+        this.props.refreshTime();
         this.getNewPublishTime = setInterval(() => {
             const endingTime = new Date(this.props.nextPublishTime*1000)
             const now = new Date();
             let msec = endingTime.getTime() - now.getTime();
 
             if (msec < 0) {
-                this.props.refreshTime();
             }
         }, 10000);
 
@@ -62,8 +62,6 @@ class Timer extends Component {
       clearInterval(this.updateClockDisplay);
       clearInterval(this.getNewPublishTime);
     }
-
-    
 
     render() {
         const endingTime = new Date(this.props.nextPublishTime*1000)
