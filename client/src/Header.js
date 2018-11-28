@@ -112,10 +112,11 @@ const MobileFreqSelector = styled(FreqSelector)`
 class _Header extends Component {
     render() {
         let urlSecondPart;
-        const urlFirstPart = this.props.location.pathname.split("/")[1];
+        let urlFirstPart = this.props.location.pathname.split("/")[1];
         if (['hourly', 'semidaily', 'weekly'].includes(urlFirstPart)) {
             urlSecondPart = this.props.location.pathname.split("/")[2];
         } else {
+            urlFirstPart = "hourly"
             urlSecondPart = "submissions";
         }
 

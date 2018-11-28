@@ -88,7 +88,7 @@ class Create extends Component {
     componentDidUpdate(){
         let {shouldRedirect} = this.props;
         if(shouldRedirect === true){
-            this.props.history.goBack();
+            setTimeout(this.props.history.goBack, 500);
         }
     }
 
