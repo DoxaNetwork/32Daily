@@ -13,6 +13,9 @@ const TimerContainer = styled.div`
         width:190px;
         color: var(--secondary);
     }
+    h2 {
+        font-size:1.4em;
+    }
 `
 
 function displayMoreThanDay(msec) {

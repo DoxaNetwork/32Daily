@@ -100,6 +100,8 @@ function* getMetaMaskWarning() {
         yield put({type: "NEW_MODAL", id: "WEB3"})
     } else if (!canSendTransactions) {
         yield put({type: "NEW_MODAL", id: "ROPSTEN"})
+    } else {
+        yield put({type: "NEW_MODAL", id: "LOCKED"})
     }
 }
 
@@ -170,6 +172,7 @@ function submitPostChannel(contract, ipfsPathShort, currentAccount) {
 function* submitPost(action) {
     const getItems = state => state.account.account;
     const currentAccount = yield select(getItems);
+    console.debug(currentAccount)
     if (!currentAccount) {
         // note - metamask may simply be locked
         yield fork(getMetaMaskWarning);

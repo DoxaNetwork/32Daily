@@ -73,6 +73,9 @@ class _Modals extends Component {
                 case 'WEB3':
                     modal = <Web3/>
                     break;
+                case 'LOCKED':
+                    modal = <Locked/>
+                    break;
             }
         }
 
@@ -118,6 +121,18 @@ class Ropsten extends Component {
                     Hey there, you've got to switch to the Ropsten Test Network
                 </ModalHeader>
                 <img src={ropstenGIF}/>
+            </ModalsBody>
+        )
+    }
+}
+
+class Locked extends Component {
+    render() {
+        return (
+            <ModalsBody>
+                <ModalHeader>
+                    Looks like your metamask is probably locked. Type in your password and login
+                </ModalHeader>
             </ModalsBody>
         )
     }
